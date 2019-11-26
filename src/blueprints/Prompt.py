@@ -47,7 +47,7 @@ def get(args: dict):
 def post(args: dict):
     # Format the date in the proper format before writing
     args["date"] = args["date"].isoformat()
-    result = database.add_prompt_to_db(args)
+    result = database.create_prompt(args)
 
     # Return the proper status depending on adding result
     status_code = 201 if result else 422
@@ -56,6 +56,10 @@ def post(args: dict):
 
 @bp.route("/", methods=["PUT"])
 @use_args({
+    "tweet_id": fields.Str(location="query", required=True),
+    "content": fields.Str(location="json", required=True),
+    "word": fields.Str(location="json", required=True),
+    "media": fields.Str(location="json", missing=None),
     "date": fields.Date(
         "%Y-%m-%d",
         location="json",
@@ -63,8 +67,16 @@ def post(args: dict):
     )
 })
 def put(args: dict):
-    args["method"] = "PUT"
-    return args
+    if not database.find_existing_prompt(args["tweet_id"]):
+        return {"error_msg": "The given tweet ID does not exist."}, 422
+
+    # Format the date in the proper format before writing
+    args["date"] = args["date"].isoformat()
+    result = database.update_prompt(args)
+
+    # Return the proper status depending on adding result
+    status_code = 204 if result else 422
+    return {}, status_code
 
 
 @bp.route("/years", methods=["GET"])

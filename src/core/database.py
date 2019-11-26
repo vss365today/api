@@ -1,20 +1,21 @@
 import os.path
 import sqlite3
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from src.core.config import load_app_config
 
 
 __all__ = [
     "create_new_database",
-    "add_prompt_to_db",
+    "create_prompt",
     "get_prompt_by_date",
-    "get_prompt_years"
+    "get_prompt_years",
+    "update_prompt"
 ]
 
 
 def __dict_factory(cursor, row):
-    """https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.row_factory"""
+    """https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.row_factory"""  # noqa
     d = {}
     for idx, col in enumerate(cursor.description):
         d[col[0]] = row[idx]
@@ -56,6 +57,35 @@ def create_new_database() -> Optional:
             db.executescript(sql)
 
 
+def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
+    """Add a prompt to the database."""
+    sql = """
+    INSERT INTO tweets (
+        tweet_id, date, uid, content, word, media
+    )
+    VALUES (
+        :tweet_id, :date, :uid, :content, :word, :media
+    )
+    """
+    try:
+        with __connect_to_db() as db:
+            db.execute(sql, prompt)
+            return True
+
+    # A prompt with this ID already exists
+    except sqlite3.IntegrityError as exc:
+        print(f"Prompt creation exception: {exc}")
+        print(prompt)
+        return False
+
+
+def find_existing_prompt(prompt_id: str) -> bool:
+    """Find an existing prompt."""
+    sql = "SELECT 1 FROM tweets WHERE tweet_id = :tweet_id"
+    with __connect_to_db() as db:
+        return bool(db.execute(sql, {"tweet_id": prompt_id}).fetchone())
+
+
 def get_prompt_years() -> List[str]:
     """Get a list of years of recorded prompts."""
     sql = """
@@ -82,23 +112,25 @@ def get_prompt_by_date(date: str) -> List[sqlite3.Row]:
         return db.execute(sql, {"date": date}).fetchall()
 
 
-def add_prompt_to_db(prompt: dict) -> bool:
-    """Add a prompt to the database."""
+def update_prompt(prompt: Dict[str, Optional[str]]) -> bool:
+    """Update an exising prompt in the database."""
     sql = """
-    INSERT INTO tweets (
-        tweet_id, date, uid, content, word, media
-    )
-    VALUES (
-        :tweet_id, :date, :uid, :content, :word, :media
-    )
+    UPDATE tweets
+    SET
+        tweet_id = :tweet_id,
+        date = :date,
+        content = :content,
+        word = :word,
+        media =  :media
+    WHERE tweet_id = :tweet_id
     """
-    try:
-        with __connect_to_db() as db:
-            db.execute(sql, prompt)
-            return True
+    # try:
+    with __connect_to_db() as db:
+        db.execute(sql, prompt)
+        return True
 
-    # A prompt with this ID already exists
-    except sqlite3.IntegrityError as exc:
-        print(f"Prompt creation exception: {exc}")
-        print(prompt)
-        return False
+    # # A prompt with this ID already exists
+    # except sqlite3.IntegrityError as exc:
+    #     print(f"Prompt creation exception: {exc}")
+    #     print(prompt)
+    #     return False
