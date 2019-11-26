@@ -5,6 +5,7 @@ from webargs import fields
 from webargs.flaskparser import use_args
 
 from src.core import database
+from src.core.helpers import make_error_response
 
 
 bp = Blueprint("prompt", __name__, url_prefix="/prompt")
@@ -15,20 +16,22 @@ bp = Blueprint("prompt", __name__, url_prefix="/prompt")
     "date": fields.Date(
         "%Y-%m-%d",
         location="query",
-        required=True
+        missing=None
     )
 })
 def get(args: dict):
-    # Format the date in the proper format before fetching
-    date = args["date"].isoformat()
+    # We want the prompt from a particular day
+    if args["date"] is not None:
+        # Format the date in the proper format before fetching
+        date = args["date"].isoformat()
 
-    # If we have a prompt, return it
-    # Sweet Python 3.8+ walrus operator usage :D
-    if (prompt := database.get_prompt_by_date(date)):  # noqa
-        return jsonify(prompt)
+        # If we have a prompt, return it
+        # Sweet Python 3.8+ walrus operator usage :D
+        if (prompt := database.get_prompt_by_date(date)):  # noqa
+            return jsonify(prompt)
 
-    # Default to a not found response
-    return abort(404)
+    # Hitting the endpoint without a date returns the latest prompt
+    return jsonify(database.get_latest_prompt())
 
 
 @bp.route("/", methods=["POST"])
@@ -70,7 +73,7 @@ def put(args: dict):
     # The prompt needs to exist first
     if not database.find_existing_prompt(args["tweet_id"]):
         msg = "The prompt ID '{}' does not exist.".format(args["tweet_id"])
-        return {"error_msg": msg}, 422
+        return make_error_response(msg, 422)
 
     # Format the date in the proper format before writing
     args["date"] = args["date"].isoformat()

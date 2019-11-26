@@ -59,7 +59,7 @@ def create_new_database() -> Optional:
 
 
 def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
-    """Add a prompt to the database."""
+    """Record a new prompt."""
     sql = """
     INSERT INTO tweets (
         tweet_id, date, uid, content, word, media
@@ -92,6 +92,19 @@ def find_existing_prompt(prompt_id: str) -> bool:
     sql = "SELECT 1 FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
         return bool(db.execute(sql, {"tweet_id": prompt_id}).fetchone())
+
+
+def get_latest_prompt() -> Dict[str, Optional[str]]:
+    """Get the newest prompt."""
+    sql = """
+    SELECT tweets.*, writers.handle AS writer_handle
+    FROM tweets
+        JOIN writers ON tweets.uid = writers.uid
+    ORDER BY date DESC
+    LIMIT 1
+    """
+    with __connect_to_db() as db:
+        return db.execute(sql).fetchall()
 
 
 def get_prompt_years() -> List[str]:
