@@ -1,6 +1,6 @@
 # #vss365 today API
 
-> A REST API for [#vss365 today](https://vss365today.com)
+> REST API for [#vss365 today](https://vss365today.com)
 
 ## Required Configuration Keys
 
