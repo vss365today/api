@@ -33,6 +33,11 @@ def get(args: dict):
 
 @bp.route("/", methods=["POST"])
 @use_args({
+    "tweet_id": fields.Str(location="json", required=True),
+    "uid": fields.Str(location="json", required=True),
+    "content": fields.Str(location="json", required=True),
+    "word": fields.Str(location="json", required=True),
+    "media": fields.Str(location="json", missing=None),
     "date": fields.Date(
         "%Y-%m-%d",
         location="json",
@@ -40,8 +45,13 @@ def get(args: dict):
     )
 })
 def post(args: dict):
-    args["method"] = "POST"
-    return args
+    # Format the date in the proper format before writing
+    args["date"] = args["date"].isoformat()
+    result = database.add_prompt_to_db(args)
+
+    # Return the proper status depending on adding result
+    status_code = 201 if result else 422
+    return {}, status_code
 
 
 @bp.route("/", methods=["PUT"])

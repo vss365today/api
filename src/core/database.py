@@ -82,7 +82,7 @@ def get_prompt_by_date(date: str) -> List[sqlite3.Row]:
         return db.execute(sql, {"date": date}).fetchall()
 
 
-def add_prompt_to_db(prompt: dict) -> Optional:
+def add_prompt_to_db(prompt: dict) -> bool:
     """Add a prompt to the database."""
     sql = """
     INSERT INTO tweets (
@@ -92,5 +92,13 @@ def add_prompt_to_db(prompt: dict) -> Optional:
         :tweet_id, :date, :uid, :content, :word, :media
     )
     """
-    with __connect_to_db() as db:
-        db.execute(sql, prompt)
+    try:
+        with __connect_to_db() as db:
+            db.execute(sql, prompt)
+            return True
+
+    # A prompt with this ID already exists
+    except sqlite3.IntegrityError as exc:
+        print(f"Prompt creation exception: {exc}")
+        print(prompt)
+        return False
