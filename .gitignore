@@ -102,3 +102,14 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+.vscode/
+backup/
+testing/
+*.db
+*.ini
+*.json
+*.log
+*.jpg
+.env
+requirements.txt
