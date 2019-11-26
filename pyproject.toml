@@ -10,6 +10,7 @@ python = "^3.8"
 webargs = "^5.5.2"
 flask = "^1.1.1"
 python-dotenv = "^0.10.3"
+gunicorn = "19.9"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.7.9"

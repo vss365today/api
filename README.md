@@ -9,7 +9,7 @@
 ## Install
 
 1. Install Python 3.8+ and [Poetry](https://poetry.eustace.io/) 1.0.0b6+
-1. Rename `oss.env` to `.env`
+1. `mv oss.env .env`
 1. Set missing configuration keys
 1. `poetry install`
 1. `poetry run flask run`
