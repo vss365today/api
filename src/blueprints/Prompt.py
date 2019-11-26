@@ -1,7 +1,10 @@
 from flask import Blueprint
+from flask import jsonify
 
 from webargs import fields
 from webargs.flaskparser import use_args
+
+from src.core import database
 
 
 bp = Blueprint("prompt", __name__, url_prefix="/prompt")
@@ -40,3 +43,9 @@ def post(args: dict):
 def put(args: dict):
     args["method"] = "PUT"
     return args
+
+
+@bp.route("/years", methods=["GET"])
+def get_years():
+    """Get the years of recorded prompts."""
+    return jsonify(database.get_prompt_years())

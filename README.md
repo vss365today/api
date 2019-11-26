@@ -1,5 +1,5 @@
 # #vss365 today API
-> TK
+> A REST API for [#vss365 today](https://vss365today.com)
 
 
 ## License
