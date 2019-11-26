@@ -8,6 +8,7 @@ from src.core.config import load_app_config
 __all__ = [
     "create_new_database",
     "create_prompt",
+    "delete_prompt",
     "get_prompt_by_date",
     "get_prompt_years",
     "update_prompt"
@@ -79,6 +80,13 @@ def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
         return False
 
 
+def delete_prompt(prompt_id: str) -> Optional:
+    """Delete an existing prompt."""
+    sql = "DELETE FROM tweets WHERE tweet_id = :tweet_id"
+    with __connect_to_db() as db:
+        db.execute(sql, {"tweet_id": prompt_id})
+
+
 def find_existing_prompt(prompt_id: str) -> bool:
     """Find an existing prompt."""
     sql = "SELECT 1 FROM tweets WHERE tweet_id = :tweet_id"
@@ -112,8 +120,8 @@ def get_prompt_by_date(date: str) -> List[sqlite3.Row]:
         return db.execute(sql, {"date": date}).fetchall()
 
 
-def update_prompt(prompt: Dict[str, Optional[str]]) -> bool:
-    """Update an exising prompt in the database."""
+def update_prompt(prompt: Dict[str, Optional[str]]) -> Optional:
+    """Update an existing prompt."""
     sql = """
     UPDATE tweets
     SET
@@ -124,13 +132,5 @@ def update_prompt(prompt: Dict[str, Optional[str]]) -> bool:
         media =  :media
     WHERE tweet_id = :tweet_id
     """
-    # try:
     with __connect_to_db() as db:
         db.execute(sql, prompt)
-        return True
-
-    # # A prompt with this ID already exists
-    # except sqlite3.IntegrityError as exc:
-    #     print(f"Prompt creation exception: {exc}")
-    #     print(prompt)
-    #     return False

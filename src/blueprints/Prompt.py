@@ -67,16 +67,26 @@ def post(args: dict):
     )
 })
 def put(args: dict):
+    # The prompt needs to exist first
     if not database.find_existing_prompt(args["tweet_id"]):
-        return {"error_msg": "The given tweet ID does not exist."}, 422
+        msg = "The prompt ID '{}' does not exist.".format(args["tweet_id"])
+        return {"error_msg": msg}, 422
 
     # Format the date in the proper format before writing
     args["date"] = args["date"].isoformat()
-    result = database.update_prompt(args)
+    database.update_prompt(args)
+    return {}, 204
 
-    # Return the proper status depending on adding result
-    status_code = 204 if result else 422
-    return {}, status_code
+
+@bp.route("/", methods=["DELETE"])
+@use_args({
+    "tweet_id": fields.Str(location="query", required=True)
+})
+def delete(args: dict):
+    # Going to mimic SQL's behavior and pretend we deleted something
+    # even if we really didn't
+    database.delete_prompt(args["tweet_id"])
+    return {}, 204
 
 
 @bp.route("/years", methods=["GET"])
