@@ -3,11 +3,9 @@ from flask import Blueprint
 from webargs import fields
 from webargs.flaskparser import use_args
 
+from src.blueprints import search
 
-bp = Blueprint("writer", __name__, url_prefix="/writer")
-
-
-@bp.route("/", methods=["GET"])
+@search.route("/", methods=["GET"])
 def get():
     args = {"method": "GET"}
     return args

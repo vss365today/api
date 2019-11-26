@@ -1,9 +1,10 @@
+from importlib import import_module
 import json
 from flask import Flask
 from werkzeug.contrib.fixers import ProxyFix
 from werkzeug.exceptions import HTTPException
 
-from src.blueprints import Prompt, Search, Writer
+from src.blueprints import all_blueprints
 from src.extensions import init_extensions
 
 
@@ -14,9 +15,9 @@ def create_app():
     init_extensions(app)
 
     # Register the resources
-    app.register_blueprint(Prompt)
-    app.register_blueprint(Search)
-    app.register_blueprint(Writer)
+    for bp in all_blueprints:
+        import_module(bp.import_name)
+        app.register_blueprint(bp)
 
     @app.errorhandler(HTTPException)
     def handle_http_exception(e):

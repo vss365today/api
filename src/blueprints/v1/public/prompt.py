@@ -4,14 +4,12 @@ from flask import abort, jsonify
 from webargs import fields
 from webargs.flaskparser import use_args
 
+from src.blueprints import prompt
 from src.core import database
 from src.core.helpers import make_error_response
 
 
-bp = Blueprint("prompt", __name__, url_prefix="/prompt")
-
-
-@bp.route("/", methods=["GET"])
+@prompt.route("/", methods=["GET"])
 @use_args({
     "date": fields.Date(
         "%Y-%m-%d",
@@ -34,7 +32,7 @@ def get(args: dict):
     return jsonify(database.get_latest_prompt())
 
 
-@bp.route("/", methods=["POST"])
+@prompt.route("/", methods=["POST"])
 @use_args({
     "tweet_id": fields.Str(location="json", required=True),
     "uid": fields.Str(location="json", required=True),
@@ -57,7 +55,7 @@ def post(args: dict):
     return {}, status_code
 
 
-@bp.route("/", methods=["PUT"])
+@prompt.route("/", methods=["PUT"])
 @use_args({
     "tweet_id": fields.Str(location="query", required=True),
     "content": fields.Str(location="json", required=True),
@@ -81,7 +79,7 @@ def put(args: dict):
     return {}, 204
 
 
-@bp.route("/", methods=["DELETE"])
+@prompt.route("/", methods=["DELETE"])
 @use_args({
     "tweet_id": fields.Str(location="query", required=True)
 })
@@ -92,7 +90,7 @@ def delete(args: dict):
     return {}, 204
 
 
-@bp.route("/years", methods=["GET"])
+@prompt.route("/years", methods=["GET"])
 def get_years():
     """Get the years of recorded prompts."""
     return jsonify(database.get_prompt_years())
