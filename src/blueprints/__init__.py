@@ -38,8 +38,8 @@ def _factory(
     return blueprint
 
 
+browse = _factory("browse", "browse", "v1")
 prompt = _factory("prompt", "prompt", "v1")
 search = _factory("search", "search", "v1")
-writer = _factory("writer", "writer", "v1")
 
-all_blueprints = (prompt, search, writer,)
+all_blueprints = (browse, prompt, search,)

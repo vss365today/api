@@ -95,9 +95,3 @@ def delete(args: dict):
     # even if we really didn't
     database.delete_prompt(args["tweet_id"])
     return make_response({}, 204)
-
-
-@prompt.route("/years", methods=["GET"])
-def get_years():
-    """Get the years of recorded prompts."""
-    return jsonify(database.get_prompt_years())
