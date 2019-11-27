@@ -9,10 +9,11 @@ from src.core.models.v1.Prompt import Prompt
 __all__ = [
     "create_new_database",
     "create_prompt",
+    "update_prompt",
     "delete_prompt",
     "get_prompt_by_date",
     "get_prompt_years",
-    "update_prompt"
+    "get_prompts_by_writer",
 ]
 
 
@@ -133,6 +134,21 @@ def get_prompt_by_date(date: str) -> List[Prompt]:
     """
     with __connect_to_db() as db:
         return [Prompt(record) for record in db.execute(sql, {"date": date})]
+
+
+def get_prompts_by_writer(handle: str) -> List[Prompt]:
+    """Get a prompt tweet by the writer who prompted it."""
+    sql = """
+    SELECT tweets.*, writers.handle AS writer_handle
+    FROM tweets
+        JOIN writers ON writers.uid = tweets.uid
+    WHERE tweets.date <= date('now')
+        AND writers.handle = :handle
+    """
+    with __connect_to_db() as db:
+        return [
+            Prompt(record) for record in db.execute(sql, {"handle": handle})
+        ]
 
 
 def search_for_prompt(word: str) -> List[Prompt]:
