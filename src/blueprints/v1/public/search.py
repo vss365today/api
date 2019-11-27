@@ -8,7 +8,7 @@ from src.core.helpers import make_error_response
 
 def __build_search_response(prompts: list) -> dict:
     """Collect just the info needed to display the results."""
-    prompts = [
+    results: list = [
         {
             "date": prompt.date,
             "word": prompt.word,
@@ -17,25 +17,25 @@ def __build_search_response(prompts: list) -> dict:
         for prompt in prompts
     ]
     return {
-        "prompts": prompts,
-        "total": len(prompts)
+        "prompts": results,
+        "total": len(results)
     }
 
 
 def search_by_prompt(prompt: str) -> dict:
     """Search for prompts by prompt word."""
-    word = prompt.strip()
-    prompts = database.search_for_prompt(word)
-    response = __build_search_response(prompts)
+    word: str = prompt.strip()
+    prompts: list = database.search_for_prompt(word)
+    response: dict = __build_search_response(prompts)
     response["query"] = word
     return response
 
 
 def search_by_writer(handle: str) -> dict:
     """Search for all prompts from a specific writer."""
-    writer = handle.strip()
-    prompts = database.get_prompts_by_writer(writer)
-    response = __build_search_response(prompts)
+    writer: str = handle.strip()
+    prompts: list = database.get_prompts_by_writer(writer)
+    response: dict = __build_search_response(prompts)
     response["query"] = writer
     return response
 
