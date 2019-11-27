@@ -26,7 +26,7 @@ def __connect_to_db() -> sqlite3.Connection:
     """Create a connection to the database."""
     config = load_app_config()
     conn = sqlite3.connect(config["DB_PATH"])
-__dict_factory    conn.row_factory = sqlite3.Row
+    conn.row_factory = sqlite3.Row
     return conn
 
 
