@@ -3,6 +3,7 @@ import sqlite3
 from typing import Dict, List, Optional
 
 from src.core.config import load_app_config
+from src.core.models.v1.Prompt import Prompt
 
 
 __all__ = [
@@ -32,11 +33,12 @@ def __connect_to_db() -> sqlite3.Connection:
     """Create a connection to the database."""
     config = load_app_config()
     conn = sqlite3.connect(config["DB_PATH"])
-    conn.row_factory = __dict_factory
+    # conn.row_factory = __dict_factory
+    conn.row_factory = sqlite3.Row
     return conn
 
 
-def create_new_database() -> Optional:
+def create_new_database() -> None:
     """Create a new database if needed."""
     try:
         # If the database exists and is loaded, this will succeed
@@ -80,7 +82,7 @@ def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
         return False
 
 
-def delete_prompt(prompt_id: str) -> Optional:
+def delete_prompt(prompt_id: str) -> None:
     """Delete an existing prompt."""
     sql = "DELETE FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
@@ -94,7 +96,7 @@ def find_existing_prompt(prompt_id: str) -> bool:
         return bool(db.execute(sql, {"tweet_id": prompt_id}).fetchone())
 
 
-def get_latest_prompt() -> Dict[str, Optional[str]]:
+def get_latest_prompt() -> List[Prompt]:
     """Get the newest prompt."""
     sql = """
     SELECT tweets.*, writers.handle AS writer_handle
@@ -104,7 +106,7 @@ def get_latest_prompt() -> Dict[str, Optional[str]]:
     LIMIT 1
     """
     with __connect_to_db() as db:
-        return db.execute(sql).fetchall()
+        return [Prompt(record) for record in db.execute(sql)]
 
 
 def get_prompt_years() -> List[str]:
@@ -130,10 +132,10 @@ def get_prompt_by_date(date: str) -> List[sqlite3.Row]:
         AND :date <= date('now')
     """
     with __connect_to_db() as db:
-        return db.execute(sql, {"date": date}).fetchall()
+        return [Prompt(record) for record in db.execute(sql, {"date": date})]
 
 
-def update_prompt(prompt: Dict[str, Optional[str]]) -> Optional:
+def update_prompt(prompt: Dict[str, Optional[str]]) -> None:
     """Update an existing prompt."""
     sql = """
     UPDATE tweets
