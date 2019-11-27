@@ -6,7 +6,7 @@ from webargs.flaskparser import use_args
 
 from src.blueprints import prompt
 from src.core import database
-from src.core.helpers import make_error_response
+from src.core.helpers import make_response, make_error_response
 
 
 @prompt.route("/", methods=["GET"])
@@ -59,7 +59,7 @@ def post(args: dict):
 
     # Return the proper status depending on adding result
     status_code = 201 if result else 422
-    return {}, status_code
+    return make_response({}, status_code)
 
 
 @prompt.route("/", methods=["PUT"])
@@ -67,7 +67,7 @@ def post(args: dict):
     "tweet_id": fields.Str(location="query", required=True),
     "content": fields.Str(location="json", required=True),
     "word": fields.Str(location="json", required=True),
-    "media": fields.Str(location="json", missing=None),
+    "media": fields.Str(location="json", required=True),
     "date": fields.Date(
         "%Y-%m-%d",
         location="json",
@@ -83,7 +83,7 @@ def put(args: dict):
     # Format the date in the proper format before writing
     args["date"] = args["date"].isoformat()
     database.update_prompt(args)
-    return {}, 204
+    return make_response({}, 204)
 
 
 @prompt.route("/", methods=["DELETE"])
@@ -94,7 +94,7 @@ def delete(args: dict):
     # Going to mimic SQL's behavior and pretend we deleted something
     # even if we really didn't
     database.delete_prompt(args["tweet_id"])
-    return {}, 204
+    return make_response({}, 204)
 
 
 @prompt.route("/years", methods=["GET"])
