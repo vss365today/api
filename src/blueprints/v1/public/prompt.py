@@ -28,6 +28,10 @@ def get(args: dict):
         if (prompt := database.get_prompt_by_date(date)):  # noqa
             return jsonify(prompt)
 
+        # A prompt for that date doesn't exisd
+        else:
+            abort(404)
+
     # Hitting the endpoint without a date returns the latest prompt
     return jsonify(database.get_latest_prompt())
 
