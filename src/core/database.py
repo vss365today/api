@@ -17,14 +17,6 @@ __all__ = [
 ]
 
 
-def __dict_factory(cursor, row):
-    """https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.row_factory"""  # noqa
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
-
-
 def __flatten_tuple_list(tup) -> list:
     """Flatten a list of tuples into a list of actual data."""
     return [item[0] for item in tup]
@@ -34,8 +26,7 @@ def __connect_to_db() -> sqlite3.Connection:
     """Create a connection to the database."""
     config = load_app_config()
     conn = sqlite3.connect(config["DB_PATH"])
-    # conn.row_factory = __dict_factory
-    conn.row_factory = sqlite3.Row
+__dict_factory    conn.row_factory = sqlite3.Row
     return conn
 
 
