@@ -16,12 +16,12 @@ def _factory(
         "src", "blueprints", api_version,
         endpoint_folder, partial_module_string
     ]
-    import_name = ".".join(import_name)
+    import_path: str = ".".join(import_name)
 
     # Actually create the blueprint
     blueprint = Blueprint(
         partial_module_string,
-        import_name,
+        import_path,
         url_prefix=f"/{api_version}/{url_prefix}"
     )
 
@@ -29,8 +29,7 @@ def _factory(
     if protected:
         # Protected endpoints must have an authorization method
         if auth_function is None:
-            # TODO: Raise a better exception
-            raise Exception(
+            raise NotImplementedError(
                 "An authorization method must be given for protected endpoints!"  # noqa
             )
 
