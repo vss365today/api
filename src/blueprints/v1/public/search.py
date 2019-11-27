@@ -5,19 +5,12 @@ from webargs.flaskparser import use_args
 
 from src.blueprints import search
 from src.core import database
+from src.core.helpers import make_error_response
 
 
-@search.route("/", methods=["GET"])
-@use_args({
-    "word": fields.Str(
-        location="query",
-        required=True,
-        validate=lambda x: len(x) > 1
-    )
-})
-def get(args: dict):
+def search_by_prompt(prompt: str):
     # Collect just the info needed to display the results
-    word = args["word"].strip()
+    word = prompt.strip()
     prompts = [
         {
             "date": prompt.date,
@@ -33,3 +26,27 @@ def get(args: dict):
         "prompts": prompts,
         "total": len(prompts)
     }
+
+
+@search.route("/", methods=["GET"])
+@use_args({
+    "prompt": fields.Str(
+        location="query",
+        missing=None
+    ),
+    "writer": fields.Str(
+        location="query",
+        missing=None,
+        validate=lambda x: len(x) > 1
+    )
+})
+def get(args: dict):
+    if args["prompt"] is not None:
+        return search_by_prompt(args["prompt"])
+    elif args["writer"] is not None:
+        return {}
+    else:
+        return make_error_response(
+            "At least one search parameter must be provided!",
+            422
+        )
