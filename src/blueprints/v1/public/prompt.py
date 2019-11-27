@@ -30,7 +30,10 @@ def get(args: dict):
 
         # A prompt for that date doesn't exisd
         else:
-            abort(404)
+            return make_error_response(
+                f"No prompt exists for date {date}!",
+                404
+            )
 
     # Hitting the endpoint without a date returns the latest prompt
     return jsonify(database.get_latest_prompt())
