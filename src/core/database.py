@@ -122,7 +122,7 @@ def get_prompt_years() -> List[str]:
     return __flatten_tuple_list(r)
 
 
-def get_prompt_by_date(date: str) -> List[sqlite3.Row]:
+def get_prompt_by_date(date: str) -> List[Prompt]:
     """Get a prompt tweet by the date it was posted."""
     sql = """
     SELECT tweets.*, writers.handle AS writer_handle
@@ -133,6 +133,19 @@ def get_prompt_by_date(date: str) -> List[sqlite3.Row]:
     """
     with __connect_to_db() as db:
         return [Prompt(record) for record in db.execute(sql, {"date": date})]
+
+
+def search_for_prompt(word: str) -> List[Prompt]:
+    """Search for prompts by partial or full word."""
+    sql = """
+    SELECT tweets.*, writers.handle AS writer_handle
+    FROM tweets
+        JOIN writers ON writers.uid = tweets.uid
+    WHERE tweets.date <= date('now')
+        AND tweets.word LIKE '%' || :word || '%'
+    """
+    with __connect_to_db() as db:
+        return [Prompt(record) for record in db.execute(sql, {"word": word})]
 
 
 def update_prompt(prompt: Dict[str, Optional[str]]) -> None:
