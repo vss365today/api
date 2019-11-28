@@ -233,6 +233,7 @@ def search_for_prompt(word: str) -> List[Prompt]:
         JOIN writers ON writers.uid = tweets.uid
     WHERE tweets.date <= date('now')
         AND tweets.word LIKE '%' || :word || '%'
+    ORDER BY UPPER(word)
     """
     with __connect_to_db() as db:
         return [Prompt(record) for record in db.execute(sql, {"word": word})]
