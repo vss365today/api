@@ -44,7 +44,8 @@ def search_by_writer(handle: str) -> dict:
 @use_args({
     "prompt": fields.Str(
         location="query",
-        missing=None
+        missing=None,
+        validate=lambda x: len(x) > 1
     ),
     "writer": fields.Str(
         location="query",
