@@ -15,6 +15,7 @@ __all__ = [
     "delete_prompt",
     "create_subscription_email",
     "delete_subscription_email",
+    "is_auth_token_valid",
     "get_prompt_by_date",
     "get_prompt_years",
     "get_prompts_by_writer",
@@ -111,6 +112,13 @@ def delete_subscription_email(addr: str) -> bool:
     with __connect_to_db() as db:
         db.execute(sql, {"addr": addr})
     return True
+
+
+def is_auth_token_valid(user: str, token: str) -> bool:
+    """Check if the given username and auth token combo is valid."""
+    sql = "SELECT 1 FROM users WHERE username = :user AND token = :token"
+    with __connect_to_db() as db:
+        return bool(db.execute(sql, {"user": user, "token": token}).fetchone())
 
 
 def find_existing_prompt(prompt_id: str) -> bool:
