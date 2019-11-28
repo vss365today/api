@@ -8,12 +8,25 @@ from src.core import database
 from src.core.helpers import make_error_response
 
 
-def browse_by_year(year: str) -> dict:
+def __build_browse_response(writers: list) -> dict:
+    """Collect just the info needed to display the results."""
+    return {
+        "writers": writers,
+        "total": len(writers)
+    }
 
-    return {}
+
+def browse_by_year(year: str) -> dict:
+    year = year.strip()
+    writers: list = database.get_writers_by_year(year)
+    response: dict = __build_browse_response(writers)
+    response["query"] = year
+    return response
 
 
 def browse_by_month(year: str, month: str) -> dict:
+    year = year.strip()
+    month = month.strip()
     pass
 
 
@@ -21,11 +34,13 @@ def browse_by_month(year: str, month: str) -> dict:
 @use_args({
     "year": fields.Str(
         location="query",
-        missing=None
+        missing=None,
+        validate=lambda x: len(x) == 4
     ),
     "month": fields.Str(
         location="query",
-        missing=None
+        missing=None,
+        validate=lambda x: len(x) == 2
     )
 })
 def get(args: dict):
@@ -33,16 +48,13 @@ def get(args: dict):
     if args["year"] is None:
         return make_error_response("A year must be provided!", 422)
 
-    year: str = args["year"].strip()
-
     # We also have a month, meaning we're browsing an individual month
     if args["month"] is not None:
-        month: str = args["month"].strip()
-        return browse_by_month(year, month)
+        return browse_by_month(args["year"], args["month"])
 
     # We only have a year, so we're browsing by year
     else:
-        return browse_by_year(year)
+        return browse_by_year(args["year"])
 
 
 @browse.route("/years", methods=["GET"])

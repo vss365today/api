@@ -4,6 +4,7 @@ from typing import Dict, List, Optional
 
 from src.core.config import load_app_config
 from src.core.models.v1.Prompt import Prompt
+from src.core.models.v1.Writer import Writer
 
 
 __all__ = [
@@ -14,6 +15,7 @@ __all__ = [
     "get_prompt_by_date",
     "get_prompt_years",
     "get_prompts_by_writer",
+    "get_writers_by_year",
 ]
 
 
@@ -140,6 +142,20 @@ def get_prompts_by_writer(handle: str) -> List[Prompt]:
         return [
             Prompt(record) for record in db.execute(sql, {"handle": handle})
         ]
+
+
+def get_writers_by_year(year: str) -> List[Writer]:
+    """Get a list of all Writers for a particular year."""
+    sql = """
+    SELECT writers.uid, handle, writer_dates.date || '-01' AS date
+    FROM writers
+        JOIN writer_dates ON writer_dates.uid = writers.uid
+    WHERE SUBSTR(date, 1, 4) = :year
+        AND SUBSTR(date, 1, 8) <= strftime('%Y-%m','now')
+    ORDER BY writer_dates.date ASC
+    """
+    with __connect_to_db() as db:
+        return [Writer(writer) for writer in db.execute(sql, {"year": year})]
 
 
 def search_for_prompt(word: str) -> List[Prompt]:
