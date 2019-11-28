@@ -1,9 +1,4 @@
 -- Create the database structure
-CREATE TABLE "sqlite_sequence" (
-  "name" TEXT,
-  "seq" TEXT
-);
-
 CREATE TABLE "users" (
   "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
   "username" VARCHAR(20) NOT NULL UNIQUE,
