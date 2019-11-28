@@ -16,6 +16,7 @@ __all__ = [
     "create_subscription_email",
     "delete_subscription_email",
     "is_auth_token_valid",
+    "get_admin_user",
     "get_prompt_by_date",
     "get_prompt_years",
     "get_prompts_by_writer",
@@ -126,6 +127,30 @@ def find_existing_prompt(prompt_id: str) -> bool:
     sql = "SELECT 1 FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
         return bool(db.execute(sql, {"tweet_id": prompt_id}).fetchone())
+
+
+def get_admin_user(user: str, password: str) -> Optional[sqlite3.Row]:
+    sql = """SELECT username, token
+    FROM users
+    WHERE username = :user AND password = :password
+    """
+    with __connect_to_db() as db:
+        user_record = db.execute(
+            sql,
+            {"user": user, "password": password}
+        ).fetchone()
+    if not user_record:
+        return None
+
+    # We have a user, update their last sign in date/time
+    with __connect_to_db() as db:
+        sql = """
+        UPDATE users
+        SET last_signin = date('now')
+        WHERE username = :user
+        """
+        db.execute(sql, {"user": user})
+    return user_record
 
 
 def get_latest_prompt() -> List[Prompt]:

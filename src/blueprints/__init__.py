@@ -40,6 +40,7 @@ def _factory(
     return blueprint
 
 
+account = _factory("account", "/account", "v1")
 browse = _factory("browse", "/browse", "v1")
 prompt = _factory("prompt", "/prompt", "v1")
 search = _factory("search", "/search", "v1")
@@ -52,4 +53,4 @@ writer = _factory(
     True, authorize_request
 )
 
-all_blueprints = (browse, prompt, search,)
+all_blueprints = (account, browse, prompt, search,)
