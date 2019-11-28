@@ -44,11 +44,10 @@ browse = _factory("browse", "/browse", "v1")
 prompt = _factory("prompt", "/prompt", "v1")
 search = _factory("search", "/search", "v1")
 subscription = _factory(
-    "subscription",
-    "/subscription",
-    "v1",
+    "subscription", "/subscription", "v1",
     True,
     authorize_request
 )
+writer = _factory("writer", "/writer", "v1", True, authorize_request)
 
 all_blueprints = (browse, prompt, search,)
