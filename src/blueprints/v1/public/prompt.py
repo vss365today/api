@@ -65,7 +65,7 @@ def get(args: dict):
     latest_prompt = database.get_latest_prompt()[0]
     latest_prompt["previous_day"] = prompt_yesterday_exists(latest_prompt)
     latest_prompt["next_day"] = None
-    return jsonify(latest_prompt)
+    return jsonify([latest_prompt])
 
 
 @prompt.route("/", methods=["POST"])
