@@ -58,7 +58,7 @@ def get(args: dict):
         return browse_by_year(args["year"])
 
 
-@browse.route("/years", methods=["GET"])
+@browse.route("/years/", methods=["GET"])
 def get_years():
     """Get the years of recorded prompts."""
     return jsonify(database.get_prompt_years())
