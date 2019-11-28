@@ -41,10 +41,10 @@ def _factory(
     return blueprint
 
 
-# browse = _facory("browse", "/browse", "v1")
-# prompt = _factoy("prompt", "/prompt", "v1")
+browse = _factory("browse", "/browse", "v1")
+prompt = _factory("prompt", "/prompt", "v1")
 search = _factory("search", "/search", "v1")
 # TODO Add proper subscription route authorization method
-# subscription = _factory("subscription", "/subscription", "v1", True, noop
+# subscription = _factory("subscription", "/subscription", "v1", True, noop)
 
-all_blueprints = (search, )
+all_blueprints = (browse, prompt, search, )
