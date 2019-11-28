@@ -49,6 +49,23 @@ dotenv = ["python-dotenv"]
 
 [[package]]
 category = "main"
+description = "Extended JWT integration with Flask"
+name = "flask-jwt-extended"
+optional = false
+python-versions = "*"
+version = "3.24.1"
+
+[package.dependencies]
+Flask = ">=1.0"
+PyJWT = ">=1.6.4"
+Werkzeug = ">=0.14"
+six = "*"
+
+[package.extras]
+asymmetric_crypto = ["cryptography (>=2.3)"]
+
+[[package]]
+category = "main"
 description = "WSGI HTTP Server for UNIX"
 name = "gunicorn"
 optional = false
@@ -154,6 +171,19 @@ version = "2.1.1"
 
 [[package]]
 category = "main"
+description = "JSON Web Token implementation in Python"
+name = "pyjwt"
+optional = false
+python-versions = "*"
+version = "1.7.1"
+
+[package.extras]
+crypto = ["cryptography (>=1.4)"]
+flake8 = ["flake8", "flake8-import-order", "pep8-naming"]
+test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner (>=4.2,<5.0.0)"]
+
+[[package]]
+category = "main"
 description = "Add .env support to your django/flask apps in development and deployments"
 name = "python-dotenv"
 optional = false
@@ -162,6 +192,14 @@ version = "0.10.3"
 
 [package.extras]
 cli = ["click (>=5.0)"]
+
+[[package]]
+category = "main"
+description = "Python 2 and 3 compatibility utilities"
+name = "six"
+optional = false
+python-versions = ">=2.6, !=3.0.*, !=3.1.*"
+version = "1.13.0"
 
 [[package]]
 category = "dev"
@@ -211,7 +249,7 @@ termcolor = ["termcolor"]
 watchdog = ["watchdog"]
 
 [metadata]
-content-hash = "0bb7d93fc2a6eb176897142a1351f1c40e4a912b6010fffbe05ea1d3d20c8f26"
+content-hash = "8ab434995a39b0d5806fe9a5467967148928475e6853eb5c213f06535a221d75"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -230,6 +268,9 @@ flake8 = [
 flask = [
     {file = "Flask-1.1.1-py2.py3-none-any.whl", hash = "sha256:45eb5a6fd193d6cf7e0cf5d8a5b31f83d5faae0293695626f539a823e93b13f6"},
     {file = "Flask-1.1.1.tar.gz", hash = "sha256:13f9f196f330c7c2c5d7a5cf91af894110ca0215ac051b5844701f2bfd934d52"},
+]
+flask-jwt-extended = [
+    {file = "Flask-JWT-Extended-3.24.1.tar.gz", hash = "sha256:0aa8ee6fa7eb3be9314e39dd199ac8e19389a95371f9d54e155c7aa635e319dd"},
 ]
 gunicorn = [
     {file = "gunicorn-19.9.0-py2.py3-none-any.whl", hash = "sha256:aa8e0b40b4157b36a5df5e599f45c9c76d6af43845ba3b3b0efe2c70473c2471"},
@@ -309,9 +350,17 @@ pyflakes = [
     {file = "pyflakes-2.1.1-py2.py3-none-any.whl", hash = "sha256:17dbeb2e3f4d772725c777fabc446d5634d1038f234e77343108ce445ea69ce0"},
     {file = "pyflakes-2.1.1.tar.gz", hash = "sha256:d976835886f8c5b31d47970ed689944a0262b5f3afa00a5a7b4dc81e5449f8a2"},
 ]
+pyjwt = [
+    {file = "PyJWT-1.7.1-py2.py3-none-any.whl", hash = "sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e"},
+    {file = "PyJWT-1.7.1.tar.gz", hash = "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"},
+]
 python-dotenv = [
     {file = "python-dotenv-0.10.3.tar.gz", hash = "sha256:f157d71d5fec9d4bd5f51c82746b6344dffa680ee85217c123f4a0c8117c4544"},
     {file = "python_dotenv-0.10.3-py2.py3-none-any.whl", hash = "sha256:debd928b49dbc2bf68040566f55cdb3252458036464806f4094487244e2a4093"},
+]
+six = [
+    {file = "six-1.13.0-py2.py3-none-any.whl", hash = "sha256:1f1b7d42e254082a9db6279deae68afb421ceba6158efa6131de7b3003ee93fd"},
+    {file = "six-1.13.0.tar.gz", hash = "sha256:30f610279e8b2578cab6db20741130331735c781b56053c59c4076da27f06b66"},
 ]
 typed-ast = [
     {file = "typed_ast-1.4.0-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:262c247a82d005e43b5b7f69aff746370538e176131c32dda9cb0f324d27141e"},
