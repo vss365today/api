@@ -1,3 +1,6 @@
+from datetime import date, timedelta
+from typing import Optional
+
 from flask import Blueprint
 from flask import abort, jsonify
 
@@ -7,6 +10,25 @@ from webargs.flaskparser import use_args
 from src.blueprints import prompt
 from src.core import database
 from src.core.helpers import make_response, make_error_response
+from src.core.models.v1.Prompt import Prompt
+
+
+def prompt_yesterday_exists(prompt: Prompt) -> Optional[str]:
+    yesterday_date = (prompt.date - timedelta(1)).isoformat()
+    r = database.get_prompt_by_date(yesterday_date)
+
+    if database.get_prompt_by_date(yesterday_date):
+        return yesterday_date
+    return None
+
+
+def prompt_tomorrow_exists(prompt: Prompt) -> Optional[str]:
+    tomorrow_date = (prompt.date + timedelta(1)).isoformat()
+    r = database.get_prompt_by_date(tomorrow_date)
+
+    if database.get_prompt_by_date(tomorrow_date):
+        return tomorrow_date
+    return None
 
 
 @prompt.route("/", methods=["GET"])
@@ -25,8 +47,12 @@ def get(args: dict):
 
         # If we have a prompt, return it
         # Sweet Python 3.8+ walrus operator usage :D
-        if (prompt := database.get_prompt_by_date(date)):  # noqa
-            return jsonify(prompt)
+        if (prompts := database.get_prompt_by_date(date)):  # noqa
+            # Find out if we have a prompt for tomorrow or yesterday
+            for prompt in prompts:
+                prompt["previous_day"] = prompt_yesterday_exists(prompt)
+                prompt["next_day"] = prompt_tomorrow_exists(prompt)
+            return jsonify(prompts)
 
         # A prompt for that date doesn't exisd
         else:
@@ -36,7 +62,10 @@ def get(args: dict):
             )
 
     # Hitting the endpoint without a date returns the latest prompt
-    return jsonify(database.get_latest_prompt())
+    latest_prompt = database.get_latest_prompt()[0]
+    latest_prompt["previous_day"] = prompt_yesterday_exists(latest_prompt)
+    latest_prompt["next_day"] = None
+    return jsonify(latest_prompt)
 
 
 @prompt.route("/", methods=["POST"])
