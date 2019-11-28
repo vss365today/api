@@ -18,7 +18,7 @@
 
 ## Build/Deploy
 
-1. `docker build -f "docker/Dockerfile" -t vss365-today-api:latest .`
+1. `docker build -f "docker/Dockerfile" -t vss365today-api:latest .`
 1. `docker-compose -f "docker/docker-compose.yml" up -d`
 
 ## License
