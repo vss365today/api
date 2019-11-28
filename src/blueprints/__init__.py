@@ -3,6 +3,9 @@ from typing import Callable, Optional
 from flask import Blueprint
 
 
+def noop(): pass
+
+
 def _factory(
     partial_module_string: str,
     url_prefix: str,
@@ -41,5 +44,7 @@ def _factory(
 browse = _factory("browse", "browse", "v1")
 prompt = _factory("prompt", "prompt", "v1")
 search = _factory("search", "search", "v1")
+# TODO Add proper subscription route authorization method
+subscription = _factory("subscription", "subscription", "v1", True, noop)
 
-all_blueprints = (browse, prompt, search,)
+all_blueprints = (browse, prompt, search, subscription, )

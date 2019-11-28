@@ -1,3 +1,4 @@
+from hashlib import sha512
 import os.path
 import sqlite3
 from typing import Dict, List, Optional
@@ -12,6 +13,8 @@ __all__ = [
     "create_prompt",
     "update_prompt",
     "delete_prompt",
+    "create_subscription_email",
+    "delete_subscription_email",
     "get_prompt_by_date",
     "get_prompt_years",
     "get_prompts_by_writer",
@@ -76,11 +79,38 @@ def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
         return False
 
 
+def create_subscription_email(addr: str) -> bool:
+    """Add a subscription email address."""
+    # Generate a hash of the email
+    email_hash = sha512(addr.encode()).hexdigest()
+    try:
+        sql = "INSERT INTO emails (email, hash) VALUES (:addr, :hash)"
+        with __connect_to_db() as db:
+            db.execute(sql, {
+                "addr": addr.lower(),
+                "hash": email_hash
+            })
+        return True
+
+    # Some error occurred
+    except Exception as err:
+        print(err)
+        return False
+
+
 def delete_prompt(prompt_id: str) -> None:
     """Delete an existing prompt."""
     sql = "DELETE FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
         db.execute(sql, {"tweet_id": prompt_id})
+
+
+def delete_subscription_email(addr: str) -> bool:
+    """Remove a subscription email address."""
+    sql = "DELETE FROM emails WHERE email = :addr"
+    with __connect_to_db() as db:
+        db.execute(sql, {"addr": addr})
+    return True
 
 
 def find_existing_prompt(prompt_id: str) -> bool:
