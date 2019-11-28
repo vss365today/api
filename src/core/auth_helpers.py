@@ -1,5 +1,4 @@
-from flask_jwt_extended import get_jwt_identity
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from src.core.database import is_auth_token_valid
 
