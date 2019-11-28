@@ -13,8 +13,5 @@ class Prompt(dict):
         self.writer_id: str = record["uid"]
         self.writer_handle: str = record["writer_handle"]
 
-        # We don't need the record anymore
-        del record
-
         # Make the class JSON serializable
         super().__init__(self.__dict__)
