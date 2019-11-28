@@ -25,7 +25,7 @@ def _factory(
     blueprint = Blueprint(
         partial_module_string,
         import_path,
-        url_prefix=f"/{api_version}/{url_prefix}"
+        url_prefix=f"/{api_version}{url_prefix}"
     )
 
     # This endpoint is not to be publicly used
@@ -41,10 +41,10 @@ def _factory(
     return blueprint
 
 
-browse = _factory("browse", "browse", "v1")
-prompt = _factory("prompt", "prompt", "v1")
-search = _factory("search", "search", "v1")
+# browse = _facory("browse", "/browse", "v1")
+# prompt = _factoy("prompt", "/prompt", "v1")
+search = _factory("search", "/search", "v1")
 # TODO Add proper subscription route authorization method
-subscription = _factory("subscription", "subscription", "v1", True, noop)
+# subscription = _factory("subscription", "/subscription", "v1", True, noop
 
-all_blueprints = (browse, prompt, search, subscription, )
+all_blueprints = (search, )
