@@ -53,4 +53,4 @@ writer = _factory(
     True, authorize_request
 )
 
-all_blueprints = (account, browse, prompt, search,)
+all_blueprints = (account, browse, prompt, search, subscription, )

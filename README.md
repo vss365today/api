@@ -5,6 +5,7 @@
 ## Required Configuration Keys
 
 * Flask secret key
+* JWT secret key
 
 ## Install
 
