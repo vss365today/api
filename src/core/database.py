@@ -158,6 +158,43 @@ def get_writers_by_year(year: str) -> List[Writer]:
         return [Writer(writer) for writer in db.execute(sql, {"year": year})]
 
 
+def get_writers_by_date(date: str) -> list:
+    """Get a Writer by the month-year they delievered the prompts. """
+    sql = """
+    SELECT handle
+    FROM writers
+        JOIN writer_dates ON writer_dates.uid = writers.uid
+    WHERE writer_dates.date = :date
+    """
+    with __connect_to_db() as db:
+        return __flatten_tuple_list(db.execute(sql, {"date": date}).fetchall())
+
+
+def get_writer_prompts_by_date(handles: list, date: str) -> List[Prompt]:
+    """Get all prompts from the Writers in a given date range."""
+    bind_keys = []
+    bind_vals = {"date": date}
+
+    # Handle multiple Writers in this single date range
+    for i, handle in enumerate(handles):
+        key = f"handle_{i}"
+        bind_keys.append(f":{key}")
+        bind_vals[key] = handle
+    handle_list = ",".join(bind_keys)
+
+    sql = f"""
+    SELECT tweets.*, writers.handle as writer_handle
+    FROM tweets
+        JOIN writers ON tweets.uid = writers.uid
+    WHERE writers.handle IN ({handle_list})
+        AND tweets.date <= date('now')
+        AND SUBSTR(tweets.date, 1, 7) = :date
+    ORDER BY tweets.date ASC
+    """
+    with __connect_to_db() as db:
+        return [Prompt(prompt) for prompt in db.execute(sql, bind_vals)]
+
+
 def search_for_prompt(word: str) -> List[Prompt]:
     """Search for prompts by partial or full word."""
     sql = """

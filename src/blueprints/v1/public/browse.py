@@ -8,26 +8,27 @@ from src.core import database
 from src.core.helpers import make_error_response
 
 
-def __build_browse_response(writers: list) -> dict:
-    """Collect just the info needed to display the results."""
+def browse_by_year(year: str) -> dict:
+    year = year.strip()
+    writers: list = database.get_writers_by_year(year)
     return {
+        "query": year,
         "writers": writers,
         "total": len(writers)
     }
 
 
-def browse_by_year(year: str) -> dict:
-    year = year.strip()
-    writers: list = database.get_writers_by_year(year)
-    response: dict = __build_browse_response(writers)
-    response["query"] = year
-    return response
-
-
 def browse_by_month(year: str, month: str) -> dict:
     year = year.strip()
     month = month.strip()
-    pass
+    date: str = f"{year}-{month}"
+    writers: list = database.get_writers_by_date(date)
+    prompts: list = database.get_writer_prompts_by_date(writers, date)
+    return {
+        "writers": writers,
+        "prompts": prompts,
+        "total": len(prompts)
+    }
 
 
 @browse.route("/", methods=["GET"])
