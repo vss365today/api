@@ -1,12 +1,12 @@
 -- Create the database structure
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
   "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
   "username" VARCHAR(20) NOT NULL UNIQUE,
   "password" VARCHAR(128) NOT NULL,
   "date_created" TEXT NOT NULL,
   "last_signin" TEXT,
   "token" VARCHAR(128) NOT NULL UNIQUE
-)
+);
 
 CREATE TABLE IF NOT EXISTS "emails" (
   "email" VARCHAR(50) NOT NULL UNIQUE,
