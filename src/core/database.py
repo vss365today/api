@@ -15,6 +15,7 @@ __all__ = [
     "delete_prompt",
     "create_subscription_email",
     "delete_subscription_email",
+    "get_subscription_list",
     "is_auth_token_valid",
     "get_admin_user",
     "get_prompt_by_date",
@@ -84,6 +85,7 @@ def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
 def create_subscription_email(addr: str) -> bool:
     """Add a subscription email address."""
     # Generate a hash of the email
+    # TODO Delete This™
     email_hash = sha512(addr.encode()).hexdigest()
     try:
         sql = "INSERT INTO emails (email, hash) VALUES (:addr, :hash)"
@@ -205,6 +207,13 @@ def get_prompts_by_writer(handle: str) -> List[Prompt]:
         return [
             Prompt(record) for record in db.execute(sql, {"handle": handle})
         ]
+
+
+def get_subscription_list() -> list:
+    """Get all emails in the subscription list."""
+    sql = "SELECT email FROM emails"
+    with __connect_to_db() as db:
+        return __flatten_tuple_list(db.execute(sql).fetchall())
 
 
 def get_writers_by_year(year: str) -> List[Writer]:
