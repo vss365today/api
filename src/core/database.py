@@ -1,4 +1,3 @@
-from hashlib import sha512
 import os.path
 import sqlite3
 from typing import Dict, List, Optional
@@ -84,16 +83,10 @@ def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
 
 def create_subscription_email(addr: str) -> bool:
     """Add a subscription email address."""
-    # Generate a hash of the email
-    # TODO Delete This™
-    email_hash = sha512(addr.encode()).hexdigest()
     try:
-        sql = "INSERT INTO emails (email, hash) VALUES (:addr, :hash)"
+        sql = "INSERT INTO emails (email) VALUES (:addr)"
         with __connect_to_db() as db:
-            db.execute(sql, {
-                "addr": addr.lower(),
-                "hash": email_hash
-            })
+            db.execute(sql, {"addr": addr.lower()})
         return True
 
     # Some error occurred
