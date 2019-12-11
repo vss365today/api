@@ -12,6 +12,7 @@ flask = "^1.1.1"
 python-dotenv = "^0.10.3"
 gunicorn = "19.9"
 flask-jwt-extended = "^3.24.1"
+pyjwt = "^1.7.1"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.7.9"

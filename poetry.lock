@@ -249,7 +249,7 @@ termcolor = ["termcolor"]
 watchdog = ["watchdog"]
 
 [metadata]
-content-hash = "8ab434995a39b0d5806fe9a5467967148928475e6853eb5c213f06535a221d75"
+content-hash = "698637c50df8491695f215c49e8857d7064397e73df45c854db10265bf0bebc1"
 python-versions = "^3.8"
 
 [metadata.files]
