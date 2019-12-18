@@ -3,7 +3,8 @@ import functools
 from flask import request
 from flask import abort
 
-from jwt.exceptions import decode, DecodeError, InvalidSignatureError
+from jwt import decode
+from jwt.exceptions import DecodeError, InvalidSignatureError
 
 from src.core.database import is_auth_token_valid
 
