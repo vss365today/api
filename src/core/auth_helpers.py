@@ -9,8 +9,8 @@ __all__ = ["authorize_request"]
 
 def authorize_request():
     # No Authorization header was even sent
-    if (bearer := request.headers.get("Authorization")):  # noqa
-        pass
+    if "Authorization" in request.headers:
+        bearer = request.headers["Authorization"]
     else:
         raise KeyError("An authorization token was not provided!")
 
