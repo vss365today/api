@@ -69,8 +69,8 @@ def get(args: dict):
     return jsonify([latest_prompt])
 
 
+# TODO This needs to be protected via authorize_route
 @prompt.route("/", methods=["POST"])
-@authorize_route
 @use_args({
     "tweet_id": fields.Str(location="json", required=True),
     "uid": fields.Str(location="json", required=True),
