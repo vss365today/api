@@ -3,6 +3,7 @@ from flask import jsonify
 from webargs import fields
 from webargs.flaskparser import use_args
 
+from src.core.auth_helpers import authorize_request
 from src.blueprints import subscription
 from src.core import database
 from src.core.helpers import make_response, make_error_response
