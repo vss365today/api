@@ -1,5 +1,7 @@
 from flask import request
-import jwt
+from flask import abort
+
+from jwt.exceptions import decode, DecodeError, InvalidSignatureError
 
 from src.core.database import is_auth_token_valid
 
@@ -8,22 +10,23 @@ __all__ = ["authorize_request"]
 
 
 def authorize_request():
-    # No Authorization header was even sent
+    # Was an Authorization header sent?
     if "Authorization" in request.headers:
         bearer = request.headers["Authorization"]
     else:
-        raise KeyError("An authorization token was not provided!")
+        abort(400)
 
-    # No JWT was provided
+    # No token was given or the provided token is not in the proper format
     try:
         identity = bearer.split("Bearer")[1].strip()
     except IndexError:
-        raise ValueError("The provided authorization token is not in the proper format!")  # noqa
+        abort(422)
 
     # The given username and token combo is not valid
-    token = jwt.decode(identity, verify=True, algorithms=["HS256"])
     try:
+        token = decode(identity, verify=True, algorithms=["HS256"])
         if not is_auth_token_valid(token["user"], token["token"]):
             raise KeyError
-    except KeyError:
-        raise PermissionError("You are not authorzed to access this endpoint!")
+    except (KeyError, DecodeError, InvalidSignatureError):
+        abort(401)
+
