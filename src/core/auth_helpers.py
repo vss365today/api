@@ -9,7 +9,7 @@ from jwt.exceptions import DecodeError, InvalidSignatureError
 from src.core.database import is_auth_token_valid
 
 
-__all__ = ["authorize_endpoints", "authorize_route"]
+__all__ = ["authorize_endpoints", "authorize_route", "fake_authorize"]
 
 
 def authorize_endpoints():
@@ -45,3 +45,7 @@ def authorize_route(func):
         authorize_endpoints()
         return func(*args, **kwargs)
     return wrap
+
+
+def fake_authorize():
+    pass

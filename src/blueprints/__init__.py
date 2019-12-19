@@ -2,7 +2,7 @@ from typing import Callable, Optional
 
 from flask import Blueprint
 
-from src.core.auth_helpers import authorize_endpoints
+from src.core.auth_helpers import fake_authorize
 
 
 def _factory(
@@ -47,7 +47,7 @@ search = _factory("search", "/search", "v1")
 subscription = _factory("subscription", "/subscription", "v1")
 writer = _factory(
     "writer", "/writer", "v1",
-    True, authorize_endpoints
+    True, fake_authorize
 )
 
-all_blueprints = (browse, prompt, search, subscription, )
+all_blueprints = (browse, prompt, search, subscription, writer)
