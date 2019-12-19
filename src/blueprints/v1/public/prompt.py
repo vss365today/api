@@ -39,13 +39,12 @@ def prompt_tomorrow_exists(prompt: Prompt) -> Optional[str]:
 @use_args({
     "date": fields.DateTime(
         "%Y-%m-%d",
-        location="query",
-        missing=None
+        location="query"
     )
 })
 def get(args: dict):
     # We want the prompt from a particular day
-    if args["date"] is not None:
+    if "date" in args:
         # Format the date in the proper format before fetching
         date = date_iso_format(args["date"])
 

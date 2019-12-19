@@ -44,19 +44,17 @@ def search_by_writer(handle: str) -> dict:
 @use_args({
     "prompt": fields.Str(
         location="query",
-        missing=None,
         validate=lambda x: len(x) > 1
     ),
     "writer": fields.Str(
         location="query",
-        missing=None,
         validate=lambda x: len(x) > 1
     )
 })
 def get(args: dict):
-    if args["prompt"] is not None:
+    if "prompt" in args:
         return search_by_prompt(args["prompt"])
-    elif args["writer"] is not None:
+    elif "writer" in args:
         return search_by_writer(args["writer"])
     return make_error_response(
         "At least one search parameter must be provided!",
