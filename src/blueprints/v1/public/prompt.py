@@ -8,7 +8,6 @@ from webargs import fields
 from webargs.flaskparser import use_args
 
 from src.blueprints import prompt
-from src.core.auth_helpers import authorize_route
 from src.core import database
 from src.core.helpers import make_response, make_error_response
 from src.core.models.v1.Prompt import Prompt
@@ -69,7 +68,7 @@ def get(args: dict):
     return jsonify([latest_prompt])
 
 
-# TODO This needs to be protected via authorize_route
+# TODO This needs to be protected via @authorize_route
 @prompt.route("/", methods=["POST"])
 @use_args({
     "tweet_id": fields.Str(location="json", required=True),
@@ -93,14 +92,14 @@ def post(args: dict):
     return make_response({}, status_code)
 
 
+# TODO This needs to be protected via @authorize_route
 @prompt.route("/", methods=["PUT"])
-@authorize_route
 @use_args({
     "tweet_id": fields.Str(location="query", required=True),
     "content": fields.Str(location="json", required=True),
     "word": fields.Str(location="json", required=True),
     "media": fields.Str(location="json", required=True),
-    "date": fields.Date(
+    "date": fields.DateTime(
         "%Y-%m-%d",
         location="json",
         required=True
