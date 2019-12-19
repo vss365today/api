@@ -2,7 +2,7 @@ from webargs import fields
 from webargs.flaskparser import use_args
 
 from src.blueprints import writer
-from src.core import database
+# from src.core import database
 from src.core.helpers import make_response, make_error_response
 
 
@@ -31,7 +31,7 @@ def get(args: dict):
         location="json",
         required=True
     ),
-    "date": fields.Date(
+    "date": fields.DateTime(
         location="json",
         required=True
     )

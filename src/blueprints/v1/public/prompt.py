@@ -1,4 +1,4 @@
-from datetime import date, timedelta
+from datetime import timedelta
 from typing import Optional
 
 from flask import Blueprint
@@ -33,7 +33,7 @@ def prompt_tomorrow_exists(prompt: Prompt) -> Optional[str]:
 
 @prompt.route("/", methods=["GET"])
 @use_args({
-    "date": fields.Date(
+    "date": fields.DateTime(
         "%Y-%m-%d",
         location="query",
         missing=None
@@ -76,7 +76,7 @@ def get(args: dict):
     "content": fields.Str(location="json", required=True),
     "word": fields.Str(location="json", required=True),
     "media": fields.Str(location="json", missing=None),
-    "date": fields.Date(
+    "date": fields.DateTime(
         "%Y-%m-%d",
         location="json",
         required=True

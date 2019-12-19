@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import datetime
 from sqlite3 import Row
 from typing import Optional
 
@@ -6,7 +6,7 @@ from typing import Optional
 class Prompt(dict):
     def __init__(self, record: Row) -> None:
         self.id: str = record["tweet_id"]
-        self.date: date = date.fromisoformat(record["date"])
+        self.date: datetime = datetime.fromisoformat(record["date"])
         self.content: str = record["content"]
         self.word: str = record["word"]
         self.media: Optional[str] = record["media"]
