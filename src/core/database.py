@@ -223,28 +223,31 @@ def get_writers_by_year(year: str) -> List[Writer]:
         return [Writer(writer) for writer in db.execute(sql, {"year": year})]
 
 
-def get_writers_by_date(date: str) -> list:
+def get_writers_by_date(date: str) -> List[Writer]:
     """Get a Writer by the month-year they delievered the prompts. """
     sql = """
-    SELECT handle
+    SELECT writers.uid, handle, writer_dates.date || '-01' AS date
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE writer_dates.date = :date
     """
     with __connect_to_db() as db:
-        return __flatten_tuple_list(db.execute(sql, {"date": date}).fetchall())
+        return [Writer(writer) for writer in db.execute(sql, {"date":  date})]
 
 
-def get_writer_prompts_by_date(handles: list, date: str) -> List[Prompt]:
+def get_writer_prompts_by_date(
+    writers: List[Writer],
+    date: str
+) -> List[Prompt]:
     """Get all prompts from the Writers in a given date range."""
     bind_keys = []
     bind_vals = {"date": date}
 
     # Handle multiple Writers in this single date range
-    for i, handle in enumerate(handles):
+    for i, writer in enumerate(writers):
         key = f"handle_{i}"
         bind_keys.append(f":{key}")
-        bind_vals[key] = handle
+        bind_vals[key] = writer.handle
     handle_list = ",".join(bind_keys)
 
     sql = f"""

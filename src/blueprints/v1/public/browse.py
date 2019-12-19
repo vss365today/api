@@ -22,8 +22,8 @@ def browse_by_month(year: str, month: str) -> dict:
     year = year.strip()
     month = month.strip()
     date: str = f"{year}-{month}"
-    writers: list = database.get_writers_by_date(date)
-    prompts: list = database.get_writer_prompts_by_date(writers, date)
+    writers = database.get_writers_by_date(date)
+    prompts = database.get_writer_prompts_by_date(writers, date)
     return {
         "writers": writers,
         "prompts": prompts,
@@ -35,22 +35,20 @@ def browse_by_month(year: str, month: str) -> dict:
 @use_args({
     "year": fields.Str(
         location="query",
-        missing=None,
         validate=lambda x: len(x) == 4
     ),
     "month": fields.Str(
         location="query",
-        missing=None,
         validate=lambda x: len(x) == 2
     )
 })
 def get(args: dict):
     # We always need a year
-    if args["year"] is None:
+    if "year" not in args:
         return make_error_response("A year must be provided!", 422)
 
     # We also have a month, meaning we're browsing an individual month
-    if args["month"] is not None:
+    if "month" in args:
         return browse_by_month(args["year"], args["month"])
 
     # We only have a year, so we're browsing by year
