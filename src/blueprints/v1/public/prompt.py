@@ -9,7 +9,11 @@ from webargs.flaskparser import use_args
 
 from src.blueprints import prompt
 from src.core import database
-from src.core.helpers import make_response, make_error_response
+from src.core.helpers import (
+    date_iso_format,
+    make_response,
+    make_error_response
+)
 from src.core.models.v1.Prompt import Prompt
 
 
@@ -43,7 +47,7 @@ def get(args: dict):
     # We want the prompt from a particular day
     if args["date"] is not None:
         # Format the date in the proper format before fetching
-        date = args["date"].isoformat()
+        date = date_iso_format(args["date"])
 
         # If we have a prompt, return it
         # Sweet Python 3.8+ walrus operator usage :D
@@ -84,7 +88,7 @@ def get(args: dict):
 })
 def post(args: dict):
     # Format the date in the proper format before writing
-    args["date"] = args["date"].isoformat()
+    args["date"] = date_iso_format(args["date"])
     result = database.create_prompt(args)
 
     # Return the proper status depending on adding result
@@ -112,7 +116,7 @@ def put(args: dict):
         return make_error_response(msg, 422)
 
     # Format the date in the proper format before writing
-    args["date"] = args["date"].isoformat()
+    args["date"] = date_iso_format(args["date"])
     database.update_prompt(args)
     return make_response({}, 204)
 
