@@ -10,21 +10,35 @@ from src.core.helpers import make_response, make_error_response
 
 @writer.route("/", methods=["GET"])
 @use_args({
-    "id": fields.Str(location="query"),
-    "handle": fields.Str(location="query")
+    "id": fields.Str(location="query", missing=""),
+    "handle": fields.Str(location="query", missing="")
 })
 def get(args: dict):
-    if "id" in args and "handle" in args:
+    # We need something to search by
+    if not args["id"] and not args["handle"]:
+        return make_error_response(
+            "Either a Writer id and handle must be provided!",
+            422
+        )
+
+    # Both a writer ID and handle cannot be provided
+    if args["id"] and args["handle"]:
         return make_error_response(
             "Providing a Writer id and handle is not allowed!",
             422
         )
 
-    # TODO Get the details for a single writer
-    # result = True
-    # if result:
-    #     return make_response({}, 201)
-    return make_error_response("Unable to get details for Writer <id/handle>!", 503)
+    # Get the writer information
+    writer = database.get_writer_by_id(uid=args["id"], handle=args["handle"])
+    if writer:
+        return make_response(jsonify(writer), 200)
+
+    # We don't have that writer
+    given_param = [(k, v) for k, v in args.items() if v][0]
+    return make_error_response(
+        f"Unable to get details for Writer {given_param[0]} {given_param[1]}!",
+        404
+    )
 
 
 @writer.route("/date", methods=["GET"])
