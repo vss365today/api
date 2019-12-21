@@ -37,18 +37,13 @@ def get(args: dict):
 })
 def get_date(args: dict):
     # We want the Writer for a given month
-    writer = database.get_writers_by_date(args["date"].strftime("%Y-%m"))
-    if writer:
+    if (writer := database.get_writers_by_date(args["date"].strftime("%Y-%m"))):  # noqa
         return make_response(jsonify(writer), 200)
     return make_error_response("Unable to get Writer details!", 503)
 
 
 @writer.route("/", methods=["POST"])
 @use_args({
-    "id": fields.Str(
-        location="json",
-        required=True
-    ),
     "handle": fields.Str(
         location="json",
         required=True
@@ -60,6 +55,7 @@ def get_date(args: dict):
 })
 def post(args: dict):
     # TODO Create a single writer with all their details
+    # TODO Need to pull Twitter API to get the uid from handle
     result = True
     if result:
         return make_response({}, 201)
