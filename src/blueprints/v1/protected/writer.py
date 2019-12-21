@@ -44,7 +44,7 @@ def get(args: dict):
 @writer.route("/date", methods=["GET"])
 @use_args({
     "date": fields.DateTime(
-        "%Y-%m-%d",
+        "%Y-%m",
         location="query",
         required=True
     )
@@ -53,7 +53,7 @@ def get_date(args: dict):
     # We want the Writer for a given month
     if (writer := database.get_writers_by_date(args["date"].strftime("%Y-%m"))):  # noqa
         return make_response(jsonify(writer), 200)
-    return make_error_response("Unable to get Writer details!", 503)
+    return make_error_response("Unable to get Writer details!", 404)
 
 
 @writer.route("/", methods=["POST"])
