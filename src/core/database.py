@@ -209,6 +209,11 @@ def get_subscription_list() -> list:
         return __flatten_tuple_list(db.execute(sql).fetchall())
 
 
+def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Writer]]:
+    """Get Writer info by either their Twitter ID or handle."""
+    pass
+
+
 def get_writers_by_year(year: str) -> List[Writer]:
     """Get a list of all Writers for a particular year."""
     sql = """
