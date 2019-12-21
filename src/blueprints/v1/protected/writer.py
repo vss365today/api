@@ -41,7 +41,7 @@ def get(args: dict):
     )
 
 
-@writer.route("/date", methods=["GET"])
+@writer.route("/date/", methods=["GET"])
 @use_args({
     "date": fields.DateTime(
         "%Y-%m",
