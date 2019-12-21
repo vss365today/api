@@ -20,7 +20,11 @@ __all__ = [
     "get_prompt_by_date",
     "get_prompt_years",
     "get_prompts_by_writer",
+    "get_writer_by_id",
+    "get_writer_prompts_by_date",
     "get_writers_by_year",
+    "get_writers_by_date",
+    "search_for_prompt"
 ]
 
 
@@ -211,7 +215,20 @@ def get_subscription_list() -> list:
 
 def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Writer]]:
     """Get Writer info by either their Twitter ID or handle."""
-    pass
+    sql = """
+    SELECT writers.uid, handle, writer_dates.date || '-01' AS date
+    FROM writers
+        JOIN writer_dates ON writer_dates.uid = writers.uid
+    WHERE
+        SUBSTR(writer_dates.date, 1, 8) <= strftime('%Y-%m','now') AND
+        (writers.uid = :uid OR handle == :handle)
+    ORDER BY date DESC
+    """
+    with __connect_to_db() as db:
+        return [
+            Writer(writer)
+            for writer in db.execute(sql, {"uid": uid, "handle": handle})
+        ]
 
 
 def get_writers_by_year(year: str) -> List[Writer]:
