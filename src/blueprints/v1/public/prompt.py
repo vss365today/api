@@ -18,18 +18,14 @@ from src.core.models.v1.Prompt import Prompt
 
 
 def prompt_yesterday_exists(prompt: Prompt) -> Optional[str]:
-    yesterday_date = (prompt.date - timedelta(1)).isoformat()
-    r = database.get_prompt_by_date(yesterday_date)
-
+    yesterday_date = date_iso_format(prompt.date - timedelta(1))
     if database.get_prompt_by_date(yesterday_date):
         return yesterday_date
     return None
 
 
 def prompt_tomorrow_exists(prompt: Prompt) -> Optional[str]:
-    tomorrow_date = (prompt.date + timedelta(1)).isoformat()
-    r = database.get_prompt_by_date(tomorrow_date)
-
+    tomorrow_date = date_iso_format(prompt.date + timedelta(1))
     if database.get_prompt_by_date(tomorrow_date):
         return tomorrow_date
     return None
