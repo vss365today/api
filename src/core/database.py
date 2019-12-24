@@ -221,7 +221,7 @@ def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Writer]]:
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE
         SUBSTR(writer_dates.date, 1, 8) <= strftime('%Y-%m','now') AND
-        (writers.uid = :uid OR UPPER(handle) == UPPER(:handle))
+        (writers.uid = :uid OR UPPER(handle) = UPPER(:handle))
     ORDER BY date DESC
     """
     with __connect_to_db() as db:
