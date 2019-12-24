@@ -19,9 +19,9 @@ __all__ = [
     "get_admin_user",
     "get_prompt_by_date",
     "get_prompt_years",
+    "get_prompts_by_date",
     "get_prompts_by_writer",
     "get_writer_by_id",
-    "get_writer_prompts_by_date",
     "get_writers_by_year",
     "get_writers_by_date",
     "search_for_prompt"
@@ -257,32 +257,18 @@ def get_writers_by_date(date: str) -> List[Writer]:
         return [Writer(writer) for writer in db.execute(sql, {"date":  date})]
 
 
-def get_writer_prompts_by_date(
-    writers: List[Writer],
-    date: str
-) -> List[Prompt]:
-    """Get all prompts from the Writers in a given date range."""
-    bind_keys = []
-    bind_vals = {"date": date}
-
-    # Handle multiple Writers in this single date range
-    for i, writer in enumerate(writers):
-        key = f"handle_{i}"
-        bind_keys.append(f":{key}")
-        bind_vals[key] = writer.handle
-    handle_list = ",".join(bind_keys)
-
+def get_prompts_by_date(date: str) -> List[Prompt]:
+    """Get all prompts in a given date range."""
     sql = f"""
     SELECT tweets.*, writers.handle as writer_handle
     FROM tweets
         JOIN writers ON tweets.uid = writers.uid
-    WHERE writers.handle IN ({handle_list})
-        AND tweets.date <= date('now')
+    WHERE tweets.date <= date('now')
         AND SUBSTR(tweets.date, 1, 7) = :date
     ORDER BY tweets.date ASC
     """
     with __connect_to_db() as db:
-        return [Prompt(prompt) for prompt in db.execute(sql, bind_vals)]
+        return [Prompt(prompt) for prompt in db.execute(sql, {"date": date})]
 
 
 def search_for_prompt(word: str) -> List[Prompt]:

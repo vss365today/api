@@ -23,7 +23,7 @@ def browse_by_month(year: str, month: str) -> dict:
     month = month.strip()
     date: str = f"{year}-{month}"
     writers = database.get_writers_by_date(date)
-    prompts = database.get_writer_prompts_by_date(writers, date)
+    prompts = database.get_prompts_by_date(date)
     return {
         "writers": writers,
         "prompts": prompts,
