@@ -168,9 +168,9 @@ def get_latest_prompt() -> List[Prompt]:
 def get_prompt_years() -> List[str]:
     """Get a list of years of recorded prompts."""
     sql = """
-    SELECT DISTINCT SUBSTRING(date, 1, 4)
+    SELECT DISTINCT YEAR(date)
     FROM writer_dates
-    WHERE SUBSTRING(date, 1, 4) <= strftime('%Y','now')
+    WHERE YEAR(date) <= YEAR(NOW())
     ORDER BY date ASC
     """
     with __connect_to_db() as db:
@@ -216,12 +216,12 @@ def get_subscription_list() -> list:
 def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Writer]]:
     """Get Writer info by either their Twitter ID or handle."""
     sql = """
-    SELECT writers.uid, handle, CONCAT(writer_dates.date,'-01') AS date
+    SELECT writers.uid, handle, writer_dates.date
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE
-        SUBSTRING(writer_dates.date, 1, 8) <= strftime('%Y-%m','now') AND
-        (writers.uid = :uid OR UPPER(handle) = UPPER(:handle))
+        writer_dates.date <= CURRENT_TIMESTAMP()
+        AND (writers.uid = :uid OR UPPER(handle) = UPPER(:handle))
     ORDER BY date DESC
     """
     with __connect_to_db() as db:
@@ -234,11 +234,11 @@ def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Writer]]:
 def get_writers_by_year(year: str) -> List[Writer]:
     """Get a list of all Writers for a particular year."""
     sql = """
-    SELECT writers.uid, handle, CONCAT(writer_dates.date, '-01') AS date
+    SELECT writers.uid, handle, writer_dates.date
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
-    WHERE SUBSTRING(date, 1, 4) = :year
-        AND SUBSTRING(date, 1, 8) <= strftime('%Y-%m','now')
+    WHERE YEAR(writer_dates.date) = :year
+        AND SUBSTRING(writer_dates.date, 1, 8) <= strftime('%Y-%m','now')
     ORDER BY writer_dates.date ASC
     """
     with __connect_to_db() as db:
@@ -248,7 +248,7 @@ def get_writers_by_year(year: str) -> List[Writer]:
 def get_writers_by_date(date: str) -> List[Writer]:
     """Get a Writer by the month-year they delievered the prompts. """
     sql = """
-    SELECT writers.uid, handle, CONCAT(writer_dates.date, '-01') AS date
+    SELECT writers.uid, handle, writer_dates.date
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE writer_dates.date = :date
