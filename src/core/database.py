@@ -2,13 +2,14 @@ import os.path
 import sqlite3
 from typing import Dict, List, Optional
 
-from src.core.config import load_app_config
+from flask import current_app
+import records
+
 from src.core.models.v1.Prompt import Prompt
 from src.core.models.v1.Writer import Writer
 
 
 __all__ = [
-    "create_new_database",
     "create_prompt",
     "update_prompt",
     "delete_prompt",
@@ -33,34 +34,17 @@ def __flatten_tuple_list(tup) -> list:
     return [item[0] for item in tup]
 
 
-def __connect_to_db() -> sqlite3.Connection:
+def __connect_to_db() -> records.Database:
     """Create a connection to the database."""
-    config = load_app_config()
-    conn = sqlite3.connect(config["DB_PATH"])
-    conn.row_factory = sqlite3.Row
+    conn_str = "mysql+pymysql://{}:{}@{}/{}".format(
+        current_app.config["DB_USERNAME"],
+        "",
+        # current_app.config["DB_PASSWORD"],
+        current_app.config["DB_HOST"],
+        current_app.config["DB_DBNAME"]
+    )
+    conn = records.Database(conn_str)
     return conn
-
-
-def create_new_database() -> None:
-    """Create a new database if needed."""
-    try:
-        # If the database exists and is loaded, this will succeed
-        sql = "SELECT COUNT(*) FROM writers"
-        with __connect_to_db() as db:
-            db.execute(sql)
-
-    # The database doesn't exist
-    except sqlite3.OperationalError:
-        # Get the db schema
-        schema = os.path.abspath(
-            os.path.join("db", "schema.sql")
-        )
-        with open(schema, "rt") as f:
-            sql = f.read()
-
-        # Create the database according to the schema
-        with __connect_to_db() as db:
-            db.executescript(sql)
 
 
 def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
@@ -75,7 +59,7 @@ def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
     """
     try:
         with __connect_to_db() as db:
-            db.execute(sql, prompt)
+            db.query(sql, prompt)
             return True
 
     # A prompt with this ID already exists
@@ -90,7 +74,7 @@ def create_subscription_email(addr: str) -> bool:
     try:
         sql = "INSERT INTO emails (email) VALUES (:addr)"
         with __connect_to_db() as db:
-            db.execute(sql, {"addr": addr.lower()})
+            db.query(sql, **{"addr": addr.lower()})
         return True
 
     # Some error occurred
@@ -103,14 +87,14 @@ def delete_prompt(prompt_id: str) -> None:
     """Delete an existing prompt."""
     sql = "DELETE FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
-        db.execute(sql, {"tweet_id": prompt_id})
+        db.query(sql, **{"tweet_id": prompt_id})
 
 
 def delete_subscription_email(addr: str) -> bool:
     """Remove a subscription email address."""
     sql = "DELETE FROM emails WHERE email = :addr"
     with __connect_to_db() as db:
-        db.execute(sql, {"addr": addr})
+        db.query(sql, **{"addr": addr})
     return True
 
 
@@ -118,14 +102,14 @@ def is_auth_token_valid(user: str, token: str) -> bool:
     """Check if the given username and auth token combo is valid."""
     sql = "SELECT 1 FROM users WHERE username = :user AND token = :token"
     with __connect_to_db() as db:
-        return bool(db.execute(sql, {"user": user, "token": token}).fetchone())
+        return bool(db.query(sql, **{"user": user, "token": token}).fetchone())
 
 
 def find_existing_prompt(prompt_id: str) -> bool:
     """Find an existing prompt."""
     sql = "SELECT 1 FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
-        return bool(db.execute(sql, {"tweet_id": prompt_id}).fetchone())
+        return bool(db.query(sql, **{"tweet_id": prompt_id}).fetchone())
 
 
 def get_admin_user(user: str, password: str) -> Optional[sqlite3.Row]:
@@ -134,9 +118,9 @@ def get_admin_user(user: str, password: str) -> Optional[sqlite3.Row]:
     WHERE username = :user AND password = :password
     """
     with __connect_to_db() as db:
-        user_record = db.execute(
+        user_record = db.query(
             sql,
-            {"user": user, "password": password}
+            **{"user": user, "password": password}
         ).fetchone()
     if not user_record:
         return None
@@ -148,7 +132,7 @@ def get_admin_user(user: str, password: str) -> Optional[sqlite3.Row]:
         SET last_signin = CURRENT_TIMESTAMP()
         WHERE username = :user
         """
-        db.execute(sql, {"user": user})
+        db.query(sql, **{"user": user})
     return user_record
 
 
@@ -162,7 +146,7 @@ def get_latest_prompt() -> List[Prompt]:
     LIMIT 1
     """
     with __connect_to_db() as db:
-        return [Prompt(record) for record in db.execute(sql)]
+        return [Prompt(record) for record in db.query(sql)]
 
 
 def get_prompt_years() -> List[str]:
@@ -174,7 +158,7 @@ def get_prompt_years() -> List[str]:
     ORDER BY date ASC
     """
     with __connect_to_db() as db:
-        r = db.execute(sql).fetchall()
+        r = db.query(sql).all()
     return __flatten_tuple_list(r)
 
 
@@ -188,7 +172,10 @@ def get_prompt_by_date(date: str) -> List[Prompt]:
         AND STR_TO_DATE(:date, '%Y-%m-%d') <= CURRENT_TIMESTAMP()
     """
     with __connect_to_db() as db:
-        return [Prompt(record) for record in db.execute(sql, {"date": date})]
+        return [
+            Prompt(record)
+            for record in db.query(sql, **{"date": date})
+        ]
 
 
 def get_prompts_by_writer(handle: str) -> List[Prompt]:
@@ -202,7 +189,7 @@ def get_prompts_by_writer(handle: str) -> List[Prompt]:
     """
     with __connect_to_db() as db:
         return [
-            Prompt(record) for record in db.execute(sql, {"handle": handle})
+            Prompt(record) for record in db.query(sql, **{"handle": handle})
         ]
 
 
@@ -210,7 +197,7 @@ def get_subscription_list() -> list:
     """Get all emails in the subscription list."""
     sql = "SELECT email FROM emails"
     with __connect_to_db() as db:
-        return __flatten_tuple_list(db.execute(sql).fetchall())
+        return __flatten_tuple_list(db.query(sql).all())
 
 
 def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Writer]]:
@@ -227,7 +214,7 @@ def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Writer]]:
     with __connect_to_db() as db:
         return [
             Writer(writer)
-            for writer in db.execute(sql, {"uid": uid, "handle": handle})
+            for writer in db.query(sql, **{"uid": uid, "handle": handle})
         ]
 
 
@@ -242,7 +229,7 @@ def get_writers_by_year(year: str) -> List[Writer]:
     ORDER BY writer_dates.date ASC
     """
     with __connect_to_db() as db:
-        return [Writer(writer) for writer in db.execute(sql, {"year": year})]
+        return [Writer(writer) for writer in db.query(sql, **{"year": year})]
 
 
 def get_writers_by_date(date: str) -> List[Writer]:
@@ -254,7 +241,7 @@ def get_writers_by_date(date: str) -> List[Writer]:
     WHERE writer_dates.date = STR_TO_DATE(CONCAT(:date, '-01'), '%Y-%m-%d')
     """
     with __connect_to_db() as db:
-        return [Writer(writer) for writer in db.execute(sql, {"date":  date})]
+        return [Writer(writer) for writer in db.query(sql, **{"date":  date})]
 
 
 def get_prompts_by_date(date: str) -> List[Prompt]:
@@ -268,7 +255,7 @@ def get_prompts_by_date(date: str) -> List[Prompt]:
     ORDER BY tweets.date ASC
     """
     with __connect_to_db() as db:
-        return [Prompt(prompt) for prompt in db.execute(sql, {"date": date})]
+        return [Prompt(prompt) for prompt in db.query(sql, **{"date": date})]
 
 
 def search_for_prompt(word: str) -> List[Prompt]:
@@ -282,7 +269,7 @@ def search_for_prompt(word: str) -> List[Prompt]:
     ORDER BY UPPER(word)
     """
     with __connect_to_db() as db:
-        return [Prompt(record) for record in db.execute(sql, {"word": word})]
+        return [Prompt(record) for record in db.query(sql, **{"word": word})]
 
 
 def update_prompt(prompt: Dict[str, Optional[str]]) -> None:
@@ -298,4 +285,4 @@ def update_prompt(prompt: Dict[str, Optional[str]]) -> None:
     WHERE tweet_id = :tweet_id
     """
     with __connect_to_db() as db:
-        db.execute(sql, prompt)
+        db.query(sql, **prompt)
