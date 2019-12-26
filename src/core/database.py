@@ -145,7 +145,7 @@ def get_admin_user(user: str, password: str) -> Optional[sqlite3.Row]:
     with __connect_to_db() as db:
         sql = """
         UPDATE users
-        SET last_signin = date('now')
+        SET last_signin = CURRENT_TIMESTAMP()
         WHERE username = :user
         """
         db.execute(sql, {"user": user})
@@ -168,9 +168,9 @@ def get_latest_prompt() -> List[Prompt]:
 def get_prompt_years() -> List[str]:
     """Get a list of years of recorded prompts."""
     sql = """
-    SELECT DISTINCT SUBSTR(date, 1, 4)
+    SELECT DISTINCT SUBSTRING(date, 1, 4)
     FROM writer_dates
-    WHERE SUBSTR(date, 1, 4) <= strftime('%Y','now')
+    WHERE SUBSTRING(date, 1, 4) <= strftime('%Y','now')
     ORDER BY date ASC
     """
     with __connect_to_db() as db:
@@ -185,7 +185,7 @@ def get_prompt_by_date(date: str) -> List[Prompt]:
     FROM tweets
         JOIN writers ON writers.uid = tweets.uid
     WHERE tweets.date = :date
-        AND :date <= date('now')
+        AND :date <= CURRENT_TIMESTAMP()
     """
     with __connect_to_db() as db:
         return [Prompt(record) for record in db.execute(sql, {"date": date})]
@@ -197,7 +197,7 @@ def get_prompts_by_writer(handle: str) -> List[Prompt]:
     SELECT tweets.*, writers.handle AS writer_handle
     FROM tweets
         JOIN writers ON writers.uid = tweets.uid
-    WHERE tweets.date <= date('now')
+    WHERE tweets.date <= CURRENT_TIMESTAMP()
         AND writers.handle = :handle
     """
     with __connect_to_db() as db:
@@ -216,11 +216,11 @@ def get_subscription_list() -> list:
 def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Writer]]:
     """Get Writer info by either their Twitter ID or handle."""
     sql = """
-    SELECT writers.uid, handle, writer_dates.date || '-01' AS date
+    SELECT writers.uid, handle, CONCAT(writer_dates.date,'-01') AS date
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE
-        SUBSTR(writer_dates.date, 1, 8) <= strftime('%Y-%m','now') AND
+        SUBSTRING(writer_dates.date, 1, 8) <= strftime('%Y-%m','now') AND
         (writers.uid = :uid OR UPPER(handle) = UPPER(:handle))
     ORDER BY date DESC
     """
@@ -234,11 +234,11 @@ def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Writer]]:
 def get_writers_by_year(year: str) -> List[Writer]:
     """Get a list of all Writers for a particular year."""
     sql = """
-    SELECT writers.uid, handle, writer_dates.date || '-01' AS date
+    SELECT writers.uid, handle, CONCAT(writer_dates.date, '-01') AS date
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
-    WHERE SUBSTR(date, 1, 4) = :year
-        AND SUBSTR(date, 1, 8) <= strftime('%Y-%m','now')
+    WHERE SUBSTRING(date, 1, 4) = :year
+        AND SUBSTRING(date, 1, 8) <= strftime('%Y-%m','now')
     ORDER BY writer_dates.date ASC
     """
     with __connect_to_db() as db:
@@ -248,7 +248,7 @@ def get_writers_by_year(year: str) -> List[Writer]:
 def get_writers_by_date(date: str) -> List[Writer]:
     """Get a Writer by the month-year they delievered the prompts. """
     sql = """
-    SELECT writers.uid, handle, writer_dates.date || '-01' AS date
+    SELECT writers.uid, handle, CONCAT(writer_dates.date, '-01') AS date
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE writer_dates.date = :date
@@ -263,8 +263,8 @@ def get_prompts_by_date(date: str) -> List[Prompt]:
     SELECT tweets.*, writers.handle as writer_handle
     FROM tweets
         JOIN writers ON tweets.uid = writers.uid
-    WHERE tweets.date <= date('now')
-        AND SUBSTR(tweets.date, 1, 7) = :date
+    WHERE tweets.date <= CURRENT_TIMESTAMP()
+        AND SUBSTRING(tweets.date, 1, 7) = :date
     ORDER BY tweets.date ASC
     """
     with __connect_to_db() as db:
@@ -277,8 +277,8 @@ def search_for_prompt(word: str) -> List[Prompt]:
     SELECT tweets.*, writers.handle AS writer_handle
     FROM tweets
         JOIN writers ON writers.uid = tweets.uid
-    WHERE tweets.date <= date('now')
-        AND tweets.word LIKE '%' || :word || '%'
+    WHERE tweets.date <= CURRENT_TIMESTAMP()
+        AND tweets.word LIKE CONCAT('%', :word, '%')
     ORDER BY UPPER(word)
     """
     with __connect_to_db() as db:
