@@ -170,7 +170,7 @@ def get_prompt_years() -> List[str]:
     sql = """
     SELECT DISTINCT YEAR(date)
     FROM writer_dates
-    WHERE YEAR(date) <= YEAR(NOW())
+    WHERE YEAR(date) <= YEAR(CURRENT_TIMESTAMP())
     ORDER BY date ASC
     """
     with __connect_to_db() as db:
@@ -184,8 +184,8 @@ def get_prompt_by_date(date: str) -> List[Prompt]:
     SELECT tweets.*, writers.handle AS writer_handle
     FROM tweets
         JOIN writers ON writers.uid = tweets.uid
-    WHERE tweets.date = :date
-        AND :date <= CURRENT_TIMESTAMP()
+    WHERE tweets.date = STR_TO_DATE(:date, '%Y-%m-%d')
+        AND STR_TO_DATE(:date, '%Y-%m-%d') <= CURRENT_TIMESTAMP()
     """
     with __connect_to_db() as db:
         return [Prompt(record) for record in db.execute(sql, {"date": date})]
@@ -238,7 +238,7 @@ def get_writers_by_year(year: str) -> List[Writer]:
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE YEAR(writer_dates.date) = :year
-        AND SUBSTRING(writer_dates.date, 1, 8) <= strftime('%Y-%m','now')
+        AND DATE_FORMAT(writer_dates.date, '%Y-%m') <= DATE_FORMAT(CURRENT_TIMESTAMP(), '%Y-%m')
     ORDER BY writer_dates.date ASC
     """
     with __connect_to_db() as db:
@@ -246,12 +246,12 @@ def get_writers_by_year(year: str) -> List[Writer]:
 
 
 def get_writers_by_date(date: str) -> List[Writer]:
-    """Get a Writer by the month-year they delievered the prompts. """
+    """Get a Writer by the date they delievered the prompts. """
     sql = """
     SELECT writers.uid, handle, writer_dates.date
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
-    WHERE writer_dates.date = :date
+    WHERE writer_dates.date = STR_TO_DATE(CONCAT(:date, '-01'), '%Y-%m-%d')
     """
     with __connect_to_db() as db:
         return [Writer(writer) for writer in db.execute(sql, {"date":  date})]
@@ -264,7 +264,7 @@ def get_prompts_by_date(date: str) -> List[Prompt]:
     FROM tweets
         JOIN writers ON tweets.uid = writers.uid
     WHERE tweets.date <= CURRENT_TIMESTAMP()
-        AND SUBSTRING(tweets.date, 1, 7) = :date
+        AND DATE_FORMAT(tweets.date, '%Y-%m') = STR_TO_DATE(:date, '%Y-%m')
     ORDER BY tweets.date ASC
     """
     with __connect_to_db() as db:
