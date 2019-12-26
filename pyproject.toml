@@ -12,6 +12,8 @@ flask = "^1.1.1"
 python-dotenv = "^0.10.3"
 gunicorn = "19.9"
 pyjwt = "^1.7.1"
+records = "^0.5.3"
+pymysql = "^0.9.3"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.7.9"
