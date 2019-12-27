@@ -223,7 +223,8 @@ def get_writers_by_year(year: str) -> List[Writer]:
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE YEAR(writer_dates.date) = :year
-        AND DATE_FORMAT(writer_dates.date, '%Y-%m') <= DATE_FORMAT(CURRENT_TIMESTAMP(), '%Y-%m')
+        AND DATE_FORMAT(writer_dates.date, '%Y-%m') <=
+            DATE_FORMAT(CURRENT_TIMESTAMP(), '%Y-%m')
     ORDER BY writer_dates.date ASC
     """
     with __connect_to_db() as db:
