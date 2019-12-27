@@ -1,4 +1,3 @@
-import os.path
 import sqlite3
 from typing import Dict, List, Optional
 
@@ -112,7 +111,7 @@ def find_existing_prompt(prompt_id: str) -> bool:
         return bool(db.query(sql, **{"tweet_id": prompt_id}).fetchone())
 
 
-def get_admin_user(user: str, password: str) -> Optional[sqlite3.Row]:
+def get_admin_user(user: str, password: str) -> Optional[records.Record]:
     sql = """SELECT username, token
     FROM users
     WHERE username = :user AND password = :password
@@ -241,7 +240,7 @@ def get_writers_by_date(date: str) -> List[Writer]:
     WHERE writer_dates.date = STR_TO_DATE(CONCAT(:date, '-01'), '%Y-%m-%d')
     """
     with __connect_to_db() as db:
-        return [Writer(writer) for writer in db.query(sql, **{"date":  date})]
+        return [Writer(writer) for writer in db.query(sql, **{"date": date})]
 
 
 def get_prompts_by_date(date: str) -> List[Prompt]:
@@ -251,7 +250,7 @@ def get_prompts_by_date(date: str) -> List[Prompt]:
     FROM tweets
         JOIN writers ON tweets.uid = writers.uid
     WHERE tweets.date <= CURRENT_TIMESTAMP()
-        AND DATE_FORMAT(tweets.date, '%Y-%m') = STR_TO_DATE(:date, '%Y-%m')
+        AND DATE_FORMAT(tweets.date, '%Y-%m') = :date
     ORDER BY tweets.date ASC
     """
     with __connect_to_db() as db:
