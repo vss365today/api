@@ -1,4 +1,3 @@
-import sqlite3
 from typing import Dict, List, Optional
 
 from flask import current_app
@@ -62,7 +61,7 @@ def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
             return True
 
     # A prompt with this ID already exists
-    except sqlite3.IntegrityError as exc:
+    except Exception as exc:
         print(f"Prompt creation exception: {exc}")
         print(prompt)
         return False
