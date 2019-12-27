@@ -2,14 +2,15 @@
 
 > REST API for [#vss365 today](https://vss365today.com)
 
-## Required Configuration Keys
+## Required Configuration
 
 * Flask secret key
 * JWT secret key
+* MySQL/MariaDB instance + login keys
 
 ## Install
 
-1. Install Python 3.8+ and [Poetry](https://poetry.eustace.io/) 1.0.0b6+
+1. Install Python 3.8+ and [Poetry](https://poetry.eustace.io/) 1.0.0+
 1. `mv oss.env .env`
 1. Set missing configuration keys
 1. `poetry install`
