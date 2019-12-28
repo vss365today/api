@@ -12,11 +12,11 @@ __all__ = [
     "create_subscription_email",
     "delete_subscription_email",
     "get_subscription_list",
+    "get_admin_user",
+    "is_auth_token_valid",
     "create_prompt",
     "delete_prompt",
     "update_prompt",
-    "is_auth_token_valid",
-    "get_admin_user",
     "get_prompt_by_date",
     "get_prompt_years",
     "get_prompts_by_date",
@@ -75,6 +75,37 @@ def get_subscription_list() -> list:
         return __flatten_tuple_list(db.query(sql).all())
 
 
+def get_admin_user(user: str, password: str) -> Optional[records.Record]:
+    sql = """SELECT username, token
+    FROM users
+    WHERE username = :user AND password = :password
+    """
+    with __connect_to_db() as db:
+        user_record = db.query(
+            sql,
+            **{"user": user, "password": password}
+        ).first()
+    if not user_record:
+        return None
+
+    # We have a user, update their last sign in date/time
+    with __connect_to_db() as db:
+        sql = """
+        UPDATE users
+        SET last_signin = CURRENT_TIMESTAMP()
+        WHERE username = :user
+        """
+        db.query(sql, **{"user": user})
+    return user_record
+
+
+def is_auth_token_valid(user: str, token: str) -> bool:
+    """Check if the given username and auth token combo is valid."""
+    sql = "SELECT 1 FROM users WHERE username = :user AND token = :token"
+    with __connect_to_db() as db:
+        return bool(db.query(sql, **{"user": user, "token": token}).first())
+
+
 def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
     """Record a new prompt."""
     sql = """
@@ -105,42 +136,11 @@ def delete_prompt(prompt_id: str) -> Literal[True]:
     return True
 
 
-def is_auth_token_valid(user: str, token: str) -> bool:
-    """Check if the given username and auth token combo is valid."""
-    sql = "SELECT 1 FROM users WHERE username = :user AND token = :token"
-    with __connect_to_db() as db:
-        return bool(db.query(sql, **{"user": user, "token": token}).first())
-
-
 def find_existing_prompt(prompt_id: str) -> bool:
     """Find an existing prompt."""
     sql = "SELECT 1 FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
         return bool(db.query(sql, **{"tweet_id": prompt_id}).first())
-
-
-def get_admin_user(user: str, password: str) -> Optional[records.Record]:
-    sql = """SELECT username, token
-    FROM users
-    WHERE username = :user AND password = :password
-    """
-    with __connect_to_db() as db:
-        user_record = db.query(
-            sql,
-            **{"user": user, "password": password}
-        ).first()
-    if not user_record:
-        return None
-
-    # We have a user, update their last sign in date/time
-    with __connect_to_db() as db:
-        sql = """
-        UPDATE users
-        SET last_signin = CURRENT_TIMESTAMP()
-        WHERE username = :user
-        """
-        db.query(sql, **{"user": user})
-    return user_record
 
 
 def get_latest_prompt() -> List[Prompt]:
