@@ -97,7 +97,7 @@ def post(args: dict):
     "tweet_id": fields.Str(location="query", required=True),
     "content": fields.Str(location="json", required=True),
     "word": fields.Str(location="json", required=True),
-    "media": fields.Str(location="json", required=True),
+    "media": fields.Str(location="json", missing=None),
     "date": fields.DateTime(
         "%Y-%m-%d",
         location="json",

@@ -2,8 +2,8 @@ version: '3.6'
 
 services:
   vss365-today-api:
-    image: vss365-today-api:latest
-    container_name: vss365-today-api
+    image: vss365today-api:latest
+    container_name: vss365today-api
     restart: unless-stopped
     volumes:
       - ../:/app  # the base directory is one level above here
@@ -12,3 +12,26 @@ services:
     entrypoint:
       - sh
       - ./run-app.sh
+    networks:
+      - vss365today
+
+    mariadb:
+      image: mariadb:10.4
+      container_name: vss365today-db
+      restart: unless-stopped
+      volumes:
+        - ../db:/docker-entrypoint-initdb.d
+        - ../secrets:/secrets
+      ports:
+        - 127.0.0.1:3306:3306
+      environment:
+        - MYSQL_RANDOM_ROOT_PASSWORD=yes
+        - MYSQL_DATABASE=vss365today
+        - MYSQL_USER_FILE=/secrets/mysql_user
+        - MYSQL_PASSWORD_FILE=/secrets/mysql_password
+      networks:
+        - vss365today
+
+networks:
+  vss365today:
+    driver: bridge

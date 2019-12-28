@@ -18,12 +18,36 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "7.0"
 
 [[package]]
+category = "main"
+description = "XML bomb protection for Python stdlib modules"
+name = "defusedxml"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+version = "0.6.0"
+
+[[package]]
+category = "main"
+description = "Pythonic argument parser, that will make you smile"
+name = "docopt"
+optional = false
+python-versions = "*"
+version = "0.6.2"
+
+[[package]]
 category = "dev"
 description = "Discover and load entry points from installed packages."
 name = "entrypoints"
 optional = false
 python-versions = ">=2.7"
 version = "0.3"
+
+[[package]]
+category = "main"
+description = "An implementation of lxml.xmlfile for the standard library"
+name = "et-xmlfile"
+optional = false
+python-versions = "*"
+version = "1.0.1"
 
 [[package]]
 category = "dev"
@@ -81,6 +105,14 @@ version = "1.1.0"
 
 [[package]]
 category = "main"
+description = "Julian dates from proleptic Gregorian and Julian calendars."
+name = "jdcal"
+optional = false
+python-versions = "*"
+version = "1.4.1"
+
+[[package]]
+category = "main"
 description = "A very fast and expressive template engine."
 name = "jinja2"
 optional = false
@@ -92,6 +124,14 @@ MarkupSafe = ">=0.23"
 
 [package.extras]
 i18n = ["Babel (>=0.8)"]
+
+[[package]]
+category = "main"
+description = "An HTML/XML generator"
+name = "markuppy"
+optional = false
+python-versions = "*"
+version = "1.14"
 
 [[package]]
 category = "main"
@@ -107,12 +147,12 @@ description = "A lightweight library for converting complex datatypes to and fro
 name = "marshmallow"
 optional = false
 python-versions = ">=3.5"
-version = "3.2.2"
+version = "3.3.0"
 
 [package.extras]
-dev = ["pytest", "pytz", "simplejson", "mypy (0.740)", "flake8 (3.7.9)", "flake8-bugbear (19.8.0)", "pre-commit (>=1.20,<2.0)", "tox"]
-docs = ["sphinx (2.2.1)", "sphinx-issues (1.2.0)", "alabaster (0.7.12)", "sphinx-version-warning (1.1.2)"]
-lint = ["mypy (0.740)", "flake8 (3.7.9)", "flake8-bugbear (19.8.0)", "pre-commit (>=1.20,<2.0)"]
+dev = ["pytest", "pytz", "simplejson", "mypy (0.750)", "flake8 (3.7.9)", "flake8-bugbear (19.8.0)", "pre-commit (>=1.20,<2.0)", "tox"]
+docs = ["sphinx (2.2.2)", "sphinx-issues (1.2.0)", "alabaster (0.7.12)", "sphinx-version-warning (1.1.2)"]
+lint = ["mypy (0.750)", "flake8 (3.7.9)", "flake8-bugbear (19.8.0)", "pre-commit (>=1.20,<2.0)"]
 tests = ["pytest", "pytz", "simplejson"]
 
 [[package]]
@@ -148,6 +188,29 @@ python-versions = "*"
 version = "0.4.3"
 
 [[package]]
+category = "main"
+description = "Python API and tools to manipulate OpenDocument files"
+name = "odfpy"
+optional = false
+python-versions = "*"
+version = "1.4.0"
+
+[package.dependencies]
+defusedxml = "*"
+
+[[package]]
+category = "main"
+description = "A Python library to read/write Excel 2010 xlsx/xlsm files"
+name = "openpyxl"
+optional = false
+python-versions = "*"
+version = "2.4.11"
+
+[package.dependencies]
+et_xmlfile = "*"
+jdcal = "*"
+
+[[package]]
 category = "dev"
 description = "Python style guide checker"
 name = "pycodestyle"
@@ -178,6 +241,17 @@ test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner
 
 [[package]]
 category = "main"
+description = "Pure Python MySQL Driver"
+name = "pymysql"
+optional = false
+python-versions = "*"
+version = "0.9.3"
+
+[package.extras]
+rsa = ["cryptography"]
+
+[[package]]
+category = "main"
 description = "Add .env support to your django/flask apps in development and deployments"
 name = "python-dotenv"
 optional = false
@@ -186,6 +260,76 @@ version = "0.10.3"
 
 [package.extras]
 cli = ["click (>=5.0)"]
+
+[[package]]
+category = "main"
+description = "YAML parser and emitter for Python"
+name = "pyyaml"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "5.2"
+
+[[package]]
+category = "main"
+description = "SQL for Humans"
+name = "records"
+optional = false
+python-versions = "*"
+version = "0.5.3"
+
+[package.dependencies]
+docopt = "*"
+openpyxl = "<2.5.0"
+tablib = ">=0.11.4"
+
+[package.dependencies.SQLAlchemy]
+python = ">=3.0"
+version = "*"
+
+[package.extras]
+pandas = ["tablib"]
+pg = ["psycopg2"]
+redshift = ["sqlalchemy-redshift", "psycopg2"]
+
+[[package]]
+category = "main"
+description = "Database Abstraction Library"
+marker = "python_version >= \"3.0\""
+name = "sqlalchemy"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "1.3.12"
+
+[package.extras]
+mssql = ["pyodbc"]
+mssql_pymssql = ["pymssql"]
+mssql_pyodbc = ["pyodbc"]
+mysql = ["mysqlclient"]
+oracle = ["cx-oracle"]
+postgresql = ["psycopg2"]
+postgresql_pg8000 = ["pg8000"]
+postgresql_psycopg2binary = ["psycopg2-binary"]
+postgresql_psycopg2cffi = ["psycopg2cffi"]
+pymysql = ["pymysql"]
+
+[[package]]
+category = "main"
+description = "Format agnostic tabular data library (XLS, JSON, YAML, CSV)"
+name = "tablib"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+version = "0.14.0"
+
+[package.dependencies]
+markuppy = "*"
+odfpy = "*"
+openpyxl = ">=2.4.0"
+pyyaml = "*"
+xlrd = "*"
+xlwt = "*"
+
+[package.extras]
+pandas = ["pandas"]
 
 [[package]]
 category = "dev"
@@ -234,8 +378,24 @@ dev = ["pytest", "coverage", "tox", "sphinx", "pallets-sphinx-themes", "sphinx-i
 termcolor = ["termcolor"]
 watchdog = ["watchdog"]
 
+[[package]]
+category = "main"
+description = "Library for developers to extract data from Microsoft Excel (tm) spreadsheet files"
+name = "xlrd"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
+version = "1.2.0"
+
+[[package]]
+category = "main"
+description = "Library to create spreadsheet files compatible with MS Excel 97/2000/XP/2003 XLS files, on any platform, with Python 2.6, 2.7, 3.3+"
+name = "xlwt"
+optional = false
+python-versions = "*"
+version = "1.3.0"
+
 [metadata]
-content-hash = "f033c63e30d54477835c9f1d67af1cf27c4d885e1fd74adecd8a869effc9a961"
+content-hash = "5cf84e97ec044cae7a096d25bd2ed62b93711b1445627402831eb38be935ca59"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -246,9 +406,19 @@ click = [
     {file = "Click-7.0-py2.py3-none-any.whl", hash = "sha256:2335065e6395b9e67ca716de5f7526736bfa6ceead690adf616d925bdc622b13"},
     {file = "Click-7.0.tar.gz", hash = "sha256:5b94b49521f6456670fdb30cd82a4eca9412788a93fa6dd6df72c94d5a8ff2d7"},
 ]
+defusedxml = [
+    {file = "defusedxml-0.6.0-py2.py3-none-any.whl", hash = "sha256:6687150770438374ab581bb7a1b327a847dd9c5749e396102de3fad4e8a3ef93"},
+    {file = "defusedxml-0.6.0.tar.gz", hash = "sha256:f684034d135af4c6cbb949b8a4d2ed61634515257a67299e5f940fbaa34377f5"},
+]
+docopt = [
+    {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
+]
 entrypoints = [
     {file = "entrypoints-0.3-py2.py3-none-any.whl", hash = "sha256:589f874b313739ad35be6e0cd7efde2a4e9b6fea91edcc34e58ecbb8dbe56d19"},
     {file = "entrypoints-0.3.tar.gz", hash = "sha256:c70dd71abe5a8c85e55e12c19bd91ccfeec11a6e99044204511f9ed547d48451"},
+]
+et-xmlfile = [
+    {file = "et_xmlfile-1.0.1.tar.gz", hash = "sha256:614d9722d572f6246302c4491846d2c393c199cfa4edc9af593437691683335b"},
 ]
 flake8 = [
     {file = "flake8-3.7.9-py2.py3-none-any.whl", hash = "sha256:49356e766643ad15072a789a20915d3c91dc89fd313ccd71802303fd67e4deca"},
@@ -266,9 +436,16 @@ itsdangerous = [
     {file = "itsdangerous-1.1.0-py2.py3-none-any.whl", hash = "sha256:b12271b2047cb23eeb98c8b5622e2e5c5e9abd9784a153e9d8ef9cb4dd09d749"},
     {file = "itsdangerous-1.1.0.tar.gz", hash = "sha256:321b033d07f2a4136d3ec762eac9f16a10ccd60f53c0c91af90217ace7ba1f19"},
 ]
+jdcal = [
+    {file = "jdcal-1.4.1-py2.py3-none-any.whl", hash = "sha256:1abf1305fce18b4e8aa248cf8fe0c56ce2032392bc64bbd61b5dff2a19ec8bba"},
+    {file = "jdcal-1.4.1.tar.gz", hash = "sha256:472872e096eb8df219c23f2689fc336668bdb43d194094b5cc1707e1640acfc8"},
+]
 jinja2 = [
     {file = "Jinja2-2.10.3-py2.py3-none-any.whl", hash = "sha256:74320bb91f31270f9551d46522e33af46a80c3d619f4a4bf42b3164d30b5911f"},
     {file = "Jinja2-2.10.3.tar.gz", hash = "sha256:9fe95f19286cfefaa917656583d020be14e7859c6b0252588391e47db34527de"},
+]
+markuppy = [
+    {file = "MarkupPy-1.14.tar.gz", hash = "sha256:1adee2c0a542af378fe84548ff6f6b0168f3cb7f426b46961038a2bcfaad0d5f"},
 ]
 markupsafe = [
     {file = "MarkupSafe-1.1.1-cp27-cp27m-macosx_10_6_intel.whl", hash = "sha256:09027a7803a62ca78792ad89403b1b7a73a01c8cb65909cd876f7fcebd79b161"},
@@ -301,8 +478,8 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
 ]
 marshmallow = [
-    {file = "marshmallow-3.2.2-py2.py3-none-any.whl", hash = "sha256:eb97c42c5928b5720812c9268865fe863d4807bc1a8b48ddd7d5c9e1779a6af0"},
-    {file = "marshmallow-3.2.2.tar.gz", hash = "sha256:1a358beb89c2b4d5555272065a9533591a3eb02f1b854f3c4002d88d8f2a1ddb"},
+    {file = "marshmallow-3.3.0-py2.py3-none-any.whl", hash = "sha256:3e53dd9e9358977a3929e45cdbe4a671f9eff53a7d6a23f33ed3eab8c1890d8f"},
+    {file = "marshmallow-3.3.0.tar.gz", hash = "sha256:0ba81b6da4ae69eb229b74b3c741ff13fe04fb899824377b1aff5aaa1a9fd46e"},
 ]
 mccabe = [
     {file = "mccabe-0.6.1-py2.py3-none-any.whl", hash = "sha256:ab8a6258860da4b6677da4bd2fe5dc2c659cff31b3ee4f7f5d64e79735b80d42"},
@@ -328,6 +505,13 @@ mypy-extensions = [
     {file = "mypy_extensions-0.4.3-py2.py3-none-any.whl", hash = "sha256:090fedd75945a69ae91ce1303b5824f428daf5a028d2f6ab8a299250a846f15d"},
     {file = "mypy_extensions-0.4.3.tar.gz", hash = "sha256:2d82818f5bb3e369420cb3c4060a7970edba416647068eb4c5343488a6c604a8"},
 ]
+odfpy = [
+    {file = "odfpy-1.4.0-py2.7.egg", hash = "sha256:863746b87121d9e4017c32b6c318f7229a588f189c122a9613116c55a47e276d"},
+    {file = "odfpy-1.4.0.tar.gz", hash = "sha256:596021f0519623ca8717331951c95e3b8d7b21e86edc7efe8cb650a0d0f59a2b"},
+]
+openpyxl = [
+    {file = "openpyxl-2.4.11.tar.gz", hash = "sha256:626d38647c063d55803ef4971c4d43226538d4e95cb6260c094e363ee33e10c7"},
+]
 pycodestyle = [
     {file = "pycodestyle-2.5.0-py2.py3-none-any.whl", hash = "sha256:95a2219d12372f05704562a14ec30bc76b05a5b297b21a5dfe3f6fac3491ae56"},
     {file = "pycodestyle-2.5.0.tar.gz", hash = "sha256:e40a936c9a450ad81df37f549d676d127b1b66000a6c500caa2b085bc0ca976c"},
@@ -340,9 +524,37 @@ pyjwt = [
     {file = "PyJWT-1.7.1-py2.py3-none-any.whl", hash = "sha256:5c6eca3c2940464d106b99ba83b00c6add741c9becaec087fb7ccdefea71350e"},
     {file = "PyJWT-1.7.1.tar.gz", hash = "sha256:8d59a976fb773f3e6a39c85636357c4f0e242707394cadadd9814f5cbaa20e96"},
 ]
+pymysql = [
+    {file = "PyMySQL-0.9.3-py2.py3-none-any.whl", hash = "sha256:3943fbbbc1e902f41daf7f9165519f140c4451c179380677e6a848587042561a"},
+    {file = "PyMySQL-0.9.3.tar.gz", hash = "sha256:d8c059dcd81dedb85a9f034d5e22dcb4442c0b201908bede99e306d65ea7c8e7"},
+]
 python-dotenv = [
     {file = "python-dotenv-0.10.3.tar.gz", hash = "sha256:f157d71d5fec9d4bd5f51c82746b6344dffa680ee85217c123f4a0c8117c4544"},
     {file = "python_dotenv-0.10.3-py2.py3-none-any.whl", hash = "sha256:debd928b49dbc2bf68040566f55cdb3252458036464806f4094487244e2a4093"},
+]
+pyyaml = [
+    {file = "PyYAML-5.2-cp27-cp27m-win32.whl", hash = "sha256:35ace9b4147848cafac3db142795ee42deebe9d0dad885ce643928e88daebdcc"},
+    {file = "PyYAML-5.2-cp27-cp27m-win_amd64.whl", hash = "sha256:ebc4ed52dcc93eeebeae5cf5deb2ae4347b3a81c3fa12b0b8c976544829396a4"},
+    {file = "PyYAML-5.2-cp35-cp35m-win32.whl", hash = "sha256:38a4f0d114101c58c0f3a88aeaa44d63efd588845c5a2df5290b73db8f246d15"},
+    {file = "PyYAML-5.2-cp35-cp35m-win_amd64.whl", hash = "sha256:483eb6a33b671408c8529106df3707270bfacb2447bf8ad856a4b4f57f6e3075"},
+    {file = "PyYAML-5.2-cp36-cp36m-win32.whl", hash = "sha256:7f38e35c00e160db592091751d385cd7b3046d6d51f578b29943225178257b31"},
+    {file = "PyYAML-5.2-cp36-cp36m-win_amd64.whl", hash = "sha256:0e7f69397d53155e55d10ff68fdfb2cf630a35e6daf65cf0bdeaf04f127c09dc"},
+    {file = "PyYAML-5.2-cp37-cp37m-win32.whl", hash = "sha256:e4c015484ff0ff197564917b4b4246ca03f411b9bd7f16e02a2f586eb48b6d04"},
+    {file = "PyYAML-5.2-cp37-cp37m-win_amd64.whl", hash = "sha256:4b6be5edb9f6bb73680f5bf4ee08ff25416d1400fbd4535fe0069b2994da07cd"},
+    {file = "PyYAML-5.2-cp38-cp38-win32.whl", hash = "sha256:8100c896ecb361794d8bfdb9c11fce618c7cf83d624d73d5ab38aef3bc82d43f"},
+    {file = "PyYAML-5.2-cp38-cp38-win_amd64.whl", hash = "sha256:2e9f0b7c5914367b0916c3c104a024bb68f269a486b9d04a2e8ac6f6597b7803"},
+    {file = "PyYAML-5.2.tar.gz", hash = "sha256:c0ee8eca2c582d29c3c2ec6e2c4f703d1b7f1fb10bc72317355a746057e7346c"},
+]
+records = [
+    {file = "records-0.5.3-py2.py3-none-any.whl", hash = "sha256:cdbacf52c61b4a3bc10fef1286a24a63ae95255a2e7b4e8ccb1e1f96737231ed"},
+    {file = "records-0.5.3.tar.gz", hash = "sha256:47e4874096f4a8f4b5bcad8c7c7cf512be36186e6e263ff3dfd750b05ff0d3c4"},
+]
+sqlalchemy = [
+    {file = "SQLAlchemy-1.3.12.tar.gz", hash = "sha256:bfb8f464a5000b567ac1d350b9090cf081180ec1ab4aa87e7bca12dab25320ec"},
+]
+tablib = [
+    {file = "tablib-0.14.0-py3-none-any.whl", hash = "sha256:00654241e5beee437ba544e4fa4abef70ccec3668503aa95406c1250bb660770"},
+    {file = "tablib-0.14.0.tar.gz", hash = "sha256:6336e7aa3f0e5894b47270a3dc639cc2e78eb823c7ccb8c4512fb408cdc18d08"},
 ]
 typed-ast = [
     {file = "typed_ast-1.4.0-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:262c247a82d005e43b5b7f69aff746370538e176131c32dda9cb0f324d27141e"},
@@ -379,4 +591,12 @@ webargs = [
 werkzeug = [
     {file = "Werkzeug-0.16.0-py2.py3-none-any.whl", hash = "sha256:e5f4a1f98b52b18a93da705a7458e55afb26f32bff83ff5d19189f92462d65c4"},
     {file = "Werkzeug-0.16.0.tar.gz", hash = "sha256:7280924747b5733b246fe23972186c6b348f9ae29724135a6dfc1e53cea433e7"},
+]
+xlrd = [
+    {file = "xlrd-1.2.0-py2.py3-none-any.whl", hash = "sha256:e551fb498759fa3a5384a94ccd4c3c02eb7c00ea424426e212ac0c57be9dfbde"},
+    {file = "xlrd-1.2.0.tar.gz", hash = "sha256:546eb36cee8db40c3eaa46c351e67ffee6eeb5fa2650b71bc4c758a29a1b29b2"},
+]
+xlwt = [
+    {file = "xlwt-1.3.0-py2.py3-none-any.whl", hash = "sha256:a082260524678ba48a297d922cc385f58278b8aa68741596a87de01a9c628b2e"},
+    {file = "xlwt-1.3.0.tar.gz", hash = "sha256:c59912717a9b28f1a3c2a98fd60741014b06b043936dcecbc113eaaada156c88"},
 ]

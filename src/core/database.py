@@ -1,14 +1,14 @@
-import os.path
-import sqlite3
-from typing import Dict, List, Optional
+from typing import Dict, List, Literal, Optional
 
-from src.core.config import load_app_config
+from flask import current_app
+import records
+from sqlalchemy.exc import IntegrityError
+
 from src.core.models.v1.Prompt import Prompt
 from src.core.models.v1.Writer import Writer
 
 
 __all__ = [
-    "create_new_database",
     "create_prompt",
     "update_prompt",
     "delete_prompt",
@@ -33,34 +33,17 @@ def __flatten_tuple_list(tup) -> list:
     return [item[0] for item in tup]
 
 
-def __connect_to_db() -> sqlite3.Connection:
+def __connect_to_db() -> records.Database:
     """Create a connection to the database."""
-    config = load_app_config()
-    conn = sqlite3.connect(config["DB_PATH"])
-    conn.row_factory = sqlite3.Row
+    conn_str = "mysql+pymysql://{}:{}@{}/{}".format(
+        current_app.config["DB_USERNAME"],
+        "",
+        # current_app.config["DB_PASSWORD"],
+        current_app.config["DB_HOST"],
+        current_app.config["DB_DBNAME"]
+    )
+    conn = records.Database(conn_str)
     return conn
-
-
-def create_new_database() -> None:
-    """Create a new database if needed."""
-    try:
-        # If the database exists and is loaded, this will succeed
-        sql = "SELECT COUNT(*) FROM writers"
-        with __connect_to_db() as db:
-            db.execute(sql)
-
-    # The database doesn't exist
-    except sqlite3.OperationalError:
-        # Get the db schema
-        schema = os.path.abspath(
-            os.path.join("db", "schema.sql")
-        )
-        with open(schema, "rt") as f:
-            sql = f.read()
-
-        # Create the database according to the schema
-        with __connect_to_db() as db:
-            db.executescript(sql)
 
 
 def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
@@ -75,11 +58,11 @@ def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
     """
     try:
         with __connect_to_db() as db:
-            db.execute(sql, prompt)
+            db.query(sql, **prompt)
             return True
 
     # A prompt with this ID already exists
-    except sqlite3.IntegrityError as exc:
+    except IntegrityError as exc:
         print(f"Prompt creation exception: {exc}")
         print(prompt)
         return False
@@ -90,27 +73,29 @@ def create_subscription_email(addr: str) -> bool:
     try:
         sql = "INSERT INTO emails (email) VALUES (:addr)"
         with __connect_to_db() as db:
-            db.execute(sql, {"addr": addr.lower()})
+            db.query(sql, **{"addr": addr.lower()})
         return True
 
-    # Some error occurred
-    except Exception as err:
-        print(err)
+    # An error occurred trying to record the email
+    except IntegrityError as exc:
+        print(f"New subscription exception: {exc}")
+        print(addr)
         return False
 
 
-def delete_prompt(prompt_id: str) -> None:
+def delete_prompt(prompt_id: str) -> Literal[True]:
     """Delete an existing prompt."""
     sql = "DELETE FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
-        db.execute(sql, {"tweet_id": prompt_id})
+        db.query(sql, **{"tweet_id": prompt_id})
+    return True
 
 
-def delete_subscription_email(addr: str) -> bool:
+def delete_subscription_email(addr: str) -> Literal[True]:
     """Remove a subscription email address."""
     sql = "DELETE FROM emails WHERE email = :addr"
     with __connect_to_db() as db:
-        db.execute(sql, {"addr": addr})
+        db.query(sql, **{"addr": addr})
     return True
 
 
@@ -118,26 +103,26 @@ def is_auth_token_valid(user: str, token: str) -> bool:
     """Check if the given username and auth token combo is valid."""
     sql = "SELECT 1 FROM users WHERE username = :user AND token = :token"
     with __connect_to_db() as db:
-        return bool(db.execute(sql, {"user": user, "token": token}).fetchone())
+        return bool(db.query(sql, **{"user": user, "token": token}).first())
 
 
 def find_existing_prompt(prompt_id: str) -> bool:
     """Find an existing prompt."""
     sql = "SELECT 1 FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
-        return bool(db.execute(sql, {"tweet_id": prompt_id}).fetchone())
+        return bool(db.query(sql, **{"tweet_id": prompt_id}).first())
 
 
-def get_admin_user(user: str, password: str) -> Optional[sqlite3.Row]:
+def get_admin_user(user: str, password: str) -> Optional[records.Record]:
     sql = """SELECT username, token
     FROM users
     WHERE username = :user AND password = :password
     """
     with __connect_to_db() as db:
-        user_record = db.execute(
+        user_record = db.query(
             sql,
-            {"user": user, "password": password}
-        ).fetchone()
+            **{"user": user, "password": password}
+        ).first()
     if not user_record:
         return None
 
@@ -145,10 +130,10 @@ def get_admin_user(user: str, password: str) -> Optional[sqlite3.Row]:
     with __connect_to_db() as db:
         sql = """
         UPDATE users
-        SET last_signin = date('now')
+        SET last_signin = CURRENT_TIMESTAMP()
         WHERE username = :user
         """
-        db.execute(sql, {"user": user})
+        db.query(sql, **{"user": user})
     return user_record
 
 
@@ -162,20 +147,19 @@ def get_latest_prompt() -> List[Prompt]:
     LIMIT 1
     """
     with __connect_to_db() as db:
-        return [Prompt(record) for record in db.execute(sql)]
+        return [Prompt(record) for record in db.query(sql)]
 
 
 def get_prompt_years() -> List[str]:
     """Get a list of years of recorded prompts."""
     sql = """
-    SELECT DISTINCT SUBSTR(date, 1, 4)
+    SELECT DISTINCT YEAR(date)
     FROM writer_dates
-    WHERE SUBSTR(date, 1, 4) <= strftime('%Y','now')
+    WHERE YEAR(date) <= YEAR(CURRENT_TIMESTAMP())
     ORDER BY date ASC
     """
     with __connect_to_db() as db:
-        r = db.execute(sql).fetchall()
-    return __flatten_tuple_list(r)
+        return __flatten_tuple_list(db.query(sql).all())
 
 
 def get_prompt_by_date(date: str) -> List[Prompt]:
@@ -184,11 +168,14 @@ def get_prompt_by_date(date: str) -> List[Prompt]:
     SELECT tweets.*, writers.handle AS writer_handle
     FROM tweets
         JOIN writers ON writers.uid = tweets.uid
-    WHERE tweets.date = :date
-        AND :date <= date('now')
+    WHERE tweets.date = STR_TO_DATE(:date, '%Y-%m-%d')
+        AND STR_TO_DATE(:date, '%Y-%m-%d') <= CURRENT_TIMESTAMP()
     """
     with __connect_to_db() as db:
-        return [Prompt(record) for record in db.execute(sql, {"date": date})]
+        return [
+            Prompt(record)
+            for record in db.query(sql, **{"date": date})
+        ]
 
 
 def get_prompts_by_writer(handle: str) -> List[Prompt]:
@@ -197,12 +184,12 @@ def get_prompts_by_writer(handle: str) -> List[Prompt]:
     SELECT tweets.*, writers.handle AS writer_handle
     FROM tweets
         JOIN writers ON writers.uid = tweets.uid
-    WHERE tweets.date <= date('now')
+    WHERE tweets.date <= CURRENT_TIMESTAMP()
         AND writers.handle = :handle
     """
     with __connect_to_db() as db:
         return [
-            Prompt(record) for record in db.execute(sql, {"handle": handle})
+            Prompt(record) for record in db.query(sql, **{"handle": handle})
         ]
 
 
@@ -210,51 +197,52 @@ def get_subscription_list() -> list:
     """Get all emails in the subscription list."""
     sql = "SELECT email FROM emails"
     with __connect_to_db() as db:
-        return __flatten_tuple_list(db.execute(sql).fetchall())
+        return __flatten_tuple_list(db.query(sql).all())
 
 
 def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Writer]]:
     """Get Writer info by either their Twitter ID or handle."""
     sql = """
-    SELECT writers.uid, handle, writer_dates.date || '-01' AS date
+    SELECT writers.uid, handle, writer_dates.date
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE
-        SUBSTR(writer_dates.date, 1, 8) <= strftime('%Y-%m','now') AND
-        (writers.uid = :uid OR UPPER(handle) = UPPER(:handle))
+        writer_dates.date <= CURRENT_TIMESTAMP()
+        AND (writers.uid = :uid OR UPPER(handle) = UPPER(:handle))
     ORDER BY date DESC
     """
     with __connect_to_db() as db:
         return [
             Writer(writer)
-            for writer in db.execute(sql, {"uid": uid, "handle": handle})
+            for writer in db.query(sql, **{"uid": uid, "handle": handle})
         ]
 
 
 def get_writers_by_year(year: str) -> List[Writer]:
     """Get a list of all Writers for a particular year."""
     sql = """
-    SELECT writers.uid, handle, writer_dates.date || '-01' AS date
+    SELECT writers.uid, handle, writer_dates.date
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
-    WHERE SUBSTR(date, 1, 4) = :year
-        AND SUBSTR(date, 1, 8) <= strftime('%Y-%m','now')
+    WHERE YEAR(writer_dates.date) = :year
+        AND DATE_FORMAT(writer_dates.date, '%Y-%m') <=
+            DATE_FORMAT(CURRENT_TIMESTAMP(), '%Y-%m')
     ORDER BY writer_dates.date ASC
     """
     with __connect_to_db() as db:
-        return [Writer(writer) for writer in db.execute(sql, {"year": year})]
+        return [Writer(writer) for writer in db.query(sql, **{"year": year})]
 
 
 def get_writers_by_date(date: str) -> List[Writer]:
-    """Get a Writer by the month-year they delievered the prompts. """
+    """Get a Writer by the date they delievered the prompts. """
     sql = """
-    SELECT writers.uid, handle, writer_dates.date || '-01' AS date
+    SELECT writers.uid, handle, writer_dates.date
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
-    WHERE writer_dates.date = :date
+    WHERE writer_dates.date = STR_TO_DATE(CONCAT(:date, '-01'), '%Y-%m-%d')
     """
     with __connect_to_db() as db:
-        return [Writer(writer) for writer in db.execute(sql, {"date":  date})]
+        return [Writer(writer) for writer in db.query(sql, **{"date": date})]
 
 
 def get_prompts_by_date(date: str) -> List[Prompt]:
@@ -263,12 +251,12 @@ def get_prompts_by_date(date: str) -> List[Prompt]:
     SELECT tweets.*, writers.handle as writer_handle
     FROM tweets
         JOIN writers ON tweets.uid = writers.uid
-    WHERE tweets.date <= date('now')
-        AND SUBSTR(tweets.date, 1, 7) = :date
+    WHERE tweets.date <= CURRENT_TIMESTAMP()
+        AND DATE_FORMAT(tweets.date, '%Y-%m') = :date
     ORDER BY tweets.date ASC
     """
     with __connect_to_db() as db:
-        return [Prompt(prompt) for prompt in db.execute(sql, {"date": date})]
+        return [Prompt(prompt) for prompt in db.query(sql, **{"date": date})]
 
 
 def search_for_prompt(word: str) -> List[Prompt]:
@@ -277,12 +265,12 @@ def search_for_prompt(word: str) -> List[Prompt]:
     SELECT tweets.*, writers.handle AS writer_handle
     FROM tweets
         JOIN writers ON writers.uid = tweets.uid
-    WHERE tweets.date <= date('now')
-        AND tweets.word LIKE '%' || :word || '%'
+    WHERE tweets.date <= CURRENT_TIMESTAMP()
+        AND tweets.word LIKE CONCAT('%', :word, '%')
     ORDER BY UPPER(word)
     """
     with __connect_to_db() as db:
-        return [Prompt(record) for record in db.execute(sql, {"word": word})]
+        return [Prompt(record) for record in db.query(sql, **{"word": word})]
 
 
 def update_prompt(prompt: Dict[str, Optional[str]]) -> None:
@@ -290,7 +278,6 @@ def update_prompt(prompt: Dict[str, Optional[str]]) -> None:
     sql = """
     UPDATE tweets
     SET
-        tweet_id = :tweet_id,
         date = :date,
         content = :content,
         word = :word,
@@ -298,4 +285,4 @@ def update_prompt(prompt: Dict[str, Optional[str]]) -> None:
     WHERE tweet_id = :tweet_id
     """
     with __connect_to_db() as db:
-        db.execute(sql, prompt)
+        db.query(sql, **prompt)

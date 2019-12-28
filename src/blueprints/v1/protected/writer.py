@@ -17,7 +17,7 @@ def get(args: dict):
     # We need something to search by
     if not args["id"] and not args["handle"]:
         return make_error_response(
-            "Either a Writer id and handle must be provided!",
+            "Either a Writer id or handle must be provided!",
             422
         )
 
