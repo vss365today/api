@@ -21,7 +21,7 @@ def get(args: dict):
             422
         )
 
-    # Both a writer ID and handle cannot be provided
+    # Both a host ID and handle cannot be provided
     if args["id"] and args["handle"]:
         return make_error_response(
             "Providing a Host id and handle is not allowed!",
@@ -29,9 +29,9 @@ def get(args: dict):
         )
 
     # Get the host information
-    writer = database.get_writer_by_id(uid=args["id"], handle=args["handle"])
-    if writer:
-        return make_response(jsonify(writer), 200)
+    host = database.get_writer_by_id(uid=args["id"], handle=args["handle"])
+    if host:
+        return make_response(jsonify(host), 200)
 
     # We don't have that host
     given_param = [(k, v) for k, v in args.items() if v][0]
@@ -51,8 +51,8 @@ def get(args: dict):
 })
 def get_date(args: dict):
     # We want the host for a given month
-    if (writer := database.get_writers_by_date(args["date"].strftime("%Y-%m"))):  # noqa
-        return make_response(jsonify(writer), 200)
+    if (host := database.get_writers_by_date(args["date"].strftime("%Y-%m"))):  # noqa
+        return make_response(jsonify(host), 200)
     return make_error_response("Unable to get Host details!", 404)
 
 
