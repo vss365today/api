@@ -23,7 +23,7 @@ def browse_by_month(year: str, month: str) -> dict:
     month = month.strip()
     date: str = f"{year}-{month}"
     hosts = database.get_writers_by_date(date)
-    prompts = database.get_prompts_by_date(date)
+    prompts = database.prompts_get_by_date(date, date_range=True)
     return {
         "hosts": hosts,
         "prompts": prompts,
@@ -59,4 +59,4 @@ def get(args: dict):
 @browse.route("/years/", methods=["GET"])
 def get_years():
     """Get the years of recorded prompts."""
-    return jsonify(database.get_prompt_years())
+    return jsonify(database.prompt_get_years())

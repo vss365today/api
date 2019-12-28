@@ -14,12 +14,12 @@ __all__ = [
     "get_subscription_list",
     "get_admin_user",
     "is_auth_token_valid",
-    "create_prompt",
-    "delete_prompt",
-    "update_prompt",
-    "get_prompt_by_date",
-    "get_prompt_years",
-    "get_prompts_by_date",
+    "prompt_create",
+    "prompt_delete",
+    "prompt_update",
+    "prompt_get_latest",
+    "prompt_get_years",
+    "prompts_get_by_date",
     "get_prompts_by_writer",
     "get_writer_by_id",
     "get_writers_by_year",
@@ -106,8 +106,8 @@ def is_auth_token_valid(user: str, token: str) -> bool:
         return bool(db.query(sql, **{"user": user, "token": token}).first())
 
 
-def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
-    """Record a new prompt."""
+def prompt_create(prompt: Dict[str, Optional[str]]) -> bool:
+    """Create a new prompt."""
     sql = """
     INSERT INTO tweets (
         tweet_id, date, uid, content, word, media
@@ -128,7 +128,7 @@ def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
         return False
 
 
-def delete_prompt(prompt_id: str) -> Literal[True]:
+def prompt_delete(prompt_id: str) -> Literal[True]:
     """Delete an existing prompt."""
     sql = "DELETE FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
@@ -143,7 +143,7 @@ def find_existing_prompt(prompt_id: str) -> bool:
         return bool(db.query(sql, **{"tweet_id": prompt_id}).first())
 
 
-def get_latest_prompt() -> List[Prompt]:
+def prompt_get_latest() -> List[Prompt]:
     """Get the newest prompt."""
     sql = """
     SELECT tweets.*, writers.handle AS writer_handle
@@ -156,7 +156,7 @@ def get_latest_prompt() -> List[Prompt]:
         return [Prompt(record) for record in db.query(sql)]
 
 
-def get_prompt_years() -> List[str]:
+def prompt_get_years() -> List[str]:
     """Get a list of years of recorded prompts."""
     sql = """
     SELECT DISTINCT YEAR(date)
@@ -168,15 +168,31 @@ def get_prompt_years() -> List[str]:
         return __flatten_tuple_list(db.query(sql).all())
 
 
-def get_prompt_by_date(date: str) -> List[Prompt]:
-    """Get a prompt tweet by the date it was posted."""
+def prompts_get_by_date(
+    date: str,
+    *,
+    date_range: bool = False
+) -> List[Prompt]:
+    """Get prompts by a single date or in a date range."""
+    # Base query info
     sql = """
-    SELECT tweets.*, writers.handle AS writer_handle
+    SELECT tweets.*, writers.handle as writer_handle
     FROM tweets
-        JOIN writers ON writers.uid = tweets.uid
-    WHERE tweets.date = STR_TO_DATE(:date, '%Y-%m-%d')
-        AND STR_TO_DATE(:date, '%Y-%m-%d') <= CURRENT_TIMESTAMP()
-    """
+        JOIN writers ON tweets.uid = writers.uid"""
+
+    # Use the proper filter depending on if
+    # we want a date range or single date
+    if date_range:
+        sql = f"""{sql}
+        WHERE DATE_FORMAT(tweets.date, '%Y-%m') = :date
+            AND tweets.date <= CURRENT_TIMESTAMP()
+        ORDER BY tweets.date ASC"""
+    else:
+        sql = f"""{sql}
+        WHERE tweets.date = STR_TO_DATE(:date, '%Y-%m-%d')
+            AND STR_TO_DATE(:date, '%Y-%m-%d') <= CURRENT_TIMESTAMP()"""
+
+    # Finally perform the query
     with __connect_to_db() as db:
         return [
             Prompt(record)
@@ -244,20 +260,6 @@ def get_writers_by_date(date: str) -> List[Host]:
         return [Host(writer) for writer in db.query(sql, **{"date": date})]
 
 
-def get_prompts_by_date(date: str) -> List[Prompt]:
-    """Get all prompts in a given date range."""
-    sql = f"""
-    SELECT tweets.*, writers.handle as writer_handle
-    FROM tweets
-        JOIN writers ON tweets.uid = writers.uid
-    WHERE tweets.date <= CURRENT_TIMESTAMP()
-        AND DATE_FORMAT(tweets.date, '%Y-%m') = :date
-    ORDER BY tweets.date ASC
-    """
-    with __connect_to_db() as db:
-        return [Prompt(prompt) for prompt in db.query(sql, **{"date": date})]
-
-
 def search_for_prompt(word: str) -> List[Prompt]:
     """Search for prompts by partial or full word."""
     sql = """
@@ -272,7 +274,7 @@ def search_for_prompt(word: str) -> List[Prompt]:
         return [Prompt(record) for record in db.query(sql, **{"word": word})]
 
 
-def update_prompt(prompt: Dict[str, Optional[str]]) -> None:
+def prompt_update(prompt: Dict[str, Optional[str]]) -> None:
     """Update an existing prompt."""
     sql = """
     UPDATE tweets
