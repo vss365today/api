@@ -5,7 +5,7 @@ import records
 from sqlalchemy.exc import IntegrityError
 
 from src.core.models.v1.Prompt import Prompt
-from src.core.models.v1.Writer import Writer
+from src.core.models.v1.Host import Host
 
 
 __all__ = [
@@ -199,8 +199,8 @@ def get_subscription_list() -> list:
         return __flatten_tuple_list(db.query(sql).all())
 
 
-def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Writer]]:
-    """Get Writer info by either their Twitter ID or handle."""
+def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Host]]:
+    """Get Host info by either their Twitter ID or handle."""
     sql = """
     SELECT writers.uid, handle, writer_dates.date
     FROM writers
@@ -212,13 +212,13 @@ def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Writer]]:
     """
     with __connect_to_db() as db:
         return [
-            Writer(writer)
+            Host(writer)
             for writer in db.query(sql, **{"uid": uid, "handle": handle})
         ]
 
 
-def get_writers_by_year(year: str) -> List[Writer]:
-    """Get a list of all Writers for a particular year."""
+def get_writers_by_year(year: str) -> List[Host]:
+    """Get a list of all Hosts for a particular year."""
     sql = """
     SELECT writers.uid, handle, writer_dates.date
     FROM writers
@@ -229,11 +229,11 @@ def get_writers_by_year(year: str) -> List[Writer]:
     ORDER BY writer_dates.date ASC
     """
     with __connect_to_db() as db:
-        return [Writer(writer) for writer in db.query(sql, **{"year": year})]
+        return [Host(writer) for writer in db.query(sql, **{"year": year})]
 
 
-def get_writers_by_date(date: str) -> List[Writer]:
-    """Get a Writer by the date they delievered the prompts. """
+def get_writers_by_date(date: str) -> List[Host]:
+    """Get a Host by the date they delievered the prompts. """
     sql = """
     SELECT writers.uid, handle, writer_dates.date
     FROM writers
@@ -241,7 +241,7 @@ def get_writers_by_date(date: str) -> List[Writer]:
     WHERE writer_dates.date = STR_TO_DATE(CONCAT(:date, '-01'), '%Y-%m-%d')
     """
     with __connect_to_db() as db:
-        return [Writer(writer) for writer in db.query(sql, **{"date": date})]
+        return [Host(writer) for writer in db.query(sql, **{"date": date})]
 
 
 def get_prompts_by_date(date: str) -> List[Prompt]:
