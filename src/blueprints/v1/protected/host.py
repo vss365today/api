@@ -3,12 +3,12 @@ from flask import jsonify
 from webargs import fields
 from webargs.flaskparser import use_args
 
-from src.blueprints import writer
+from src.blueprints import host
 from src.core import database
 from src.core.helpers import make_response, make_error_response
 
 
-@writer.route("/", methods=["GET"])
+@host.route("/", methods=["GET"])
 @use_args({
     "id": fields.Str(location="query", missing=""),
     "handle": fields.Str(location="query", missing="")
@@ -41,7 +41,7 @@ def get(args: dict):
     )
 
 
-@writer.route("/date/", methods=["GET"])
+@host.route("/date/", methods=["GET"])
 @use_args({
     "date": fields.DateTime(
         "%Y-%m",
@@ -50,13 +50,13 @@ def get(args: dict):
     )
 })
 def get_date(args: dict):
-    # We want the Host for a given month
+    # We want the host for a given month
     if (writer := database.get_writers_by_date(args["date"].strftime("%Y-%m"))):  # noqa
         return make_response(jsonify(writer), 200)
     return make_error_response("Unable to get Host details!", 404)
 
 
-@writer.route("/", methods=["POST"])
+@host.route("/", methods=["POST"])
 @use_args({
     "handle": fields.Str(
         location="json",
@@ -68,7 +68,7 @@ def get_date(args: dict):
     )
 })
 def post(args: dict):
-    # TODO Create a single writer with all their details
+    # TODO Create a single host with all their details
     # TODO Need to pull Twitter API to get the uid from handle
     result = True
     if result:
