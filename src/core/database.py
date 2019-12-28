@@ -57,7 +57,7 @@ def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
     """
     try:
         with __connect_to_db() as db:
-            db.query(sql, prompt)
+            db.query(sql, **prompt)
             return True
 
     # A prompt with this ID already exists
@@ -277,7 +277,6 @@ def update_prompt(prompt: Dict[str, Optional[str]]) -> None:
     sql = """
     UPDATE tweets
     SET
-        tweet_id = :tweet_id,
         date = :date,
         content = :content,
         word = :word,
