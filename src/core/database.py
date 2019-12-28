@@ -2,6 +2,7 @@ from typing import Dict, List, Literal, Optional
 
 from flask import current_app
 import records
+from sqlalchemy.exc import IntegrityError
 
 from src.core.models.v1.Prompt import Prompt
 from src.core.models.v1.Writer import Writer
@@ -61,7 +62,7 @@ def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
             return True
 
     # A prompt with this ID already exists
-    except Exception as exc:
+    except IntegrityError as exc:
         print(f"Prompt creation exception: {exc}")
         print(prompt)
         return False
@@ -75,9 +76,10 @@ def create_subscription_email(addr: str) -> bool:
             db.query(sql, **{"addr": addr.lower()})
         return True
 
-    # Some error occurred
-    except Exception as err:
-        print(err)
+    # An error occurred trying to record the email
+    except IntegrityError as exc:
+        print(f"New subscription exception: {exc}")
+        print(addr)
         return False
 
 
@@ -157,8 +159,7 @@ def get_prompt_years() -> List[str]:
     ORDER BY date ASC
     """
     with __connect_to_db() as db:
-        r = db.query(sql).all()
-    return __flatten_tuple_list(r)
+        return __flatten_tuple_list(db.query(sql).all())
 
 
 def get_prompt_by_date(date: str) -> List[Prompt]:
