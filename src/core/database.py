@@ -19,12 +19,12 @@ __all__ = [
     "prompt_update",
     "prompt_get_latest",
     "prompt_get_years",
+    "prompt_search",
     "prompts_get_by_date",
-    "get_prompts_by_writer",
-    "get_writer_by_id",
-    "get_writers_by_year",
-    "get_writers_by_date",
-    "search_for_prompt"
+    "prompts_get_by_host",
+    "host_get",
+    "host_get_by_date",
+    "hosts_get_by_year"
 ]
 
 
@@ -168,6 +168,23 @@ def prompt_get_years() -> List[str]:
         return __flatten_tuple_list(db.query(sql).all())
 
 
+def prompt_search(word: str) -> List[Prompt]:
+    """Search for prompts by partial or full word."""
+    sql = """
+    SELECT tweets.*, writers.handle AS writer_handle
+    FROM tweets
+        JOIN writers ON writers.uid = tweets.uid
+    WHERE tweets.date <= CURRENT_TIMESTAMP()
+        AND tweets.word LIKE CONCAT('%', :word, '%')
+    ORDER BY UPPER(word)
+    """
+    with __connect_to_db() as db:
+        return [
+            Prompt(record)
+            for record in db.query(sql, **{"word": word})
+        ]
+
+
 def prompts_get_by_date(
     date: str,
     *,
@@ -200,7 +217,7 @@ def prompts_get_by_date(
         ]
 
 
-def get_prompts_by_writer(handle: str) -> List[Prompt]:
+def prompts_get_by_host(handle: str) -> List[Prompt]:
     """Get a prompt tweet by the Host who prompted it."""
     sql = """
     SELECT tweets.*, writers.handle AS writer_handle
@@ -215,7 +232,7 @@ def get_prompts_by_writer(handle: str) -> List[Prompt]:
         ]
 
 
-def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Host]]:
+def host_get(*, uid: str, handle: str) -> Optional[List[Host]]:
     """Get Host info by either their Twitter ID or handle."""
     sql = """
     SELECT writers.uid, handle, writer_dates.date
@@ -228,12 +245,27 @@ def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Host]]:
     """
     with __connect_to_db() as db:
         return [
-            Host(writer)
-            for writer in db.query(sql, **{"uid": uid, "handle": handle})
+            Host(host)
+            for host in db.query(sql, **{"uid": uid, "handle": handle})
         ]
 
 
-def get_writers_by_year(year: str) -> List[Host]:
+def host_get_by_date(date: str) -> List[Host]:
+    """Get a Host by the date they delievered the prompts. """
+    sql = """
+    SELECT writers.uid, handle, writer_dates.date
+    FROM writers
+        JOIN writer_dates ON writer_dates.uid = writers.uid
+    WHERE writer_dates.date = STR_TO_DATE(CONCAT(:date, '-01'), '%Y-%m-%d')
+    """
+    with __connect_to_db() as db:
+        return [
+            Host(host)
+            for host in db.query(sql, **{"date": date})
+        ]
+
+
+def hosts_get_by_year(year: str) -> List[Host]:
     """Get a list of all Hosts for a particular year."""
     sql = """
     SELECT writers.uid, handle, writer_dates.date
@@ -245,33 +277,10 @@ def get_writers_by_year(year: str) -> List[Host]:
     ORDER BY writer_dates.date ASC
     """
     with __connect_to_db() as db:
-        return [Host(writer) for writer in db.query(sql, **{"year": year})]
-
-
-def get_writers_by_date(date: str) -> List[Host]:
-    """Get a Host by the date they delievered the prompts. """
-    sql = """
-    SELECT writers.uid, handle, writer_dates.date
-    FROM writers
-        JOIN writer_dates ON writer_dates.uid = writers.uid
-    WHERE writer_dates.date = STR_TO_DATE(CONCAT(:date, '-01'), '%Y-%m-%d')
-    """
-    with __connect_to_db() as db:
-        return [Host(writer) for writer in db.query(sql, **{"date": date})]
-
-
-def search_for_prompt(word: str) -> List[Prompt]:
-    """Search for prompts by partial or full word."""
-    sql = """
-    SELECT tweets.*, writers.handle AS writer_handle
-    FROM tweets
-        JOIN writers ON writers.uid = tweets.uid
-    WHERE tweets.date <= CURRENT_TIMESTAMP()
-        AND tweets.word LIKE CONCAT('%', :word, '%')
-    ORDER BY UPPER(word)
-    """
-    with __connect_to_db() as db:
-        return [Prompt(record) for record in db.query(sql, **{"word": word})]
+        return [
+            Host(host)
+            for host in db.query(sql, **{"year": year})
+        ]
 
 
 def prompt_update(prompt: Dict[str, Optional[str]]) -> None:

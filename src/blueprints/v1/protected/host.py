@@ -29,7 +29,7 @@ def get(args: dict):
         )
 
     # Get the host information
-    host = database.get_writer_by_id(uid=args["id"], handle=args["handle"])
+    host = database.host_get(uid=args["id"], handle=args["handle"])
     if host:
         return make_response(jsonify(host), 200)
 
@@ -51,7 +51,7 @@ def get(args: dict):
 })
 def get_date(args: dict):
     # We want the host for a given month
-    if (host := database.get_writers_by_date(args["date"].strftime("%Y-%m"))):  # noqa
+    if (host := database.host_get_by_date(args["date"].strftime("%Y-%m"))):  # noqa
         return make_response(jsonify(host), 200)
     return make_error_response("Unable to get Host details!", 404)
 

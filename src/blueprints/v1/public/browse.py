@@ -10,7 +10,7 @@ from src.core.helpers import make_error_response
 
 def browse_by_year(year: str) -> dict:
     year = year.strip()
-    hosts: list = database.get_writers_by_year(year)
+    hosts: list = database.hosts_get_by_year(year)
     return {
         "query": year,
         "hosts": hosts,
@@ -22,7 +22,7 @@ def browse_by_month(year: str, month: str) -> dict:
     year = year.strip()
     month = month.strip()
     date: str = f"{year}-{month}"
-    hosts = database.get_writers_by_date(date)
+    hosts = database.host_get_by_date(date)
     prompts = database.prompts_get_by_date(date, date_range=True)
     return {
         "hosts": hosts,
