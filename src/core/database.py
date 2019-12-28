@@ -9,12 +9,12 @@ from src.core.models.v1.Host import Host
 
 
 __all__ = [
-    "create_prompt",
-    "update_prompt",
-    "delete_prompt",
     "create_subscription_email",
     "delete_subscription_email",
     "get_subscription_list",
+    "create_prompt",
+    "delete_prompt",
+    "update_prompt",
     "is_auth_token_valid",
     "get_admin_user",
     "get_prompt_by_date",
@@ -28,11 +28,6 @@ __all__ = [
 ]
 
 
-def __flatten_tuple_list(tup) -> list:
-    """Flatten a list of tuples into a list of actual data."""
-    return [item[0] for item in tup]
-
-
 def __connect_to_db() -> records.Database:
     """Create a connection to the database."""
     conn_str = "mysql+pymysql://{}:{}@{}/{}".format(
@@ -43,6 +38,41 @@ def __connect_to_db() -> records.Database:
     )
     conn = records.Database(conn_str)
     return conn
+
+
+def __flatten_tuple_list(tup) -> list:
+    """Flatten a list of tuples into a tuple of actual data."""
+    return [item[0] for item in tup]
+
+
+def create_subscription_email(addr: str) -> bool:
+    """Add a subscription email address."""
+    try:
+        sql = "INSERT INTO emails (email) VALUES (:addr)"
+        with __connect_to_db() as db:
+            db.query(sql, **{"addr": addr.lower()})
+        return True
+
+    # An error occurred trying to record the email
+    except IntegrityError as exc:
+        print(f"New subscription exception: {exc}")
+        print(addr)
+        return False
+
+
+def delete_subscription_email(addr: str) -> Literal[True]:
+    """Remove a subscription email address."""
+    sql = "DELETE FROM emails WHERE email = :addr"
+    with __connect_to_db() as db:
+        db.query(sql, **{"addr": addr})
+    return True
+
+
+def get_subscription_list() -> list:
+    """Get all emails in the subscription list."""
+    sql = "SELECT email FROM emails"
+    with __connect_to_db() as db:
+        return __flatten_tuple_list(db.query(sql).all())
 
 
 def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
@@ -67,34 +97,11 @@ def create_prompt(prompt: Dict[str, Optional[str]]) -> bool:
         return False
 
 
-def create_subscription_email(addr: str) -> bool:
-    """Add a subscription email address."""
-    try:
-        sql = "INSERT INTO emails (email) VALUES (:addr)"
-        with __connect_to_db() as db:
-            db.query(sql, **{"addr": addr.lower()})
-        return True
-
-    # An error occurred trying to record the email
-    except IntegrityError as exc:
-        print(f"New subscription exception: {exc}")
-        print(addr)
-        return False
-
-
 def delete_prompt(prompt_id: str) -> Literal[True]:
     """Delete an existing prompt."""
     sql = "DELETE FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
         db.query(sql, **{"tweet_id": prompt_id})
-    return True
-
-
-def delete_subscription_email(addr: str) -> Literal[True]:
-    """Remove a subscription email address."""
-    sql = "DELETE FROM emails WHERE email = :addr"
-    with __connect_to_db() as db:
-        db.query(sql, **{"addr": addr})
     return True
 
 
@@ -178,7 +185,7 @@ def get_prompt_by_date(date: str) -> List[Prompt]:
 
 
 def get_prompts_by_writer(handle: str) -> List[Prompt]:
-    """Get a prompt tweet by the writer who prompted it."""
+    """Get a prompt tweet by the Host who prompted it."""
     sql = """
     SELECT tweets.*, writers.handle AS writer_handle
     FROM tweets
@@ -190,13 +197,6 @@ def get_prompts_by_writer(handle: str) -> List[Prompt]:
         return [
             Prompt(record) for record in db.query(sql, **{"handle": handle})
         ]
-
-
-def get_subscription_list() -> list:
-    """Get all emails in the subscription list."""
-    sql = "SELECT email FROM emails"
-    with __connect_to_db() as db:
-        return __flatten_tuple_list(db.query(sql).all())
 
 
 def get_writer_by_id(*, uid: str, handle: str) -> Optional[List[Host]]:
