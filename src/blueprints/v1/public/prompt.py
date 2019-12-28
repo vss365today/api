@@ -109,7 +109,7 @@ def post(args: dict):
 })
 def put(args: dict):
     # The prompt needs to exist first
-    if not database.find_existing_prompt(args["tweet_id"]):
+    if not database.prompt_find_existing(args["tweet_id"]):
         msg = "The prompt ID '{}' does not exist.".format(args["tweet_id"])
         return make_error_response(msg, 422)
 

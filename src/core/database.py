@@ -9,14 +9,15 @@ from src.core.models.v1.Host import Host
 
 
 __all__ = [
-    "create_subscription_email",
-    "delete_subscription_email",
-    "get_subscription_list",
+    "subscription_email_create",
+    "subscription_email_delete",
+    "subscription_list_get",
     "get_admin_user",
     "is_auth_token_valid",
     "prompt_create",
     "prompt_delete",
     "prompt_update",
+    "prompt_find_existing",
     "prompt_get_latest",
     "prompt_get_years",
     "prompt_search",
@@ -45,7 +46,7 @@ def __flatten_tuple_list(tup) -> list:
     return [item[0] for item in tup]
 
 
-def create_subscription_email(addr: str) -> bool:
+def subscription_email_create(addr: str) -> bool:
     """Add a subscription email address."""
     try:
         sql = "INSERT INTO emails (email) VALUES (:addr)"
@@ -60,7 +61,7 @@ def create_subscription_email(addr: str) -> bool:
         return False
 
 
-def delete_subscription_email(addr: str) -> Literal[True]:
+def subscription_email_delete(addr: str) -> Literal[True]:
     """Remove a subscription email address."""
     sql = "DELETE FROM emails WHERE email = :addr"
     with __connect_to_db() as db:
@@ -68,7 +69,7 @@ def delete_subscription_email(addr: str) -> Literal[True]:
     return True
 
 
-def get_subscription_list() -> list:
+def subscription_list_get() -> list:
     """Get all emails in the subscription list."""
     sql = "SELECT email FROM emails"
     with __connect_to_db() as db:
@@ -136,7 +137,22 @@ def prompt_delete(prompt_id: str) -> Literal[True]:
     return True
 
 
-def find_existing_prompt(prompt_id: str) -> bool:
+def prompt_update(prompt: Dict[str, Optional[str]]) -> None:
+    """Update an existing prompt."""
+    sql = """
+    UPDATE tweets
+    SET
+        date = :date,
+        content = :content,
+        word = :word,
+        media =  :media
+    WHERE tweet_id = :tweet_id
+    """
+    with __connect_to_db() as db:
+        db.query(sql, **prompt)
+
+
+def prompt_find_existing(prompt_id: str) -> bool:
     """Find an existing prompt."""
     sql = "SELECT 1 FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
@@ -228,7 +244,8 @@ def prompts_get_by_host(handle: str) -> List[Prompt]:
     """
     with __connect_to_db() as db:
         return [
-            Prompt(record) for record in db.query(sql, **{"handle": handle})
+            Prompt(record)
+            for record in db.query(sql, **{"handle": handle})
         ]
 
 
@@ -281,18 +298,3 @@ def hosts_get_by_year(year: str) -> List[Host]:
             Host(host)
             for host in db.query(sql, **{"year": year})
         ]
-
-
-def prompt_update(prompt: Dict[str, Optional[str]]) -> None:
-    """Update an existing prompt."""
-    sql = """
-    UPDATE tweets
-    SET
-        date = :date,
-        content = :content,
-        word = :word,
-        media =  :media
-    WHERE tweet_id = :tweet_id
-    """
-    with __connect_to_db() as db:
-        db.query(sql, **prompt)
