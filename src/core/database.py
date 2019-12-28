@@ -37,8 +37,7 @@ def __connect_to_db() -> records.Database:
     """Create a connection to the database."""
     conn_str = "mysql+pymysql://{}:{}@{}/{}".format(
         current_app.config["DB_USERNAME"],
-        "",
-        # current_app.config["DB_PASSWORD"],
+        current_app.config["DB_PASSWORD"],
         current_app.config["DB_HOST"],
         current_app.config["DB_DBNAME"]
     )
