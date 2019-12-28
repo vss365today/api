@@ -12,7 +12,7 @@ __all__ = [
     "subscription_email_create",
     "subscription_email_delete",
     "subscription_list_get",
-    "get_admin_user",
+    "admin_user_get",
     "is_auth_token_valid",
     "prompt_create",
     "prompt_delete",
@@ -76,7 +76,7 @@ def subscription_list_get() -> list:
         return __flatten_tuple_list(db.query(sql).all())
 
 
-def get_admin_user(user: str, password: str) -> Optional[records.Record]:
+def admin_user_get(user: str, password: str) -> Optional[records.Record]:
     sql = """SELECT username, token
     FROM users
     WHERE username = :user AND password = :password

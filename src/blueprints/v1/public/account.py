@@ -2,7 +2,7 @@ from webargs import fields
 from webargs.flaskparser import use_args
 
 from src.blueprints import account
-from src.core.database import get_admin_user
+from src.core.database import admin_user_get
 from src.core.helpers import make_response, make_error_response
 
 
@@ -23,7 +23,7 @@ def post(args: dict):
     What that means in reality is do a semi-sign in/
     make sure they are authorized to access protected endpoints.
     """
-    user = get_admin_user(
+    user = admin_user_get(
         args["user"].strip(),
         args["password"].strip()
     )
