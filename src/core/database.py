@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, Literal, Optional
 
 from flask import current_app
 import records
@@ -81,14 +81,15 @@ def create_subscription_email(addr: str) -> bool:
         return False
 
 
-def delete_prompt(prompt_id: str) -> None:
+def delete_prompt(prompt_id: str) -> Literal[True]:
     """Delete an existing prompt."""
     sql = "DELETE FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
         db.query(sql, **{"tweet_id": prompt_id})
+    return True
 
 
-def delete_subscription_email(addr: str) -> bool:
+def delete_subscription_email(addr: str) -> Literal[True]:
     """Remove a subscription email address."""
     sql = "DELETE FROM emails WHERE email = :addr"
     with __connect_to_db() as db:
@@ -100,14 +101,14 @@ def is_auth_token_valid(user: str, token: str) -> bool:
     """Check if the given username and auth token combo is valid."""
     sql = "SELECT 1 FROM users WHERE username = :user AND token = :token"
     with __connect_to_db() as db:
-        return bool(db.query(sql, **{"user": user, "token": token}).fetchone())
+        return bool(db.query(sql, **{"user": user, "token": token}).first())
 
 
 def find_existing_prompt(prompt_id: str) -> bool:
     """Find an existing prompt."""
     sql = "SELECT 1 FROM tweets WHERE tweet_id = :tweet_id"
     with __connect_to_db() as db:
-        return bool(db.query(sql, **{"tweet_id": prompt_id}).fetchone())
+        return bool(db.query(sql, **{"tweet_id": prompt_id}).first())
 
 
 def get_admin_user(user: str, password: str) -> Optional[records.Record]:
@@ -119,7 +120,7 @@ def get_admin_user(user: str, password: str) -> Optional[records.Record]:
         user_record = db.query(
             sql,
             **{"user": user, "password": password}
-        ).fetchone()
+        ).first()
     if not user_record:
         return None
 
