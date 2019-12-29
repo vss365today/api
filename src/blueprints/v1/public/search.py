@@ -25,18 +25,18 @@ def __build_search_response(prompts: list) -> dict:
 def search_by_prompt(prompt: str) -> dict:
     """Search for prompts by prompt word."""
     word: str = prompt.strip()
-    prompts: list = database.search_for_prompt(word)
+    prompts: list = database.prompt_search(word)
     response: dict = __build_search_response(prompts)
     response["query"] = word
     return response
 
 
 def search_by_writer(handle: str) -> dict:
-    """Search for all prompts from a specific writer."""
-    writer: str = handle.strip()
-    prompts: list = database.get_prompts_by_writer(writer)
+    """Search for all prompts from a specific Host."""
+    host: str = handle.strip()
+    prompts: list = database.prompts_get_by_host(host)
     response: dict = __build_search_response(prompts)
-    response["query"] = writer
+    response["query"] = host
     return response
 
 
@@ -46,16 +46,17 @@ def search_by_writer(handle: str) -> dict:
         location="query",
         validate=lambda x: len(x) > 1
     ),
-    "writer": fields.Str(
+    "host": fields.Str(
         location="query",
         validate=lambda x: len(x) > 1
     )
 })
 def get(args: dict):
+    # TODO Error message if both are provided
     if "prompt" in args:
         return search_by_prompt(args["prompt"])
-    elif "writer" in args:
-        return search_by_writer(args["writer"])
+    elif "host" in args:
+        return search_by_writer(args["host"])
     return make_error_response(
         "At least one search parameter must be provided!",
         422

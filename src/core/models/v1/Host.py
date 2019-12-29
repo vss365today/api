@@ -2,7 +2,7 @@ from datetime import datetime
 from records import Record
 
 
-class Writer(dict):
+class Host(dict):
     def __init__(self, record: Record):
         self.id: str = record["uid"]
         self.handle: str = record["handle"]

@@ -11,7 +11,7 @@ from src.core.helpers import make_response, make_error_response
 # TODO This needs to be protected via @authorize_route
 @subscription.route("/", methods=["GET"])
 def get():
-    if (mailing_list := database.get_subscription_list()):  # noqa
+    if (mailing_list := database.subscription_list_get()):  # noqa
         return make_response(jsonify(mailing_list), 200)
     return make_error_response("Unable to get mailing list!", 503)
 
@@ -24,7 +24,7 @@ def get():
     )
 })
 def post(args: dict):
-    result: bool = database.create_subscription_email(args["email"])
+    result: bool = database.subscription_email_create(args["email"])
     if result:
         return make_response({}, 201)
     return make_error_response("Unable to add email to mailing list!", 503)
@@ -38,5 +38,5 @@ def post(args: dict):
     )
 })
 def delete(args: dict):
-    database.delete_subscription_email(args["email"])
+    database.subscription_email_delete(args["email"])
     return make_response({}, 204)
