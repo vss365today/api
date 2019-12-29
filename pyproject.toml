@@ -14,6 +14,7 @@ gunicorn = "19.9"
 pyjwt = "^1.7.1"
 records = "^0.5.3"
 pymysql = "^0.9.3"
+Flask-Cors = "^3.0.8"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.7.9"
