@@ -45,15 +45,36 @@ def browse_by_month(year: str, month: str) -> dict:
 def get(args: dict):
     # We always need a year
     if "year" not in args:
-        return make_error_response("A year must be provided!", 422)
+        return make_error_response(
+            "At the least, a prompt year must be provided!",
+            422
+        )
 
     # We also have a month, meaning we're browsing an individual month
     if "month" in args:
-        return browse_by_month(args["year"], args["month"])
+        month_data = browse_by_month(args["year"], args["month"])
+
+        # Error out if there's no data
+        if month_data["total"] != 0:
+            return month_data
+        else:
+            return make_error_response(
+                f"No prompts available for year-month {args['year']}-{args['month']}!",  # noqa
+                404
+            )
 
     # We only have a year, so we're browsing by year
     else:
-        return browse_by_year(args["year"])
+        year_results = browse_by_year(args["year"])
+
+        # Error out if there's no data
+        if year_results["total"] != 0:
+            return year_results
+        else:
+            return make_error_response(
+                f"No prompts available for year {args['year']}!",
+                404
+            )
 
 
 @browse.route("/years/", methods=["GET"])
