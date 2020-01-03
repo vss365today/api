@@ -106,7 +106,7 @@ def post(args: dict):
 def put(args: dict):
     # The prompt needs to exist first
     if not database.prompt_find_existing(args["tweet_id"]):
-        msg = "The prompt ID '{}' does not exist.".format(args["tweet_id"])
+        msg = "The prompt ID '{}' does not exist!".format(args["tweet_id"])
         return make_error_response(msg, 422)
 
     # Format the date in the proper format before writing
