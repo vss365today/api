@@ -80,9 +80,16 @@ def get(args: dict):
 def post(args: dict):
     # Format the date in the proper format before writing
     args["date"] = date_iso_format(args["date"])
-    result = database.prompt_create(args)
+
+    # Don't create a prompt if it already exists
+    if database.prompt_find_existing(args["tweet_id"]):
+        return make_error_response(
+            f"A prompt for {args['date']} already exists!",
+            422
+        )
 
     # Return the proper status depending on adding result
+    result = database.prompt_create(args)
     status_code = 201 if result else 422
     return make_response({}, status_code)
 
