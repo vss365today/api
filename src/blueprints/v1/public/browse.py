@@ -1,3 +1,4 @@
+import re
 from flask import jsonify
 
 from webargs import fields
@@ -39,7 +40,7 @@ def browse_by_month(year: str, month: str) -> dict:
     ),
     "month": fields.Str(
         location="query",
-        validate=lambda x: len(x) == 2
+        validate=lambda x: re.search(r"^(?:0?\d)|(?:\d{2})$", x) is not None
     )
 })
 def get(args: dict):
@@ -52,6 +53,10 @@ def get(args: dict):
 
     # We also have a month, meaning we're browsing an individual month
     if "month" in args:
+        # Handle the month coming in as single number
+        if len(args["month"]) == 1:
+            args["month"] = f"0{args['month']}"
+
         month_data = browse_by_month(args["year"], args["month"])
 
         # Error out if there's no data
