@@ -32,10 +32,7 @@ def prompt_tomorrow_exists(prompt: Prompt) -> Optional[str]:
 
 @prompt.route("/", methods=["GET"])
 @use_args({
-    "date": fields.DateTime(
-        "%Y-%m-%d",
-        location="query"
-    )
+    "date": fields.DateTime(location="query")
 })
 def get(args: dict):
     # We want the prompt from a particular day
@@ -78,11 +75,7 @@ def get(args: dict):
     "content": fields.Str(location="json", required=True),
     "word": fields.Str(location="json", required=True),
     "media": fields.Str(location="json", missing=None),
-    "date": fields.DateTime(
-        "%Y-%m-%d",
-        location="json",
-        required=True
-    )
+    "date": fields.DateTime(location="json", required=True)
 })
 def post(args: dict):
     # Format the date in the proper format before writing
@@ -101,11 +94,7 @@ def post(args: dict):
     "content": fields.Str(location="json", required=True),
     "word": fields.Str(location="json", required=True),
     "media": fields.Str(location="json", missing=None),
-    "date": fields.DateTime(
-        "%Y-%m-%d",
-        location="json",
-        required=True
-    )
+    "date": fields.DateTime(location="json", required=True)
 })
 def put(args: dict):
     # The prompt needs to exist first

@@ -43,11 +43,7 @@ def get(args: dict):
 
 @host.route("/date/", methods=["GET"])
 @use_args({
-    "date": fields.DateTime(
-        "%Y-%m",
-        location="query",
-        required=True
-    )
+    "date": fields.DateTime(location="query", required=True)
 })
 def get_date(args: dict):
     # We want the host for a given month
