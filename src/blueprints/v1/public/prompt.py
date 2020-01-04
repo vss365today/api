@@ -74,7 +74,7 @@ def get(args: dict):
     "uid": fields.Str(location="json", required=True),
     "content": fields.Str(location="json", required=True),
     "word": fields.Str(location="json", required=True),
-    "media": fields.Str(location="json", missing=None),
+    "media": fields.Str(location="json", missing=None, allow_none=True),
     "date": fields.DateTime(location="json", required=True)
 })
 def post(args: dict):
@@ -82,7 +82,7 @@ def post(args: dict):
     args["date"] = date_iso_format(args["date"])
 
     # Don't create a prompt if it already exists
-    if database.prompt_find_existing(args["tweet_id"]):
+    if database.prompt_find_existing(pid="", date=args["date"]):
         return make_error_response(
             f"A prompt for {args['date']} already exists!",
             422
@@ -100,12 +100,12 @@ def post(args: dict):
     "tweet_id": fields.Str(location="query", required=True),
     "content": fields.Str(location="json", required=True),
     "word": fields.Str(location="json", required=True),
-    "media": fields.Str(location="json", missing=None),
+    "media": fields.Str(location="json", missing=None, allow_none=True),
     "date": fields.DateTime(location="json", required=True)
 })
 def put(args: dict):
     # The prompt needs to exist first
-    if not database.prompt_find_existing(args["tweet_id"]):
+    if not database.prompt_find_existing(pid=args["tweet_id"], date=""):
         msg = "The prompt ID '{}' does not exist!".format(args["tweet_id"])
         return make_error_response(msg, 422)
 

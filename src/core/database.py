@@ -152,11 +152,16 @@ def prompt_update(prompt: Dict[str, Optional[str]]) -> None:
         db.query(sql, **prompt)
 
 
-def prompt_find_existing(prompt_id: str) -> bool:
+def prompt_find_existing(*, pid: str, date: str) -> bool:
     """Find an existing prompt."""
-    sql = "SELECT 1 FROM tweets WHERE tweet_id = :tweet_id"
+    sql = """SELECT 1
+    FROM tweets
+    WHERE (tweet_id = :tweet_id OR date = :date)"""
     with __connect_to_db() as db:
-        return bool(db.query(sql, **{"tweet_id": prompt_id}).first())
+        return bool(db.query(sql, **{
+            "tweet_id": pid,
+            "date": date
+        }).first())
 
 
 def prompt_get_latest() -> List[Prompt]:
