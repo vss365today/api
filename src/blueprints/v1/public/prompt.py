@@ -32,10 +32,7 @@ def prompt_tomorrow_exists(prompt: Prompt) -> Optional[str]:
 
 @prompt.route("/", methods=["GET"])
 @use_args({
-    "date": fields.DateTime(
-        "%Y-%m-%d",
-        location="query"
-    )
+    "date": fields.DateTime(location="query")
 })
 def get(args: dict):
     # We want the prompt from a particular day
@@ -73,23 +70,26 @@ def get(args: dict):
 # TODO This needs to be protected via @authorize_route
 @prompt.route("/", methods=["POST"])
 @use_args({
-    "tweet_id": fields.Str(location="json", required=True),
+    "id": fields.Str(location="json", required=True),
     "uid": fields.Str(location="json", required=True),
     "content": fields.Str(location="json", required=True),
     "word": fields.Str(location="json", required=True),
-    "media": fields.Str(location="json", missing=None),
-    "date": fields.DateTime(
-        "%Y-%m-%d",
-        location="json",
-        required=True
-    )
+    "media": fields.Str(location="json", missing=None, allow_none=True),
+    "date": fields.DateTime(location="json", required=True)
 })
 def post(args: dict):
     # Format the date in the proper format before writing
     args["date"] = date_iso_format(args["date"])
-    result = database.prompt_create(args)
+
+    # Don't create a prompt if it already exists
+    if database.prompt_find_existing(pid="", date=args["date"]):
+        return make_error_response(
+            f"A prompt for {args['date']} already exists!",
+            422
+        )
 
     # Return the proper status depending on adding result
+    result = database.prompt_create(args)
     status_code = 201 if result else 422
     return make_response({}, status_code)
 
@@ -97,20 +97,16 @@ def post(args: dict):
 # TODO This needs to be protected via @authorize_route
 @prompt.route("/", methods=["PUT"])
 @use_args({
-    "tweet_id": fields.Str(location="query", required=True),
+    "id": fields.Str(location="query", required=True),
     "content": fields.Str(location="json", required=True),
     "word": fields.Str(location="json", required=True),
-    "media": fields.Str(location="json", missing=None),
-    "date": fields.DateTime(
-        "%Y-%m-%d",
-        location="json",
-        required=True
-    )
+    "media": fields.Str(location="json", missing=None, allow_none=True),
+    "date": fields.DateTime(location="json", required=True)
 })
 def put(args: dict):
     # The prompt needs to exist first
-    if not database.prompt_find_existing(args["tweet_id"]):
-        msg = "The prompt ID '{}' does not exist.".format(args["tweet_id"])
+    if not database.prompt_find_existing(pid=args["id"], date=""):
+        msg = "The prompt ID '{}' does not exist!".format(args["id"])
         return make_error_response(msg, 422)
 
     # Format the date in the proper format before writing
@@ -121,10 +117,10 @@ def put(args: dict):
 
 @prompt.route("/", methods=["DELETE"])
 @use_args({
-    "tweet_id": fields.Str(location="query", required=True)
+    "id": fields.Str(location="query", required=True)
 })
 def delete(args: dict):
     # Going to mimic SQL's behavior and pretend we deleted something
     # even if we really didn't
-    database.prompt_delete(args["tweet_id"])
+    database.prompt_delete(args["id"])
     return make_response({}, 204)
