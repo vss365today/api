@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from typing import Optional
 
 from flask import jsonify
@@ -16,16 +16,16 @@ from src.core.helpers import (
 from src.core.models.v1.Prompt import Prompt
 
 
-def prompt_yesterday_exists(prompt: Prompt) -> Optional[str]:
-    yesterday_date = date_iso_format(prompt.date - timedelta(1))
-    if database.prompts_get_by_date(yesterday_date):
+def prompt_yesterday_exists(prompt: Prompt) -> Optional[datetime]:
+    yesterday_date = prompt.date - timedelta(1)
+    if database.prompts_get_by_date(date_iso_format(yesterday_date)):
         return yesterday_date
     return None
 
 
-def prompt_tomorrow_exists(prompt: Prompt) -> Optional[str]:
-    tomorrow_date = date_iso_format(prompt.date + timedelta(1))
-    if database.prompts_get_by_date(tomorrow_date):
+def prompt_tomorrow_exists(prompt: Prompt) -> Optional[datetime]:
+    tomorrow_date = prompt.date + timedelta(1)
+    if database.prompts_get_by_date(date_iso_format(tomorrow_date)):
         return tomorrow_date
     return None
 
