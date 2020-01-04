@@ -114,7 +114,7 @@ def prompt_create(prompt: Dict[str, Optional[str]]) -> bool:
         tweet_id, date, uid, content, word, media
     )
     VALUES (
-        :tweet_id, :date, :uid, :content, :word, :media
+        :id, :date, :uid, :content, :word, :media
     )
     """
     try:
@@ -129,11 +129,11 @@ def prompt_create(prompt: Dict[str, Optional[str]]) -> bool:
         return False
 
 
-def prompt_delete(prompt_id: str) -> Literal[True]:
+def prompt_delete(pid: str) -> Literal[True]:
     """Delete an existing prompt."""
-    sql = "DELETE FROM tweets WHERE tweet_id = :tweet_id"
+    sql = "DELETE FROM tweets WHERE tweet_id = :id"
     with __connect_to_db() as db:
-        db.query(sql, **{"tweet_id": prompt_id})
+        db.query(sql, **{"id": pid})
     return True
 
 
@@ -146,7 +146,7 @@ def prompt_update(prompt: Dict[str, Optional[str]]) -> None:
         content = :content,
         word = :word,
         media =  :media
-    WHERE tweet_id = :tweet_id
+    WHERE tweet_id = :id
     """
     with __connect_to_db() as db:
         db.query(sql, **prompt)
