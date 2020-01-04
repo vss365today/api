@@ -1,9 +1,9 @@
 import filecmp
-import os.path
+import os
 import secrets
 import shutil
 from urllib import parse
-from typing import Optional
+from typing import Literal, Optional
 
 import requests
 
@@ -64,7 +64,7 @@ def media_download(url: str) -> dict:
 
     # Return the original and temp file name
     return {
-        "orginal": original_f_name,
+        "original": original_f_name,
         "temp": temp_f_name
     }
 
@@ -78,10 +78,17 @@ def media_file_name(url: str) -> Optional[str]:
 
 def media_move(details: dict) -> bool:
     current_path = os.path.join(CONFIG["IMAGES_DIR_TEMP"], details["temp"])
-    final_path = os.path.join(CONFIG["IMAGES_DIR"], details["orginal"])
+    final_path = os.path.join(CONFIG["IMAGES_DIR"], details["final"])
     shutil.move(current_path, final_path)
     return os.path.isfile(final_path)
 
 
-def media_remove(f_name: str):
-    pass
+def media_remove(pid: str) -> Literal[True]:
+    f_name = [
+        f
+        for f in os.listdir(CONFIG["IMAGES_DIR"])
+        if f.startswith(pid)
+    ]
+    if len(f_name) == 1:
+        os.remove(os.path.join(CONFIG["IMAGES_DIR"], f_name[0]))
+    return True

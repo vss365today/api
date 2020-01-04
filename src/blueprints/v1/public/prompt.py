@@ -76,7 +76,10 @@ def get(args: dict):
 def post(args: dict):
     # Extract the media URL
     media_url = args["media"]
-    args["media"] = helpers.media_file_name(args["media"])
+    args["media"] = "{id}-{media}".format(
+        id=args["id"],
+        media=helpers.media_file_name(args["media"])
+    )
 
     # Format the date in the proper format before writing
     args["date"] = helpers.date_iso_format(args["date"])
@@ -94,9 +97,12 @@ def post(args: dict):
     # Download the given media
     media_result = True
     if args["media"] is not None:
-        media_result = helpers.media_move(
-            helpers.media_download(media_url)
+        media_names = helpers.media_download(media_url)
+        media_names["final"] = "{id}-{original}".format(
+            id=args["id"],
+            original=media_names["original"]
         )
+        media_result = helpers.media_move(media_names)
 
     # Return the proper status depending on adding result
     status_code = 201 if db_result and media_result else 422
@@ -129,7 +135,8 @@ def put(args: dict):
     "id": fields.Str(location="query", required=True)
 })
 def delete(args: dict):
-    # Going to mimic SQL's behavior and pretend we deleted something
-    # even if we really didn't
+    # Going to mimic SQL's behavior and pretend
+    # we deleted somethin even if we didn't
+    helpers.media_remove(args["id"])
     database.prompt_delete(args["id"])
     return helpers.make_response({}, 204)
