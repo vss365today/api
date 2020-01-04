@@ -8,24 +8,20 @@ from webargs.flaskparser import use_args
 
 from src.blueprints import prompt
 from src.core import database
-from src.core.helpers import (
-    date_iso_format,
-    make_response,
-    make_error_response
-)
+from src.core import helpers
 from src.core.models.v1.Prompt import Prompt
 
 
 def prompt_yesterday_exists(prompt: Prompt) -> Optional[datetime]:
     yesterday_date = prompt.date - timedelta(1)
-    if database.prompts_get_by_date(date_iso_format(yesterday_date)):
+    if database.prompts_get_by_date(helpers.date_iso_format(yesterday_date)):
         return yesterday_date
     return None
 
 
 def prompt_tomorrow_exists(prompt: Prompt) -> Optional[datetime]:
     tomorrow_date = prompt.date + timedelta(1)
-    if database.prompts_get_by_date(date_iso_format(tomorrow_date)):
+    if database.prompts_get_by_date(helpers.date_iso_format(tomorrow_date)):
         return tomorrow_date
     return None
 
@@ -38,7 +34,7 @@ def get(args: dict):
     # We want the prompt from a particular day
     if "date" in args:
         # Format the date in the proper format before fetching
-        date = date_iso_format(args["date"])
+        date = helpers.date_iso_format(args["date"])
 
         # If we have a prompt, return it
         prompts = database.prompts_get_by_date(date, date_range=False)
@@ -55,7 +51,7 @@ def get(args: dict):
 
         # A prompt for that date doesn't exisd
         else:
-            return make_error_response(
+            return helpers.make_error_response(
                 f"No prompt exists for date {date}!",
                 404
             )
@@ -79,11 +75,11 @@ def get(args: dict):
 })
 def post(args: dict):
     # Format the date in the proper format before writing
-    args["date"] = date_iso_format(args["date"])
+    args["date"] = helpers.date_iso_format(args["date"])
 
     # Don't create a prompt if it already exists
     if database.prompt_find_existing(pid="", date=args["date"]):
-        return make_error_response(
+        return helpers.make_error_response(
             f"A prompt for {args['date']} already exists!",
             422
         )
@@ -91,7 +87,7 @@ def post(args: dict):
     # Return the proper status depending on adding result
     result = database.prompt_create(args)
     status_code = 201 if result else 422
-    return make_response({}, status_code)
+    return helpers.make_response({}, status_code)
 
 
 # TODO This needs to be protected via @authorize_route
@@ -107,12 +103,12 @@ def put(args: dict):
     # The prompt needs to exist first
     if not database.prompt_find_existing(pid=args["id"], date=""):
         msg = "The prompt ID '{}' does not exist!".format(args["id"])
-        return make_error_response(msg, 422)
+        return helpers.make_error_response(msg, 422)
 
     # Format the date in the proper format before writing
-    args["date"] = date_iso_format(args["date"])
+    args["date"] = helpers.date_iso_format(args["date"])
     database.prompt_update(args)
-    return make_response({}, 204)
+    return helpers.make_response({}, 204)
 
 
 @prompt.route("/", methods=["DELETE"])
@@ -123,4 +119,4 @@ def delete(args: dict):
     # Going to mimic SQL's behavior and pretend we deleted something
     # even if we really didn't
     database.prompt_delete(args["id"])
-    return make_response({}, 204)
+    return helpers.make_response({}, 204)
