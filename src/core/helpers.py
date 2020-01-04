@@ -18,7 +18,8 @@ __all__ = [
     "media_download",
     "media_file_name",
     "media_move",
-    "media_remove"
+    "media_remove",
+    "media_saved_name"
 ]
 
 
@@ -44,7 +45,7 @@ def media_compare(current: str, new: str) -> bool:
     return filecmp.cmp(current_path, new_path)
 
 
-def media_download(id: str, url: str) -> dict:
+def media_download(pid: str, url: str) -> dict:
     # Generate a random file name for the download
     original_f_name = media_file_name(url)
     temp_f_name = "{name}{ext}".format(
@@ -58,7 +59,6 @@ def media_download(id: str, url: str) -> dict:
         os.path.abspath(CONFIG["IMAGES_DIR_TEMP"]),
         temp_f_name
     )
-
     with open(dl_path, "wb") as f:
         f.write(r.content)
 
@@ -66,10 +66,7 @@ def media_download(id: str, url: str) -> dict:
     return {
         "original": original_f_name,
         "temp": temp_f_name,
-        "final": "{id}-{original}".format(
-            id=id,
-            original=original_f_name
-        )
+        "final": media_saved_name(pid, url)
     }
 
 
@@ -81,6 +78,7 @@ def media_file_name(url: str) -> Optional[str]:
 
 
 def media_move(details: dict) -> bool:
+    """Move a media file from the temporary directory to final location."""
     current_path = os.path.join(CONFIG["IMAGES_DIR_TEMP"], details["temp"])
     final_path = os.path.join(CONFIG["IMAGES_DIR"], details["final"])
     shutil.move(current_path, final_path)
@@ -88,6 +86,7 @@ def media_move(details: dict) -> bool:
 
 
 def media_remove(pid: str) -> Literal[True]:
+    """Delete a media file."""
     f_name = [
         f
         for f in os.listdir(CONFIG["IMAGES_DIR"])
@@ -96,3 +95,11 @@ def media_remove(pid: str) -> Literal[True]:
     if len(f_name) == 1:
         os.remove(os.path.join(CONFIG["IMAGES_DIR"], f_name[0]))
     return True
+
+
+def media_saved_name(pid: str, url: str) -> str:
+    """Generate the media's saved file name."""
+    return "{id}-{original}".format(
+        id=pid,
+        original=media_file_name(url)
+    )

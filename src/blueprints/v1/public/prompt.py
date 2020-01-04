@@ -74,13 +74,6 @@ def get(args: dict):
     "date": fields.DateTime(location="json", required=True)
 })
 def post(args: dict):
-    # Extract the media URL
-    media_url = args["media"]
-    args["media"] = "{id}-{media}".format(
-        id=args["id"],
-        media=helpers.media_file_name(args["media"])
-    )
-
     # Format the date in the proper format before writing
     args["date"] = helpers.date_iso_format(args["date"])
 
@@ -91,15 +84,19 @@ def post(args: dict):
             422
         )
 
-    # Write the prormpt to the database
-    db_result = database.prompt_create(args)
-
     # Download the given media
     media_result = True
     if args["media"] is not None:
+        media_url = args["media"]
         media_result = helpers.media_move(
             helpers.media_download(args["id"], media_url)
         )
+
+        # Extract the media URL
+        args["media"] = helpers.media_saved_name(args["id"], media_url)
+
+    # Write the prompt to the database
+    db_result = database.prompt_create(args)
 
     # Return the proper status depending on adding result
     status_code = 201 if db_result and media_result else 422
@@ -110,10 +107,11 @@ def post(args: dict):
 @prompt.route("/", methods=["PUT"])
 @use_args({
     "id": fields.Str(location="query", required=True),
-    "content": fields.Str(location="json", required=True),
+    "date": fields.DateTime(location="json", required=True),
     "word": fields.Str(location="json", required=True),
+    "content": fields.Str(location="json", required=True),
     "media": fields.Str(location="json", missing=None, allow_none=True),
-    "date": fields.DateTime(location="json", required=True)
+    "media_replace": fields.Bool(location="json", required=False)
 })
 def put(args: dict):
     # The prompt needs to exist first
@@ -121,14 +119,31 @@ def put(args: dict):
         msg = "The prompt ID '{}' does not exist!".format(args["id"])
         return helpers.make_error_response(msg, 422)
 
-    # Format the date in the proper format before writing
-    args["date"] = helpers.date_iso_format(args["date"])
-    database.prompt_update(args)
-
     # If media is set to nothing, we want to delete it
-    if args["media"] is not None:
+    if args["media"] is None:
         helpers.media_remove(args["id"])
 
+    # We want to replace the existng media
+    elif args["media"] is not None and args["media_replace"]:
+        # Start by deleting the old media
+        helpers.media_remove(args["id"])
+
+        # Download the new media
+        # We're assuming that, by virtue of a true replacement flag,
+        # the media string is a URL
+        helpers.media_move(
+            helpers.media_download(args["id"], args["media"])
+        )
+
+        # Set the new media file name. It's not likely to be different
+        # but better safe than sorry here
+        args["media"] = helpers.media_saved_name(args["id"], args["media"])
+
+    # Format the date in the proper format
+    args["date"] = helpers.date_iso_format(args["date"])
+
+    # Finally, save all this to the database
+    database.prompt_update(args)
     return helpers.make_response({}, 204)
 
 
