@@ -74,6 +74,10 @@ def get(args: dict):
     "date": fields.DateTime(location="json", required=True)
 })
 def post(args: dict):
+    # Extract the media URL
+    media_url = args["media"]
+    args["media"] = helpers.media_file_name(args["media"])
+
     # Format the date in the proper format before writing
     args["date"] = helpers.date_iso_format(args["date"])
 
@@ -84,9 +88,18 @@ def post(args: dict):
             422
         )
 
+    # Write the prormpt to the database
+    db_result = database.prompt_create(args)
+
+    # Download the given media
+    media_result = True
+    if args["media"] is not None:
+        media_result = helpers.media_move(
+            helpers.media_download(media_url)
+        )
+
     # Return the proper status depending on adding result
-    result = database.prompt_create(args)
-    status_code = 201 if result else 422
+    status_code = 201 if db_result and media_result else 422
     return helpers.make_response({}, status_code)
 
 
