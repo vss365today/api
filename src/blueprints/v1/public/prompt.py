@@ -97,12 +97,9 @@ def post(args: dict):
     # Download the given media
     media_result = True
     if args["media"] is not None:
-        media_names = helpers.media_download(media_url)
-        media_names["final"] = "{id}-{original}".format(
-            id=args["id"],
-            original=media_names["original"]
+        media_result = helpers.media_move(
+            helpers.media_download(args["id"], media_url)
         )
-        media_result = helpers.media_move(media_names)
 
     # Return the proper status depending on adding result
     status_code = 201 if db_result and media_result else 422

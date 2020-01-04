@@ -44,7 +44,7 @@ def media_compare(current: str, new: str) -> bool:
     return filecmp.cmp(current_path, new_path)
 
 
-def media_download(url: str) -> dict:
+def media_download(id: str, url: str) -> dict:
     # Generate a random file name for the download
     original_f_name = media_file_name(url)
     temp_f_name = "{name}{ext}".format(
@@ -65,7 +65,11 @@ def media_download(url: str) -> dict:
     # Return the original and temp file name
     return {
         "original": original_f_name,
-        "temp": temp_f_name
+        "temp": temp_f_name,
+        "final": "{id}-{original}".format(
+            id=id,
+            original=original_f_name
+        )
     }
 
 
