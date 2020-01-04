@@ -1,4 +1,3 @@
-import filecmp
 import os
 import secrets
 import shutil
@@ -14,7 +13,6 @@ __all__ = [
     "date_iso_format",
     "make_response",
     "make_error_response",
-    "media_compare",
     "media_download",
     "media_file_name",
     "media_move",
@@ -36,13 +34,6 @@ def make_response(data: dict, status: int) -> tuple:
 
 def make_error_response(msg: str, status: int) -> tuple:
     return make_response({"error_msg": msg}, status)
-
-
-def media_compare(current: str, new: str) -> bool:
-    # Generate paths to the two files and compare them
-    current_path = os.path.join(CONFIG["IMAGES_DIR"], current)
-    new_path = os.path.join(CONFIG["IMAGES_DIR_TEMP"], new)
-    return filecmp.cmp(current_path, new_path)
 
 
 def media_download(pid: str, url: str) -> dict:
