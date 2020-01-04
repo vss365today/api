@@ -124,6 +124,11 @@ def put(args: dict):
     # Format the date in the proper format before writing
     args["date"] = helpers.date_iso_format(args["date"])
     database.prompt_update(args)
+
+    # If media is set to nothing, we want to delete it
+    if args["media"] is not None:
+        helpers.media_remove(args["id"])
+
     return helpers.make_response({}, 204)
 
 
