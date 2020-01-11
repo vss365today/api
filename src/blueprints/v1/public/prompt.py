@@ -8,24 +8,20 @@ from webargs.flaskparser import use_args
 
 from src.blueprints import prompt
 from src.core import database
-from src.core.helpers import (
-    date_iso_format,
-    make_response,
-    make_error_response
-)
+from src.core import helpers
 from src.core.models.v1.Prompt import Prompt
 
 
 def prompt_yesterday_exists(prompt: Prompt) -> Optional[datetime]:
     yesterday_date = prompt.date - timedelta(1)
-    if database.prompts_get_by_date(date_iso_format(yesterday_date)):
+    if database.prompts_get_by_date(helpers.date_iso_format(yesterday_date)):
         return yesterday_date
     return None
 
 
 def prompt_tomorrow_exists(prompt: Prompt) -> Optional[datetime]:
     tomorrow_date = prompt.date + timedelta(1)
-    if database.prompts_get_by_date(date_iso_format(tomorrow_date)):
+    if database.prompts_get_by_date(helpers.date_iso_format(tomorrow_date)):
         return tomorrow_date
     return None
 
@@ -38,7 +34,7 @@ def get(args: dict):
     # We want the prompt from a particular day
     if "date" in args:
         # Format the date in the proper format before fetching
-        date = date_iso_format(args["date"])
+        date = helpers.date_iso_format(args["date"])
 
         # If we have a prompt, return it
         prompts = database.prompts_get_by_date(date, date_range=False)
@@ -55,7 +51,7 @@ def get(args: dict):
 
         # A prompt for that date doesn't exisd
         else:
-            return make_error_response(
+            return helpers.make_error_response(
                 f"No prompt exists for date {date}!",
                 404
             )
@@ -79,40 +75,76 @@ def get(args: dict):
 })
 def post(args: dict):
     # Format the date in the proper format before writing
-    args["date"] = date_iso_format(args["date"])
+    args["date"] = helpers.date_iso_format(args["date"])
 
     # Don't create a prompt if it already exists
     if database.prompt_find_existing(pid="", date=args["date"]):
-        return make_error_response(
+        return helpers.make_error_response(
             f"A prompt for {args['date']} already exists!",
             422
         )
 
+    # Download the given media
+    media_result = True
+    if args["media"] is not None:
+        media_url = args["media"]
+        media_result = helpers.media_move(
+            helpers.media_download(args["id"], media_url)
+        )
+
+        # Extract the media URL
+        args["media"] = helpers.media_saved_name(args["id"], media_url)
+
+    # Write the prompt to the database
+    db_result = database.prompt_create(args)
+
     # Return the proper status depending on adding result
-    result = database.prompt_create(args)
-    status_code = 201 if result else 422
-    return make_response({}, status_code)
+    status_code = 201 if db_result and media_result else 422
+    return helpers.make_response({}, status_code)
 
 
 # TODO This needs to be protected via @authorize_route
 @prompt.route("/", methods=["PUT"])
 @use_args({
     "id": fields.Str(location="query", required=True),
-    "content": fields.Str(location="json", required=True),
+    "date": fields.DateTime(location="json", required=True),
     "word": fields.Str(location="json", required=True),
+    "content": fields.Str(location="json", required=True),
     "media": fields.Str(location="json", missing=None, allow_none=True),
-    "date": fields.DateTime(location="json", required=True)
+    "media_replace": fields.Bool(location="json", required=False)
 })
 def put(args: dict):
     # The prompt needs to exist first
     if not database.prompt_find_existing(pid=args["id"], date=""):
         msg = "The prompt ID '{}' does not exist!".format(args["id"])
-        return make_error_response(msg, 422)
+        return helpers.make_error_response(msg, 422)
 
-    # Format the date in the proper format before writing
-    args["date"] = date_iso_format(args["date"])
+    # If media is set to nothing, we want to delete it
+    if args["media"] is None:
+        helpers.media_remove(args["id"])
+
+    # We want to replace the existng media
+    elif args["media"] is not None and args["media_replace"]:
+        # Start by deleting the old media
+        helpers.media_remove(args["id"])
+
+        # Download the new media
+        # We're assuming that, by virtue of a true replacement flag,
+        # the media string is a URL
+        helpers.media_move(
+            helpers.media_download(args["id"], args["media"])
+        )
+
+        # Set the new media file name. It's not likely to be different
+        # but better safe than sorry here
+        args["media"] = helpers.media_saved_name(args["id"], args["media"])
+
+    # Format the date in the proper format
+    args["date"] = helpers.date_iso_format(args["date"])
+
+    # Finally, save all this to the database
     database.prompt_update(args)
-    return make_response({}, 204)
+    return helpers.make_response({}, 204)
 
 
 @prompt.route("/", methods=["DELETE"])
@@ -120,7 +152,8 @@ def put(args: dict):
     "id": fields.Str(location="query", required=True)
 })
 def delete(args: dict):
-    # Going to mimic SQL's behavior and pretend we deleted something
-    # even if we really didn't
+    # Going to mimic SQL's behavior and pretend
+    # we deleted somethin even if we didn't
+    helpers.media_remove(args["id"])
     database.prompt_delete(args["id"])
-    return make_response({}, 204)
+    return helpers.make_response({}, 204)
