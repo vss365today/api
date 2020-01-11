@@ -64,7 +64,15 @@ def media_download(pid: str, url: str) -> dict:
 def media_file_name(url: str) -> Optional[str]:
     """Extract the media file name from its URL."""
     if url is not None:
-        return parse.urlsplit(url).path.split("/")[2]
+        # Extract the media filename from the URL
+        name = parse.urlsplit(url).path.split("/")[2]
+
+        # If there's a colon in the filename,
+        # it means there's an image size tag.
+        # We want to remove this from the filename
+        if ":" in name:
+            name = name[:name.find(":")]
+        return name
     return None
 
 
