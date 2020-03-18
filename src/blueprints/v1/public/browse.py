@@ -62,11 +62,10 @@ def get(args: dict):
         # Error out if there's no data
         if month_data["total"] != 0:
             return month_data
-        else:
-            return make_error_response(
-                f"No prompts available for year-month {args['year']}-{args['month']}!",  # noqa
-                404
-            )
+        return make_error_response(
+            f"No prompts available for year-month {args['year']}-{args['month']}!",  # noqa
+            404
+        )
 
     # We only have a year, so we're browsing by year
     else:
@@ -75,11 +74,10 @@ def get(args: dict):
         # Error out if there's no data
         if year_results["total"] != 0:
             return year_results
-        else:
-            return make_error_response(
-                f"No prompts available for year {args['year']}!",
-                404
-            )
+        return make_error_response(
+            f"No prompts available for year {args['year']}!",
+            404
+        )
 
 
 @browse.route("/years/", methods=["GET"])

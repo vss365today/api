@@ -2,7 +2,7 @@ import os
 import secrets
 import shutil
 from urllib import parse
-from typing import Literal, Optional
+from typing import Dict, Literal, Optional, Tuple
 
 import requests
 
@@ -28,15 +28,15 @@ def date_iso_format(dt) -> str:
     return dt.strftime("%Y-%m-%d")
 
 
-def make_response(data: dict, status: int) -> tuple:
+def make_response(data: dict, status: int) -> Tuple[dict, int]:
     return (data, status)
 
 
-def make_error_response(msg: str, status: int) -> tuple:
+def make_error_response(msg: str, status: int) -> Tuple[Dict[str, str], int]:
     return make_response({"error_msg": msg}, status)
 
 
-def media_download(pid: str, url: str) -> dict:
+def media_download(pid: str, url: str) -> Dict[str, str]:
     # Generate a random file name for the download
     original_f_name = media_file_name(url)
     temp_f_name = "{name}{ext}".format(
