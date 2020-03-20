@@ -7,7 +7,7 @@ license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.8"
-webargs = "^5.5.2"
+webargs = "^5.5.3"
 flask = "^1.1.1"
 python-dotenv = "^0.10.3"
 gunicorn = "19.9"
@@ -15,12 +15,13 @@ pyjwt = "^1.7.1"
 records = "^0.5.3"
 pymysql = "^0.9.3"
 Flask-Cors = "^3.0.8"
-requests = "^2.22.0"
+requests = "^2.23.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.7.9"
 mypy = "^0.740"
-autopep8 = "^1.4.4"
+autopep8 = "^1.5.0"
+toml = "^0.10.0"
 
 [build-system]
 requires = ["poetry>=0.12"]
