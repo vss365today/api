@@ -1,7 +1,7 @@
 from importlib import import_module
 import json
 from flask import Flask
-from werkzeug.contrib.fixers import ProxyFix
+from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.exceptions import HTTPException
 
 from src.blueprints import all_blueprints
