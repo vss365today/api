@@ -9,6 +9,7 @@ from webargs.flaskparser import use_args
 from src.blueprints import prompt
 from src.core import database
 from src.core import helpers
+from src.core.helpers import media
 from src.core.models.v1.Prompt import Prompt
 
 
@@ -86,12 +87,12 @@ def post(args: dict):
     media_result = True
     if args["media"] is not None:
         media_url = args["media"]
-        media_result = helpers.media_move(
-            helpers.media_download(args["id"], media_url)
+        media_result = media.move(
+            media.download(args["id"], media_url)
         )
 
         # Extract the media URL
-        args["media"] = helpers.media_saved_name(args["id"], media_url)
+        args["media"] = media.saved_name(args["id"], media_url)
 
     # Write the prompt to the database
     db_result = database.prompt_create(args)
@@ -119,23 +120,24 @@ def put(args: dict):
 
     # If media is set to nothing, we want to delete it
     if args["media"] is None:
-        helpers.media_remove(args["id"])
+        media.delete(args["id"])
 
     # We want to replace the existng media
     elif args["media"] is not None and args["media_replace"]:
         # Start by deleting the old media
-        helpers.media_remove(args["id"])
+        media.delete(args["id"])
 
         # Download the new media
         # We're assuming that, by virtue of a true replacement flag,
         # the media string is a URL
-        helpers.media_move(
-            helpers.media_download(args["id"], args["media"])
+        # TODO Validate the above statements
+        media.move(
+            media.download(args["id"], args["media"])
         )
 
         # Set the new media file name. It's not likely to be different
         # but better safe than sorry here
-        args["media"] = helpers.media_saved_name(args["id"], args["media"])
+        args["media"] = media.saved_name(args["id"], args["media"])
 
     # Format the date in the proper format
     args["date"] = helpers.date_iso_format(args["date"])
@@ -152,6 +154,6 @@ def put(args: dict):
 def delete(args: dict):
     # Going to mimic SQL's behavior and pretend
     # we deleted somethin even if we didn't
-    helpers.media_remove(args["id"])
+    media.delete(args["id"])
     database.prompt_delete(args["id"])
     return helpers.make_response({}, 204)
