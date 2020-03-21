@@ -12,15 +12,15 @@ from src.core import helpers
 from src.core.models.v1.Prompt import Prompt
 
 
-def prompt_yesterday_exists(prompt: Prompt) -> Optional[datetime]:
-    yesterday_date = prompt.date - timedelta(1)
+def prompt_yesterday_exists(given_prompt: Prompt) -> Optional[datetime]:
+    yesterday_date = given_prompt.date - timedelta(1)
     if database.prompts_get_by_date(helpers.date_iso_format(yesterday_date)):
         return yesterday_date
     return None
 
 
-def prompt_tomorrow_exists(prompt: Prompt) -> Optional[datetime]:
-    tomorrow_date = prompt.date + timedelta(1)
+def prompt_tomorrow_exists(given_prompt: Prompt) -> Optional[datetime]:
+    tomorrow_date = given_prompt.date + timedelta(1)
     if database.prompts_get_by_date(helpers.date_iso_format(tomorrow_date)):
         return tomorrow_date
     return None

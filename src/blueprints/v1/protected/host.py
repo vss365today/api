@@ -29,9 +29,9 @@ def get(args: dict):
         )
 
     # Get the host information
-    host = database.host_get(uid=args["id"], handle=args["handle"])
-    if host:
-        return make_response(jsonify(host), 200)
+    found_host = database.host_get(uid=args["id"], handle=args["handle"])
+    if found_host:
+        return make_response(jsonify(found_host), 200)
 
     # We don't have that host
     given_param = [(k, v) for k, v in args.items() if v][0]
@@ -47,9 +47,9 @@ def get(args: dict):
 })
 def get_date(args: dict):
     # We want the host for a given month
-    host = database.host_get_by_date(args["date"].strftime("%Y-%m"))
-    if host:
-        return make_response(jsonify(host), 200)
+    found_host = database.host_get_by_date(args["date"].strftime("%Y-%m"))
+    if found_host:
+        return make_response(jsonify(found_host), 200)
     return make_error_response("Unable to get Host details!", 404)
 
 
