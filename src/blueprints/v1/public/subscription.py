@@ -12,7 +12,7 @@ from src.core.helpers import make_response, make_error_response
 @subscription.route("/", methods=["GET"])
 def get():
     mailing_list = database.subscription_list_get()
-    if not mailing_list:
+    if mailing_list:
         return make_response(jsonify(mailing_list), 200)
     return make_error_response("Unable to get mailing list!", 503)
 

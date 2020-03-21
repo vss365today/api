@@ -48,7 +48,7 @@ def get(args: dict):
 def get_date(args: dict):
     # We want the host for a given month
     host = database.host_get_by_date(args["date"].strftime("%Y-%m"))
-    if not host:
+    if host:
         return make_response(jsonify(host), 200)
     return make_error_response("Unable to get Host details!", 404)
 
