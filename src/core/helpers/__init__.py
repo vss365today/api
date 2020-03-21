@@ -1,16 +1,11 @@
 from typing import Dict, Tuple
 
-from src.core.config import load_app_config
-
 
 __all__ = [
     "date_iso_format",
     "make_response",
     "make_error_response"
 ]
-
-
-CONFIG = load_app_config()
 
 
 def date_iso_format(dt) -> str:
