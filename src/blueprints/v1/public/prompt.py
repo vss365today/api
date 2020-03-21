@@ -36,25 +36,23 @@ def get(args: dict):
         # Format the date in the proper format before fetching
         date = helpers.date_iso_format(args["date"])
 
-        # If we have a prompt, return it
+        # A prompt for that date doesn't exist
         prompts = database.prompts_get_by_date(date, date_range=False)
-        if prompts:
-            # Find out if we have a prompt for tomorrow or yesterday
-            for day_prompt in prompts:
-                day_prompt["previous_day"] = prompt_yesterday_exists(
-                    day_prompt
-                )
-                day_prompt["next_day"] = prompt_tomorrow_exists(
-                    day_prompt
-                )
-            return jsonify(prompts)
-
-        # A prompt for that date doesn't exisd
-        else:
+        if not prompts:
             return helpers.make_error_response(
                 f"No prompt exists for date {date}!",
                 404
             )
+
+        # Find out if we have a prompt for tomorrow or yesterday
+        for day_prompt in prompts:
+            day_prompt["previous_day"] = prompt_yesterday_exists(
+                day_prompt
+            )
+            day_prompt["next_day"] = prompt_tomorrow_exists(
+                day_prompt
+            )
+        return jsonify(prompts)
 
     # Hitting the endpoint without a date returns the latest prompt
     latest_prompt = database.prompt_get_latest()[0]
