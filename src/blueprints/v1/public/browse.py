@@ -68,16 +68,15 @@ def get(args: dict):
         )
 
     # We only have a year, so we're browsing by year
-    else:
-        year_results = browse_by_year(args["year"])
+    year_results = browse_by_year(args["year"])
 
-        # Error out if there's no data
-        if year_results["total"] != 0:
-            return year_results
-        return make_error_response(
-            f"No prompts available for year {args['year']}!",
-            404
-        )
+    # Error out if there's no data
+    if year_results["total"] != 0:
+        return year_results
+    return make_error_response(
+        f"No prompts available for year {args['year']}!",
+        404
+    )
 
 
 @browse.route("/years/", methods=["GET"])
