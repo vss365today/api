@@ -9,6 +9,7 @@ __all__ = [
 
 
 def date_iso_format(dt) -> str:
+    """Give an ISO 8601 date string representation."""
     return dt.strftime("%Y-%m-%d")
 
 

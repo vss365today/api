@@ -31,6 +31,7 @@ def delete(prompt_id: str) -> Literal[True]:
 
 
 def download(prompt_id: str, url: str) -> Dict[str, str]:
+    """Download a Tweet's media."""
     # Generate a random file name for the download
     original_f_name = original_name(url)
     temp_f_name = "{name}{ext}".format(
