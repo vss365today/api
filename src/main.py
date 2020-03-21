@@ -1,7 +1,6 @@
 from importlib import import_module
 import json
 from flask import Flask
-from werkzeug.middleware.proxy_fix import ProxyFix
 from werkzeug.exceptions import HTTPException
 
 from src.blueprints import all_blueprints
@@ -10,8 +9,6 @@ from src.extensions import init_extensions
 
 def create_app():
     app = Flask(__name__)
-    # https://stackoverflow.com/a/45333882
-    app.wsgi_app = ProxyFix(app.wsgi_app)
     init_extensions(app)
 
     # Register the resources
