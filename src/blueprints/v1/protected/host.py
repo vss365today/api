@@ -43,7 +43,10 @@ def get(args: dict):
 
 @host.route("/date/", methods=["GET"])
 @use_args({
-    "date": fields.DateTime(location="query", required=True)
+    "date": fields.DateTime(
+        location="query",
+        required=True
+    )
 })
 def get_date(args: dict):
     # We want the host for a given month
@@ -55,6 +58,10 @@ def get_date(args: dict):
 
 @host.route("/", methods=["POST"])
 @use_args({
+    "id": fields.Str(
+        location="json",
+        required=True
+    ),
     "handle": fields.Str(
         location="json",
         required=True
@@ -66,7 +73,6 @@ def get_date(args: dict):
 })
 def post(args: dict):
     # TODO Create a single host with all their details
-    # TODO Need to pull Twitter API to get the uid from handle
     result = True
     if result:
         return make_response({}, 201)
