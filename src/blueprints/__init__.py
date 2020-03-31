@@ -49,5 +49,9 @@ host = _factory(
     "host", "/host", "v1",
     True, fake_authorize
 )
+broadcast = _factory(
+    "broadcast", "/broadcast", "v1",
+    True, fake_authorize
+)
 
-all_blueprints = (browse, prompt, search, subscription, host)
+all_blueprints = (browse, host, prompt, search, subscription)
