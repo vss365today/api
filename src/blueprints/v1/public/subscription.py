@@ -19,12 +19,7 @@ def get():
 
 
 @subscription.route("/", methods=["POST"])
-@use_args({
-    "email": fields.Email(
-        location="query",
-        required=True
-    )
-})
+@use_args({"email": fields.Email(required=True)}, location="query")
 def post(args: dict):
     """Add an email to the mailing list."""
     result = database.subscription_email_create(args["email"])
@@ -34,12 +29,7 @@ def post(args: dict):
 
 
 @subscription.route("/", methods=["DELETE"])
-@use_args({
-    "email": fields.Email(
-        location="query",
-        required=True
-    )
-})
+@use_args({"email": fields.Email(required=True)}, location="query")
 def delete(args: dict):
     """Remove an email from the mailing list."""
     database.subscription_email_delete(args["email"])

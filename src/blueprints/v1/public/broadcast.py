@@ -10,9 +10,7 @@ from src.core.helpers import make_response, make_error_response
 
 # TODO This needs to be protected via @authorize_route
 @broadcast.route("/", methods=["POST"])
-@use_args({
-    "date": fields.DateTime(location="query")
-})
+@use_args({"date": fields.DateTime()}, location="query")
 def post(args: dict):
     """Trigger an email broadcast for the given day's prompt."""
     mailing_list = database.subscription_list_get()

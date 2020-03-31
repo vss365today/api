@@ -28,9 +28,7 @@ def prompt_tomorrow_exists(given_prompt: Prompt) -> Optional[datetime]:
 
 
 @prompt.route("/", methods=["GET"])
-@use_args({
-    "date": fields.DateTime(location="query")
-})
+@use_args({"date": fields.DateTime()}, location="query")
 def get(args: dict):
     # We want the prompt from a particular day
     if "date" in args:
@@ -65,13 +63,13 @@ def get(args: dict):
 # TODO This needs to be protected via @authorize_route
 @prompt.route("/", methods=["POST"])
 @use_args({
-    "id": fields.Str(location="json", required=True),
-    "uid": fields.Str(location="json", required=True),
-    "content": fields.Str(location="json", required=True),
-    "word": fields.Str(location="json", required=True),
-    "media": fields.Str(location="json", missing=None, allow_none=True),
-    "date": fields.DateTime(location="json", required=True)
-})
+    "id": fields.Str(required=True),
+    "uid": fields.Str(required=True),
+    "content": fields.Str(required=True),
+    "word": fields.Str(required=True),
+    "media": fields.Str(missing=None, allow_none=True),
+    "date": fields.DateTime(required=True)
+}, location="json")
 def post(args: dict):
     # Format the date in the proper format before writing
     args["date"] = helpers.date_iso_format(args["date"])
@@ -104,14 +102,14 @@ def post(args: dict):
 
 # TODO This needs to be protected via @authorize_route
 @prompt.route("/", methods=["PUT"])
+@use_args({"id": fields.Str(required=True)}, location="query")
 @use_args({
-    "id": fields.Str(location="query", required=True),
-    "date": fields.DateTime(location="json", required=True),
-    "word": fields.Str(location="json", required=True),
-    "content": fields.Str(location="json", required=True),
-    "media": fields.Str(location="json", missing=None, allow_none=True),
-    "media_replace": fields.Bool(location="json", required=False)
-})
+    "date": fields.DateTime(required=True),
+    "word": fields.Str(required=True),
+    "content": fields.Str(required=True),
+    "media": fields.Str(missing=None, allow_none=True),
+    "media_replace": fields.Bool(required=False)
+}, location="json")
 def put(args: dict):
     # The prompt needs to exist first
     if not database.prompt_find_existing(pid=args["id"], date=""):
@@ -148,9 +146,7 @@ def put(args: dict):
 
 
 @prompt.route("/", methods=["DELETE"])
-@use_args({
-    "id": fields.Str(location="query", required=True)
-})
+@use_args({"id": fields.Str(required=True)}, location="query")
 def delete(args: dict):
     # Going to mimic SQL's behavior and pretend
     # we deleted somethin even if we didn't
