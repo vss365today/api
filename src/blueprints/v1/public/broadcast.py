@@ -1,5 +1,3 @@
-from flask import jsonify
-
 from webargs import fields
 from webargs.flaskparser import use_args
 
