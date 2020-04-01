@@ -110,7 +110,10 @@ def post(args: dict):
     "media": fields.Str(missing=None, allow_none=True),
     "media_replace": fields.Bool(required=False)
 }, location="json")
-def put(args: dict):
+def put(query_args: dict, json_args: dict):
+    # Merge the two args dicts into a single dict for easier use
+    args = {**query_args, **json_args}
+
     # The prompt needs to exist first
     if not database.prompt_find_existing(pid=args["id"], date=""):
         msg = "The prompt ID '{}' does not exist!".format(args["id"])
