@@ -114,7 +114,7 @@ def put(args: dict):
     # The prompt needs to exist first
     if not database.prompt_find_existing(pid=args["id"], date=""):
         msg = "The prompt ID '{}' does not exist!".format(args["id"])
-        return helpers.make_error_response(msg, 422)
+        return helpers.make_error_response(msg, 404)
 
     # If media is set to nothing, we want to delete it
     if args["media"] is None:
