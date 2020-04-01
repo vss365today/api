@@ -8,15 +8,9 @@ from src.core.helpers import make_response, make_error_response
 
 @account.route("/", methods=["POST"])
 @use_args({
-    "user": fields.Str(
-        location="json",
-        required=True
-    ),
-    "password": fields.Str(
-        location="json",
-        required=True
-    )
-})
+    "user": fields.Str(required=True),
+    "password": fields.Str(required=True)
+}, location="json")
 def post(args: dict):
     """Do a user 'sign in'.
 

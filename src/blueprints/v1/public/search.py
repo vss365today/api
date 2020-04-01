@@ -43,14 +43,12 @@ def search_by_writer(handle: str) -> dict:
 @search.route("/", methods=["GET"])
 @use_args({
     "prompt": fields.Str(
-        location="query",
         validate=lambda x: len(x) > 1
     ),
     "host": fields.Str(
-        location="query",
         validate=lambda x: len(x) > 1
     )
-})
+}, location="query")
 def get(args: dict):
     # Both parameters were provided, and that is not supporte
     if len(args) > 1:

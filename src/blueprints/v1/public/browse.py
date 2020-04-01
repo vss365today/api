@@ -35,14 +35,12 @@ def browse_by_month(year: str, month: str) -> dict:
 @browse.route("/", methods=["GET"])
 @use_args({
     "year": fields.Str(
-        location="query",
         validate=lambda x: len(x) == 4
     ),
     "month": fields.Str(
-        location="query",
         validate=lambda x: re.search(r"^(?:0?\d)|(?:\d{2})$", x) is not None
     )
-})
+}, location="query")
 def get(args: dict):
     # We always need a year
     if "year" not in args:

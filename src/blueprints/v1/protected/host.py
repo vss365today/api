@@ -10,9 +10,9 @@ from src.core.helpers import make_response, make_error_response
 
 @host.route("/", methods=["GET"])
 @use_args({
-    "id": fields.Str(location="query", missing=""),
-    "handle": fields.Str(location="query", missing="")
-})
+    "id": fields.Str(missing=""),
+    "handle": fields.Str(missing="")
+}, location="query")
 def get(args: dict):
     # We need something to search by
     if not args["id"] and not args["handle"]:
@@ -42,12 +42,7 @@ def get(args: dict):
 
 
 @host.route("/date/", methods=["GET"])
-@use_args({
-    "date": fields.DateTime(
-        location="query",
-        required=True
-    )
-})
+@use_args({"date": fields.DateTime(required=True)}, location="query")
 def get_date(args: dict):
     # We want the host for a given month
     found_host = database.host_get_by_date(args["date"].strftime("%Y-%m"))
@@ -58,19 +53,10 @@ def get_date(args: dict):
 
 @host.route("/", methods=["POST"])
 @use_args({
-    "id": fields.Str(
-        location="json",
-        required=True
-    ),
-    "handle": fields.Str(
-        location="json",
-        required=True
-    ),
-    "date": fields.DateTime(
-        location="json",
-        required=True
-    )
-})
+    "id": fields.Str(required=True),
+    "handle": fields.Str(required=True),
+    "date": fields.DateTime(required=True)
+}, location="json")
 def post(args: dict):
     # TODO Create a single host with all their details
     result = True
