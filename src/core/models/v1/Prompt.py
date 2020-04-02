@@ -7,9 +7,7 @@ class Prompt(dict):
     def __init__(self, record: Record) -> None:
         self.id: str = record["tweet_id"]
         self.date: datetime = datetime(
-            record["date"].year,
-            record["date"].month,
-            record["date"].day
+            record["date"].year, record["date"].month, record["date"].day
         )
         self.content: str = record["content"]
         self.word: str = record["word"]

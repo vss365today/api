@@ -25,7 +25,7 @@ __all__ = [
     "prompts_get_by_host",
     "host_get",
     "host_get_by_date",
-    "hosts_get_by_year"
+    "hosts_get_by_year",
 ]
 
 
@@ -35,7 +35,7 @@ def __connect_to_db() -> records.Database:
         current_app.config["DB_USERNAME"],
         current_app.config["DB_PASSWORD"],
         current_app.config["DB_HOST"],
-        current_app.config["DB_DBNAME"]
+        current_app.config["DB_DBNAME"],
     )
     conn = records.Database(conn_str)
     return conn
@@ -82,10 +82,7 @@ def admin_user_get(user: str, password: str) -> Optional[records.Record]:
     WHERE username = :user AND password = :password
     """
     with __connect_to_db() as db:
-        user_record = db.query(
-            sql,
-            **{"user": user, "password": password}
-        ).first()
+        user_record = db.query(sql, **{"user": user, "password": password}).first()
     if not user_record:
         return None
 
@@ -158,10 +155,7 @@ def prompt_find_existing(*, pid: str, date: str) -> bool:
     FROM tweets
     WHERE (tweet_id = :tweet_id OR date = :date)"""
     with __connect_to_db() as db:
-        return bool(db.query(sql, **{
-            "tweet_id": pid,
-            "date": date
-        }).first())
+        return bool(db.query(sql, **{"tweet_id": pid, "date": date}).first())
 
 
 def prompt_get_latest() -> List[Prompt]:
@@ -200,17 +194,10 @@ def prompt_search(word: str) -> List[Prompt]:
     ORDER BY UPPER(word)
     """
     with __connect_to_db() as db:
-        return [
-            Prompt(record)
-            for record in db.query(sql, **{"word": word})
-        ]
+        return [Prompt(record) for record in db.query(sql, **{"word": word})]
 
 
-def prompts_get_by_date(
-    date: str,
-    *,
-    date_range: bool = False
-) -> List[Prompt]:
+def prompts_get_by_date(date: str, *, date_range: bool = False) -> List[Prompt]:
     """Get prompts by a single date or in a date range."""
     # Base query info
     sql = """
@@ -232,10 +219,7 @@ def prompts_get_by_date(
 
     # Finally perform the query
     with __connect_to_db() as db:
-        return [
-            Prompt(record)
-            for record in db.query(sql, **{"date": date})
-        ]
+        return [Prompt(record) for record in db.query(sql, **{"date": date})]
 
 
 def prompts_get_by_host(handle: str) -> List[Prompt]:
@@ -248,10 +232,7 @@ def prompts_get_by_host(handle: str) -> List[Prompt]:
         AND writers.handle = :handle
     """
     with __connect_to_db() as db:
-        return [
-            Prompt(record)
-            for record in db.query(sql, **{"handle": handle})
-        ]
+        return [Prompt(record) for record in db.query(sql, **{"handle": handle})]
 
 
 def host_get(*, uid: str, handle: str) -> Optional[List[Host]]:
@@ -266,10 +247,7 @@ def host_get(*, uid: str, handle: str) -> Optional[List[Host]]:
     ORDER BY date DESC
     """
     with __connect_to_db() as db:
-        return [
-            Host(host)
-            for host in db.query(sql, **{"uid": uid, "handle": handle})
-        ]
+        return [Host(host) for host in db.query(sql, **{"uid": uid, "handle": handle})]
 
 
 def host_get_by_date(date: str) -> List[Host]:
@@ -281,10 +259,7 @@ def host_get_by_date(date: str) -> List[Host]:
     WHERE writer_dates.date = STR_TO_DATE(CONCAT(:date, '-01'), '%Y-%m-%d')
     """
     with __connect_to_db() as db:
-        return [
-            Host(host)
-            for host in db.query(sql, **{"date": date})
-        ]
+        return [Host(host) for host in db.query(sql, **{"date": date})]
 
 
 def hosts_get_by_year(year: str) -> List[Host]:
@@ -299,7 +274,4 @@ def hosts_get_by_year(year: str) -> List[Host]:
     ORDER BY writer_dates.date ASC
     """
     with __connect_to_db() as db:
-        return [
-            Host(host)
-            for host in db.query(sql, **{"year": year})
-        ]
+        return [Host(host) for host in db.query(sql, **{"year": year})]

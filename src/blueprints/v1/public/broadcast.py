@@ -17,6 +17,5 @@ def post(args: dict):
 
     # We couldn't send the broadcast :(
     return make_error_response(
-        f"Unable to send email broadcast for date {args['date']}!",
-        503
+        f"Unable to send email broadcast for date {args['date']}!", 503
     )

@@ -7,9 +7,7 @@ class Host(dict):
         self.id: str = record["uid"]
         self.handle: str = record["handle"]
         self.date: datetime = datetime(
-            record["date"].year,
-            record["date"].month,
-            record["date"].day
+            record["date"].year, record["date"].month, record["date"].day
         )
 
         # Make the class JSON serializable

@@ -10,21 +10,22 @@ def _factory(
     url_prefix: str,
     api_version: str,
     protected: bool = False,
-    auth_function: Optional[Callable] = None
+    auth_function: Optional[Callable] = None,
 ) -> Blueprint:
     # Build out the module import path
     endpoint_folder = "protected" if protected else "public"
     import_name = [
-        "src", "blueprints", api_version,
-        endpoint_folder, partial_module_string
+        "src",
+        "blueprints",
+        api_version,
+        endpoint_folder,
+        partial_module_string,
     ]
     import_path: str = ".".join(import_name)
 
     # Actually create the blueprint
     blueprint = Blueprint(
-        partial_module_string,
-        import_path,
-        url_prefix=f"/{api_version}{url_prefix}"
+        partial_module_string, import_path, url_prefix=f"/{api_version}{url_prefix}"
     )
 
     # This endpoint is not to be publicly used
@@ -45,13 +46,7 @@ browse = _factory("browse", "/browse", "v1")
 prompt = _factory("prompt", "/prompt", "v1")
 search = _factory("search", "/search", "v1")
 subscription = _factory("subscription", "/subscription", "v1")
-host = _factory(
-    "host", "/host", "v1",
-    True, fake_authorize
-)
-broadcast = _factory(
-    "broadcast", "/broadcast", "v1",
-    True, fake_authorize
-)
+host = _factory("host", "/host", "v1", True, fake_authorize)
+broadcast = _factory("broadcast", "/broadcast", "v1", True, fake_authorize)
 
 all_blueprints = (browse, host, prompt, search, subscription)

@@ -39,18 +39,13 @@ def get(args: dict):
         prompts = database.prompts_get_by_date(date, date_range=False)
         if not prompts:
             return helpers.make_error_response(
-                f"No prompt exists for date {date}!",
-                404
+                f"No prompt exists for date {date}!", 404
             )
 
         # Find out if we have a prompt for tomorrow or yesterday
         for day_prompt in prompts:
-            day_prompt["previous_day"] = prompt_yesterday_exists(
-                day_prompt
-            )
-            day_prompt["next_day"] = prompt_tomorrow_exists(
-                day_prompt
-            )
+            day_prompt["previous_day"] = prompt_yesterday_exists(day_prompt)
+            day_prompt["next_day"] = prompt_tomorrow_exists(day_prompt)
         return jsonify(prompts)
 
     # Hitting the endpoint without a date returns the latest prompt
@@ -62,14 +57,17 @@ def get(args: dict):
 
 # TODO This needs to be protected via @authorize_route
 @prompt.route("/", methods=["POST"])
-@use_args({
-    "id": fields.Str(required=True),
-    "uid": fields.Str(required=True),
-    "content": fields.Str(required=True),
-    "word": fields.Str(required=True),
-    "media": fields.Str(missing=None, allow_none=True),
-    "date": fields.DateTime(required=True)
-}, location="json")
+@use_args(
+    {
+        "id": fields.Str(required=True),
+        "uid": fields.Str(required=True),
+        "content": fields.Str(required=True),
+        "word": fields.Str(required=True),
+        "media": fields.Str(missing=None, allow_none=True),
+        "date": fields.DateTime(required=True),
+    },
+    location="json",
+)
 def post(args: dict):
     # Format the date in the proper format before writing
     args["date"] = helpers.date_iso_format(args["date"])
@@ -77,17 +75,14 @@ def post(args: dict):
     # Don't create a prompt if it already exists
     if database.prompt_find_existing(pid="", date=args["date"]):
         return helpers.make_error_response(
-            f"A prompt for {args['date']} already exists!",
-            422
+            f"A prompt for {args['date']} already exists!", 422
         )
 
     # Download the given media
     media_result = True
     if args["media"] is not None:
         media_url = args["media"]
-        media_result = media.move(
-            media.download(args["id"], media_url)
-        )
+        media_result = media.move(media.download(args["id"], media_url))
 
         # Extract the media URL
         args["media"] = media.saved_name(args["id"], media_url)
@@ -103,13 +98,16 @@ def post(args: dict):
 # TODO This needs to be protected via @authorize_route
 @prompt.route("/", methods=["PUT"])
 @use_args({"id": fields.Str(required=True)}, location="query")
-@use_args({
-    "date": fields.DateTime(required=True),
-    "word": fields.Str(required=True),
-    "content": fields.Str(required=True),
-    "media": fields.Str(missing=None, allow_none=True),
-    "media_replace": fields.Bool(required=False)
-}, location="json")
+@use_args(
+    {
+        "date": fields.DateTime(required=True),
+        "word": fields.Str(required=True),
+        "content": fields.Str(required=True),
+        "media": fields.Str(missing=None, allow_none=True),
+        "media_replace": fields.Bool(required=False),
+    },
+    location="json",
+)
 def put(query_args: dict, json_args: dict):
     # Merge the two args dicts into a single dict for easier use
     args = {**query_args, **json_args}
@@ -132,9 +130,7 @@ def put(query_args: dict, json_args: dict):
         # We're assuming that, by virtue of a true replacement flag,
         # the media string is a URL
         # TODO Validate the above statements
-        media.move(
-            media.download(args["id"], args["media"])
-        )
+        media.move(media.download(args["id"], args["media"]))
 
         # Set the new media file name. It's not likely to be different
         # but better safe than sorry here

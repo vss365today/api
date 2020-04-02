@@ -12,11 +12,7 @@ from src.core.helpers import make_error_response
 def browse_by_year(year: str) -> dict:
     year = year.strip()
     hosts: list = database.hosts_get_by_year(year)
-    return {
-        "query": year,
-        "hosts": hosts,
-        "total": len(hosts)
-    }
+    return {"query": year, "hosts": hosts, "total": len(hosts)}
 
 
 def browse_by_month(year: str, month: str) -> dict:
@@ -25,29 +21,23 @@ def browse_by_month(year: str, month: str) -> dict:
     date: str = f"{year}-{month}"
     hosts = database.host_get_by_date(date)
     prompts = database.prompts_get_by_date(date, date_range=True)
-    return {
-        "hosts": hosts,
-        "prompts": prompts,
-        "total": len(prompts)
-    }
+    return {"hosts": hosts, "prompts": prompts, "total": len(prompts)}
 
 
 @browse.route("/", methods=["GET"])
-@use_args({
-    "year": fields.Str(
-        validate=lambda x: len(x) == 4
-    ),
-    "month": fields.Str(
-        validate=lambda x: re.search(r"^(?:0?\d)|(?:\d{2})$", x) is not None
-    )
-}, location="query")
+@use_args(
+    {
+        "year": fields.Str(validate=lambda x: len(x) == 4),
+        "month": fields.Str(
+            validate=lambda x: re.search(r"^(?:0?\d)|(?:\d{2})$", x) is not None
+        ),
+    },
+    location="query",
+)
 def get(args: dict):
     # We always need a year
     if "year" not in args:
-        return make_error_response(
-            "At the least, a prompt year must be provided!",
-            422
-        )
+        return make_error_response("At the least, a prompt year must be provided!", 422)
 
     # We also have a month, meaning we're browsing an individual month
     if "month" in args:
@@ -62,7 +52,7 @@ def get(args: dict):
             return month_data
         return make_error_response(
             f"No prompts available for year-month {args['year']}-{args['month']}!",  # noqa
-            404
+            404,
         )
 
     # We only have a year, so we're browsing by year
@@ -71,10 +61,7 @@ def get(args: dict):
     # Error out if there's no data
     if year_results["total"] != 0:
         return year_results
-    return make_error_response(
-        f"No prompts available for year {args['year']}!",
-        404
-    )
+    return make_error_response(f"No prompts available for year {args['year']}!", 404)
 
 
 @browse.route("/years/", methods=["GET"])

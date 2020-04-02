@@ -7,12 +7,7 @@ import requests
 
 from src.core.config import load_app_config
 
-__all__ = [
-    "delete",
-    "download",
-    "move",
-    "saved_name"
-]
+__all__ = ["delete", "download", "move", "saved_name"]
 
 
 CONFIG = load_app_config()
@@ -35,8 +30,7 @@ def download(prompt_id: str, url: str) -> Dict[str, str]:
     # Generate a random file name for the download
     original_f_name = original_name(url)
     temp_f_name = "{name}{ext}".format(
-        name=secrets.token_hex(12),
-        ext=PurePath(original_f_name).suffix
+        name=secrets.token_hex(12), ext=PurePath(original_f_name).suffix
     )
 
     # Download the media to a temp directory
@@ -48,7 +42,7 @@ def download(prompt_id: str, url: str) -> Dict[str, str]:
     return {
         "original": original_f_name,
         "temp": temp_f_name,
-        "final": saved_name(prompt_id, url)
+        "final": saved_name(prompt_id, url),
     }
 
 
@@ -69,13 +63,10 @@ def original_name(url: str) -> str:
     # it means there's an image size tag.
     # We want to remove this from the filename
     if ":" in name:
-        name = name[:name.find(":")]
+        name = name[: name.find(":")]
     return name
 
 
 def saved_name(prompt_id: str, url: str) -> str:
     """Generate the media's saved file name."""
-    return "{id}-{original}".format(
-        id=prompt_id,
-        original=original_name(url)
-    )
+    return "{id}-{original}".format(id=prompt_id, original=original_name(url))

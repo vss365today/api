@@ -40,10 +40,12 @@ def authorize_route(func):
     This decorator is useful when a single endpoint
     needs to be protected but not the entire blueprint.
     """
+
     @functools.wraps(func)
     def wrap(*args, **kwargs):
         authorize_endpoints()
         return func(*args, **kwargs)
+
     return wrap
 
 

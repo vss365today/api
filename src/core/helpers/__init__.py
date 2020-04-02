@@ -1,11 +1,7 @@
 from typing import Dict, Tuple
 
 
-__all__ = [
-    "date_iso_format",
-    "make_response",
-    "make_error_response"
-]
+__all__ = ["date_iso_format", "make_response", "make_error_response"]
 
 
 def date_iso_format(dt) -> str:

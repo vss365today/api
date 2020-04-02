@@ -13,7 +13,7 @@ def get_package(package_info: dict) -> str:
         package_tag = package_info["source"]["url"]
 
         # Trim off the app root path
-        package_tag = package_tag[package_tag.find("/") + 1:]
+        package_tag = package_tag[package_tag.find("/") + 1 :]
     return package_tag
 
 

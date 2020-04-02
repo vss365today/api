@@ -9,17 +9,10 @@ from src.core.helpers import make_error_response
 def __build_search_response(prompts: list) -> dict:
     """Collect just the info needed to display the results."""
     results: list = [
-        {
-            "date": prompt.date,
-            "word": prompt.word,
-            "writer": prompt.writer_handle
-        }
+        {"date": prompt.date, "word": prompt.word, "writer": prompt.writer_handle}
         for prompt in prompts
     ]
-    return {
-        "prompts": results,
-        "total": len(results)
-    }
+    return {"prompts": results, "total": len(results)}
 
 
 def search_by_prompt(prompt: str) -> dict:
@@ -41,27 +34,20 @@ def search_by_writer(handle: str) -> dict:
 
 
 @search.route("/", methods=["GET"])
-@use_args({
-    "prompt": fields.Str(
-        validate=lambda x: len(x) > 1
-    ),
-    "host": fields.Str(
-        validate=lambda x: len(x) > 1
-    )
-}, location="query")
+@use_args(
+    {
+        "prompt": fields.Str(validate=lambda x: len(x) > 1),
+        "host": fields.Str(validate=lambda x: len(x) > 1),
+    },
+    location="query",
+)
 def get(args: dict):
     # Both parameters were provided, and that is not supporte
     if len(args) > 1:
-        return make_error_response(
-            "Only one search parameter can be provided!",
-            422
-        )
+        return make_error_response("Only one search parameter can be provided!", 422)
 
     if "prompt" in args:
         return search_by_prompt(args["prompt"])
     if "host" in args:
         return search_by_writer(args["host"])
-    return make_error_response(
-        "At least one search parameter must be provided!",
-        422
-    )
+    return make_error_response("At least one search parameter must be provided!", 422)
