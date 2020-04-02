@@ -47,6 +47,5 @@ prompt = _factory("prompt", "/prompt", "v1")
 search = _factory("search", "/search", "v1")
 subscription = _factory("subscription", "/subscription", "v1")
 host = _factory("host", "/host", "v1", True, fake_authorize)
-broadcast = _factory("broadcast", "/broadcast", "v1", True, fake_authorize)
 
 all_blueprints = (browse, host, prompt, search, subscription)
