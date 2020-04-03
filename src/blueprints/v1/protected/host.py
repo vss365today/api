@@ -26,7 +26,7 @@ def get(args: dict):
     # Get the host information
     found_host = database.host_get(uid=args["id"], handle=args["handle"])
     if found_host:
-        return make_response(jsonify(found_host), 200)
+        return make_response(200, jsonify(found_host))
 
     # We don't have that host
     given_param = [(k, v) for k, v in args.items() if v][0]
@@ -41,7 +41,7 @@ def get_date(args: dict):
     # We want the host for a given month
     found_host = database.host_get_by_date(args["date"].strftime("%Y-%m"))
     if found_host:
-        return make_response(jsonify(found_host), 200)
+        return make_response(200, jsonify(found_host))
     return make_error_response("Unable to get Host details!", 404)
 
 
@@ -58,5 +58,5 @@ def post(args: dict):
     # TODO Create a single host with all their details
     result = True
     if result:
-        return make_response({}, 201)
+        return make_response(201)
     return make_error_response("Unable to create a new Host!", 503)

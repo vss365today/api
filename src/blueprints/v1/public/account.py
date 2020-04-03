@@ -19,5 +19,5 @@ def post(args: dict):
     """
     user = admin_user_get(args["user"].strip(), args["password"].strip())
     if user is not None:
-        return make_response(dict(user), 200)
+        return make_response(200, dict(user))
     return make_error_response("The username or password is incorrect!", 401)

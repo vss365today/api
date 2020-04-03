@@ -95,7 +95,7 @@ def post(args: dict):
 
     # Return the proper status depending on adding result
     status_code = 201 if db_result and media_result else 422
-    return helpers.make_response({}, status_code)
+    return helpers.make_response(status_code)
 
 
 # TODO This needs to be protected via @authorize_route
@@ -144,7 +144,7 @@ def put(query_args: dict, json_args: dict):
 
     # Finally, save all this to the database
     database.prompt_update(args)
-    return helpers.make_response({}, 204)
+    return helpers.make_response(204)
 
 
 @prompt.route("/", methods=["DELETE"])
@@ -154,4 +154,4 @@ def delete(args: dict):
     # we deleted somethin even if we didn't
     media.delete(args["id"])
     database.prompt_delete(args["id"])
-    return helpers.make_response({}, 204)
+    return helpers.make_response(204)
