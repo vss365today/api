@@ -62,7 +62,7 @@ def broadcast(args: dict):
     # Render out the email template once
     email_content = email.render("email", **prompt[0])
 
-    # Send out the email
+    # Send out the emails
     # TODO Impl some send rate limiting
     for email_addr in mailing_list:
         email_msg = email.construct(
