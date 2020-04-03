@@ -5,7 +5,7 @@ from webargs.flaskparser import use_args
 
 from src.blueprints import subscription
 from src.core import database
-from src.core.helpers import date_iso_format, make_response, make_error_response
+from src.core.helpers import format_datetime_iso, make_response, make_error_response
 
 
 # TODO This needs to be protected via @authorize_route
@@ -42,7 +42,7 @@ def delete(args: dict):
 def broadcast(args: dict):
     """Trigger an email broadcast for the given day's prompt."""
     # Put the date in the proper format
-    date = date_iso_format(args["date"])
+    date = format_datetime_iso(args["date"])
 
     # A prompt for that date doesn't exist
     prompt = database.prompts_get_by_date(date, date_range=False)
