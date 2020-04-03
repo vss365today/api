@@ -36,7 +36,7 @@ def send(email: Dict[str, str]) -> bool:
     """Send out a completed email."""
     # If email sending is not configured, just pretend the email
     # sent out correctly instead of making the caller handle the special case
-    if not current_app.config["ENABLE_EMAIL_SENDING"]:
+    if current_app.config["ENABLE_EMAIL_SENDING"] == "false":
         return True
 
     # Attempt to send out the email
