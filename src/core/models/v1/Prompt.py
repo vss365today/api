@@ -19,3 +19,6 @@ class Prompt(dict):
 
         # Make the class JSON serializable
         super().__init__(self.__dict__)
+
+    def __str__(self):
+        return f"https://twitter.com/{self.writer_handle}/status/{self.id}"
