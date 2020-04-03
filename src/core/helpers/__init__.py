@@ -23,5 +23,5 @@ def make_response(status: int, data: dict = {}) -> Tuple[dict, int]:
     return (data, status)
 
 
-def make_error_response(msg: str, status: int) -> Tuple[Dict[str, str], int]:
+def make_error_response(status: int, msg: str) -> Tuple[Dict[str, str], int]:
     return make_response(status, {"error_msg": msg})

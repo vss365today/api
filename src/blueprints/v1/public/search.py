@@ -44,10 +44,10 @@ def search_by_writer(handle: str) -> dict:
 def get(args: dict):
     # Both parameters were provided, and that is not supporte
     if len(args) > 1:
-        return make_error_response("Only one search parameter can be provided!", 422)
+        return make_error_response(422, "Only one search parameter can be provided!")
 
     if "prompt" in args:
         return search_by_prompt(args["prompt"])
     if "host" in args:
         return search_by_writer(args["host"])
-    return make_error_response("At least one search parameter must be provided!", 422)
+    return make_error_response(422, "At least one search parameter must be provided!")

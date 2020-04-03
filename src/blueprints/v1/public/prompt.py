@@ -39,7 +39,7 @@ def get(args: dict):
         prompts = database.prompts_get_by_date(date, date_range=False)
         if not prompts:
             return helpers.make_error_response(
-                f"No prompt exists for date {date}!", 404
+                404, f"No prompt exists for date {date}!"
             )
 
         # Find out if we have a prompt for tomorrow or yesterday
@@ -78,7 +78,7 @@ def post(args: dict):
     # Don't create a prompt if it already exists
     if database.prompt_find_existing(pid="", date=args["date"]):
         return helpers.make_error_response(
-            f"A prompt for {args['date']} already exists!", 422
+            422, f"A prompt for {args['date']} already exists!"
         )
 
     # Download the given media
@@ -118,7 +118,7 @@ def put(query_args: dict, json_args: dict):
     # The prompt needs to exist first
     if not database.prompt_find_existing(pid=args["id"], date=""):
         msg = "The prompt ID '{}' does not exist!".format(args["id"])
-        return helpers.make_error_response(msg, 404)
+        return helpers.make_error_response(404, msg)
 
     # If media is set to nothing, we want to delete it
     if args["media"] is None:

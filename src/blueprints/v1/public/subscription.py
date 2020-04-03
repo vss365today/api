@@ -14,7 +14,7 @@ def get():
     mailing_list = database.subscription_list_get()
     if mailing_list:
         return helpers.make_response(200, jsonify(mailing_list))
-    return helpers.make_error_response("Unable to get mailing list!", 503)
+    return helpers.make_error_response(503, "Unable to get mailing list!")
 
 
 @subscription.route("/", methods=["POST"])
@@ -24,7 +24,7 @@ def post(args: dict):
     result = database.subscription_email_create(args["email"])
     if result:
         return helpers.make_response(201)
-    return helpers.make_error_response("Unable to add email to mailing list!", 503)
+    return helpers.make_error_response(503, "Unable to add email to mailing list!")
 
 
 @subscription.route("/", methods=["DELETE"])
@@ -47,7 +47,7 @@ def broadcast(args: dict):
     prompt = database.prompts_get_by_date(date, date_range=False)
     if not prompt:
         return helpers.make_error_response(
-            f"Unable to send out email broadcast for the {date} prompt!", 503
+            503, f"Unable to send out email broadcast for the {date} prompt!"
         )
 
     # Get the mailing list
@@ -56,7 +56,7 @@ def broadcast(args: dict):
     #  We couldn't get the mailing list
     if not mailing_list:
         return helpers.make_error_response(
-            f"Unable to send email broadcast for date {args['date']}!", 503
+            503, f"Unable to send email broadcast for date {args['date']}!"
         )
 
     # Render out the email template once
