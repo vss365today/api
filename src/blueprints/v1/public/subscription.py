@@ -4,8 +4,7 @@ from webargs import fields
 from webargs.flaskparser import use_args
 
 from src.blueprints import subscription
-from src.core import database
-from src.core.helpers import format_datetime_iso, make_response, make_error_response
+from src.core import database, email, helpers
 
 
 # TODO This needs to be protected via @authorize_route
@@ -14,8 +13,8 @@ def get():
     """Retrieve the entire mailing list."""
     mailing_list = database.subscription_list_get()
     if mailing_list:
-        return make_response(jsonify(mailing_list), 200)
-    return make_error_response("Unable to get mailing list!", 503)
+        return helpers.make_response(jsonify(mailing_list), 200)
+    return helpers.make_error_response("Unable to get mailing list!", 503)
 
 
 @subscription.route("/", methods=["POST"])
@@ -24,8 +23,8 @@ def post(args: dict):
     """Add an email to the mailing list."""
     result = database.subscription_email_create(args["email"])
     if result:
-        return make_response({}, 201)
-    return make_error_response("Unable to add email to mailing list!", 503)
+        return helpers.make_response({}, 201)
+    return helpers.make_error_response("Unable to add email to mailing list!", 503)
 
 
 @subscription.route("/", methods=["DELETE"])
@@ -33,7 +32,7 @@ def post(args: dict):
 def delete(args: dict):
     """Remove an email from the mailing list."""
     database.subscription_email_delete(args["email"])
-    return make_response({}, 204)
+    return helpers.make_response({}, 204)
 
 
 # TODO This needs to be protected via @authorize_route
@@ -42,21 +41,34 @@ def delete(args: dict):
 def broadcast(args: dict):
     """Trigger an email broadcast for the given day's prompt."""
     # Put the date in the proper format
-    date = format_datetime_iso(args["date"])
+    date = helpers.format_datetime_iso(args["date"])
 
     # A prompt for that date doesn't exist
     prompt = database.prompts_get_by_date(date, date_range=False)
     if not prompt:
-        return make_error_response(
-            f"Unable to send out email broadcast for the {date} prompt!", 404
+        return helpers.make_error_response(
+            f"Unable to send out email broadcast for the {date} prompt!", 503
         )
 
     # Get the mailing list
     mailing_list = database.subscription_list_get()
-    if mailing_list:
-        return make_response({}, 201)
 
-    # We couldn't send the broadcast :(
-    return make_error_response(
-        f"Unable to send email broadcast for date {args['date']}!", 503
-    )
+    #  We couldn't get the mailing list
+    if not mailing_list:
+        return helpers.make_error_response(
+            f"Unable to send email broadcast for date {args['date']}!", 503
+        )
+
+    # Render out the email template once
+    email_content = email.render("email", **prompt[0])
+
+    # Send out the email
+    for email_addr in mailing_list:
+        email_msg = email.construct(
+            email_addr, helpers.format_datetime_pretty(prompt[0].date), email_content
+        )
+        email.send(email_msg)
+
+    # There's no easy way to tell if they all sent, so just pretend they did
+    # TODO No easy way until I add some number tracking, that is
+    return helpers.make_response({}, 200)
