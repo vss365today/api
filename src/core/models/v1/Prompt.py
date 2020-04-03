@@ -16,6 +16,7 @@ class Prompt(dict):
         self.writer_handle: str = record["writer_handle"]
         self.previous_day: Optional[str] = None
         self.next_day: Optional[str] = None
+        self.url: str = str(self)
 
         # Make the class JSON serializable
         super().__init__(self.__dict__)

@@ -14,7 +14,7 @@ def construct(email_addr: str, subject: str, content: dict) -> dict:
     return {
         "from": (
             f'{current_app.config["APP_NAME"]} '
-            f'<noreply@{current_app.config["APP_DOMAIN"]}>'
+            f'<noreply@{current_app.config["MG_DOMAIN"]}>'
         ),
         "to": email_addr,
         "subject": subject,
