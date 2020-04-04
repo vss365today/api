@@ -19,7 +19,9 @@ def format_datetime_pretty(date_obj: datetime) -> str:
     return date_obj.strftime("%B %d, %Y")
 
 
-def make_response(status: int, data: dict = {}) -> Tuple[dict, int]:
+def make_response(status: int, data: dict = None) -> Tuple[dict, int]:
+    if data is None:
+        data = {}
     return (data, status)
 
 
