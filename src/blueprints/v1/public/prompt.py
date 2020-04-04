@@ -3,6 +3,8 @@ from typing import Optional
 
 from flask import jsonify
 
+from urllib3.util import parse_url
+from urllib3.exceptions import LocationParseError
 from webargs import fields
 from webargs.flaskparser import use_args
 
@@ -25,6 +27,15 @@ def prompt_tomorrow_exists(given_prompt: Prompt) -> Optional[datetime]:
     if database.prompts_get_by_date(helpers.format_datetime_iso(tomorrow_date)):
         return tomorrow_date
     return None
+
+
+def __is_valid_url(url: str) -> bool:
+    """Attempt to determine if a URL is valid."""
+    try:
+        parse_url(url)
+        return True
+    except LocationParseError:
+        return False
 
 
 @prompt.route("/", methods=["GET"])
@@ -82,8 +93,8 @@ def post(args: dict):
         )
 
     # Download the given media
-    media_result = True
-    if args["media"] is not None:
+    media_result = False
+    if args["media"] is not None and __is_valid_url(args["media"]):
         media_url = args["media"]
         media_result = media.move(media.download(args["id"], media_url))
 
@@ -125,14 +136,15 @@ def put(query_args: dict, json_args: dict):
         media.delete(args["id"])
 
     # We want to replace the existng media
-    elif args["media"] is not None and args["media_replace"]:
+    elif (
+        args["media"] is not None
+        and __is_valid_url(args["media"])
+        and args["media_replace"]
+    ):
         # Start by deleting the old media
         media.delete(args["id"])
 
         # Download the new media
-        # We're assuming that, by virtue of a true replacement flag,
-        # the media string is a URL
-        # TODO Validate the above statements
         media.move(media.download(args["id"], args["media"]))
 
         # Set the new media file name. It's not likely to be different
