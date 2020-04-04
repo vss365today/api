@@ -9,6 +9,8 @@ Prompt by {{ writer_handle }}
 {{ url }}
 
 To get a definition, visit https://www.dictionary.com/browse/{{ word|lower }}
-To view in your browser, visit https://vss365today.com/view/{{ date.strftime("%Y-%m-%d") }}
+To view this email in your browser, visit https://vss365today.com/view/{{ date.strftime("%Y-%m-%d") }}
 To help support #vss365 today, visit https://vss365today.com/donate
 To unsubscribe, visit https://vss365today.com/unsubscribe
+To view our privacy policy, visit https://vss365today.com/privacy
+This email has been sent to %recipient.email%

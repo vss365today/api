@@ -62,13 +62,15 @@ def broadcast(args: dict):
     # Render out the email template once
     email_content = email.render("email", **prompt[0])
 
-    # Send out the emails
-    # TODO Impl some send rate limiting
-    for email_addr in mailing_list:
-        email_msg = email.construct(
-            email_addr, helpers.format_datetime_pretty(prompt[0].date), email_content
-        )
-        email.send(email_msg)
+    # Batch send out the emails
+    # NOTE: According to the MG docs,
+    # "The maximum number of recipients allowed for Batch Sending is 1,000."
+    # This code may need to be updated to support that,
+    # though hopefully that won't need to happen too soon
+    email_msgs = email.batch_construct(
+        mailing_list, helpers.format_datetime_pretty(prompt[0].date), email_content
+    )
+    email.send(email_msgs)
 
     # There's no easy way to tell if they all sent, so just pretend they did
     # TODO No easy way until I add some number tracking, that is

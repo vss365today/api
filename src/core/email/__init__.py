@@ -1,4 +1,5 @@
-from typing import Dict
+from json import dumps
+from typing import Dict, List
 
 import requests
 
@@ -6,7 +7,28 @@ from flask import current_app
 from flask import render_template
 
 
-__all__ = ["construct", "render", "send", "make_and_send"]
+__all__ = ["batch_construct", "construct", "render", "send", "make_and_send"]
+
+
+def batch_construct(mailing_list: List[str], subject: str, content: dict) -> dict:
+    """Construct a Mailgun email dictionary for batching sending.
+
+    https://documentation.mailgun.com/en/latest/user_manual.html#batch-sending
+    """
+    # Create a Recipient Variables dict to generate unique messages
+    rvs = {addr: {"email": addr} for addr in mailing_list}
+
+    return {
+        "from": (
+            f'{current_app.config["APP_NAME"]} '
+            f'<noreply@{current_app.config["MG_DOMAIN"]}>'
+        ),
+        "to": mailing_list,
+        "subject": subject,
+        "text": content["text"],
+        "html": content["html"],
+        "recipient-variables": dumps(rvs),
+    }
 
 
 def construct(email_addr: str, subject: str, content: dict) -> dict:
@@ -40,25 +62,25 @@ def send(email: Dict[str, str]) -> bool:
         return True
 
     # Attempt to send out the email
-    try:
-        r = requests.post(
-            f'https://api.mailgun.net/v3/{current_app.config["MG_DOMAIN"]}/messages',
-            auth=("api", current_app.config["MG_API_KEY"]),
-            data=email,
-        )
-        r.raise_for_status()
-        return True
+    # try:
+    r = requests.post(
+        f'https://api.mailgun.net/v3/{current_app.config["MG_DOMAIN"]}/messages',
+        auth=("api", current_app.config["MG_API_KEY"]),
+        data=email,
+    )
+    r.raise_for_status()
+    return True
 
     # Some error occurred while attempting to send the email
-    except requests.HTTPError as exc:
-        print(exc)
-    return False
+    # except requests.HTTPError as exc:
+    #     print(exc)
+    # return False
 
 
 def make_and_send(
     email_addr: str, subject: str, template_name: str, **render_opts: str
 ) -> bool:
-    """Convenience function to construct and send an email in one call."""
+    """Convenience function to construct and send a single email."""
     email_content = render(template_name, **render_opts)
     email_msg = construct(email_addr, subject, email_content)
     return send(email_msg)
