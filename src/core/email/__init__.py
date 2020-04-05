@@ -58,11 +58,10 @@ def send(email: Dict[str, str]) -> bool:
     """Send out a completed email."""
     # If email sending is not configured, just pretend the email
     # sent out correctly instead of making the caller handle the special case
-    if current_app.config["ENABLE_EMAIL_SENDING"] == "false":
+    if not current_app.config["ENABLE_EMAIL_SENDING"]:
         return True
 
     # Attempt to send out the email
-    # try:
     r = requests.post(
         f'https://api.mailgun.net/v3/{current_app.config["MG_DOMAIN"]}/messages',
         auth=("api", current_app.config["MG_API_KEY"]),
@@ -70,11 +69,6 @@ def send(email: Dict[str, str]) -> bool:
     )
     r.raise_for_status()
     return True
-
-    # Some error occurred while attempting to send the email
-    # except requests.HTTPError as exc:
-    #     print(exc)
-    # return False
 
 
 def make_and_send(

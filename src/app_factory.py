@@ -1,14 +1,24 @@
 from importlib import import_module
 import json
+
 from flask import Flask
 from werkzeug.exceptions import HTTPException
 
+import src.configuration as config
 from src.blueprints import all_blueprints
 from src.extensions import init_extensions
 
 
 def create_app():
     app = Flask(__name__)
+
+    # Load the app configuration
+    app.config.update(config.get_app_config("default.json"))
+    app.config.update(
+        config.get_app_config(config.get_app_config_file(app.config["ENV"]))
+    )
+
+    # Load the extensions
     init_extensions(app)
 
     # Register the resources

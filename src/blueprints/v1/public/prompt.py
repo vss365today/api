@@ -93,7 +93,7 @@ def post(args: dict):
         )
 
     # Download the given media
-    media_result = False
+    media_result = True
     if args["media"] is not None and __is_valid_url(args["media"]):
         media_url = args["media"]
         media_result = media.move(media.download(args["id"], media_url))

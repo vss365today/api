@@ -3,21 +3,17 @@ import secrets
 from typing import Dict, Literal
 from urllib import parse
 
+from flask import current_app
 import requests
 
-from src.core.config import load_app_config
-
 __all__ = ["delete", "download", "move", "saved_name"]
-
-
-CONFIG = load_app_config()
 
 
 def delete(prompt_id: str) -> Literal[True]:
     """Delete a media file."""
     f_name = [
         f
-        for f in Path(CONFIG["IMAGES_DIR"]).iterdir()
+        for f in Path(current_app.config["IMAGES_DIR"]).iterdir()
         if f.is_file() and f.name.startswith(prompt_id)
     ]
     if len(f_name) == 1:
@@ -35,7 +31,7 @@ def download(prompt_id: str, url: str) -> Dict[str, str]:
 
     # Download the media to a temp directory
     r = requests.get(url)
-    dl_path = Path(CONFIG["IMAGES_DIR_TEMP"]).resolve() / temp_f_name
+    dl_path = Path(current_app.config["IMAGES_DIR_TEMP"]).resolve() / temp_f_name
     dl_path.write_bytes(r.content)
 
     # Return the original and temp file name
@@ -48,8 +44,8 @@ def download(prompt_id: str, url: str) -> Dict[str, str]:
 
 def move(details: dict) -> bool:
     """Move a media file from the temporary directory to final location."""
-    current_path = Path(CONFIG["IMAGES_DIR_TEMP"]) / details["temp"]
-    final_path = Path(CONFIG["IMAGES_DIR"]) / details["final"]
+    current_path = Path(current_app.config["IMAGES_DIR_TEMP"]) / details["temp"]
+    final_path = Path(current_app.config["IMAGES_DIR"]) / details["final"]
     current_path.replace(final_path)
     return final_path.is_file()
 
