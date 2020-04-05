@@ -2,6 +2,7 @@ from pprint import pprint
 from time import sleep
 
 from flask import jsonify
+from flask import current_app
 
 from webargs import fields
 from webargs.flaskparser import use_args
@@ -62,17 +63,25 @@ def broadcast(args: dict):
             503, f"Unable to send email broadcast for date {args['date']}!"
         )
 
-    # Render out the email template once
-    email_content = email.render("email", **prompt[0])
+    r = email.make_and_send(
+        current_app.config["MG_MAILING_LIST_ADDR_DEV"],
+        helpers.format_datetime_pretty(prompt[0].date),
+        "email",
+        **prompt[0],
+    )
+    pprint(r)
 
-    for addr in mailing_list:
-        email_msg = email.construct(
-            addr, helpers.format_datetime_pretty(prompt[0].date), email_content
-        )
-        r = email.send(email_msg)
-        print("MG response")
-        pprint(r)
-        sleep(1)
+    # Render out the email template once
+    # email_content = email.render("email", **prompt[0])
+
+    # for addr in mailing_list:
+    #     email_msg = email.construct(
+    #         addr, helpers.format_datetime_pretty(prompt[0].date), email_content
+    #     )
+    #     r = email.send(email_msg)
+    #     print("MG response")
+    #     pprint(r)
+    #     sleep(1)
 
     # Batch send out the emails
     # NOTE: According to the MG docs,

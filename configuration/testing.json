@@ -1,3 +1,10 @@
 {
-  "appConfig": {}
+  "secrets": [
+    "MG_API_KEY",
+    "MG_DOMAIN",
+    "MG_MAILING_LIST_ADDR_DEV"
+  ],
+  "appConfig": {
+    "ENABLE_EMAIL_SENDING": true
+  }
 }
