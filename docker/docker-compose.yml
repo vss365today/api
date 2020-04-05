@@ -9,6 +9,9 @@ services:
       - ../:/app  # the base directory is one level above here
     ports:
       - 127.0.0.1:5000:5000
+    environment:
+      - FLASK_ENV=production
+      - DOCKER_SECRETS_PATH=/app/secrets
     entrypoint:
       - sh
       - ./run-app.sh
