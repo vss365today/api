@@ -1,14 +1,12 @@
 from pprint import pprint
-from time import sleep
 
-from flask import jsonify
-from flask import current_app
-
+from flask import current_app, jsonify
 from webargs import fields
 from webargs.flaskparser import use_args
 
 from src.blueprints import subscription
 from src.core import database, email, helpers
+from src.core.email import mailgun
 
 
 # TODO This needs to be protected via @authorize_route
@@ -25,8 +23,9 @@ def get():
 @use_args({"email": fields.Email(required=True)}, location="query")
 def post(args: dict):
     """Add an email to the mailing list."""
-    result = database.subscription_email_create(args["email"])
-    if result:
+    mailgun.subscription_email_create(args["email"])
+    db_result = database.subscription_email_create(args["email"])
+    if db_result:
         return helpers.make_response(201)
     return helpers.make_error_response(503, "Unable to add email to mailing list!")
 
@@ -35,6 +34,7 @@ def post(args: dict):
 @use_args({"email": fields.Email(required=True)}, location="query")
 def delete(args: dict):
     """Remove an email from the mailing list."""
+    mailgun.subscription_email_delete(args["email"])
     database.subscription_email_delete(args["email"])
     return helpers.make_response(204)
 
@@ -54,7 +54,8 @@ def broadcast(args: dict):
             503, f"Unable to send out email broadcast for the {date} prompt!"
         )
 
-    # Get the mailing list
+    # Get the mailing list from the local database
+    # We don't need to get it from MG bc we have a local copy still
     mailing_list = database.subscription_list_get()
 
     #  We couldn't get the mailing list
@@ -63,35 +64,23 @@ def broadcast(args: dict):
             503, f"Unable to send email broadcast for date {args['date']}!"
         )
 
+    # Construct the mailing list address. It is written this way
+    # because the development and production lists are different
+    # and we need to use the proper one depending on the env
+    mg_list_addr = f'{current_app.config["MG_MAILING_LIST_ADDR"]}@{current_app.config["MG_DOMAIN"]}'
+
+    # Send an email to the MG mailing list
+    # This helps us keep track of who is on the list at any given moment
+    # but also resolves a crazy amount of trouble
+    # when it comes to sending out a large amount of email messages
+    # https://documentation.mailgun.com/en/latest/api-mailinglists.html#examples
     r = email.make_and_send(
-        current_app.config["MG_MAILING_LIST_ADDR_DEV"],
+        mg_list_addr,
         helpers.format_datetime_pretty(prompt[0].date),
         "email",
         **prompt[0],
     )
     pprint(r)
-
-    # Render out the email template once
-    # email_content = email.render("email", **prompt[0])
-
-    # for addr in mailing_list:
-    #     email_msg = email.construct(
-    #         addr, helpers.format_datetime_pretty(prompt[0].date), email_content
-    #     )
-    #     r = email.send(email_msg)
-    #     print("MG response")
-    #     pprint(r)
-    #     sleep(1)
-
-    # Batch send out the emails
-    # NOTE: According to the MG docs,
-    # "The maximum number of recipients allowed for Batch Sending is 1,000."
-    # This code may need to be updated to support that,
-    # though hopefully that won't need to happen too soon
-    # email_msgs = email.batch_construct(
-    #     mailing_list, helpers.format_datetime_pretty(prompt[0].date), email_content
-    # )
-    # email.send(email_msgs)
 
     # There's no easy way to tell if they all sent, so just pretend they did
     # TODO No easy way until I add some number tracking, that is
