@@ -1,0 +1,19 @@
+{
+  "env": [],
+  "secrets": [
+    "SECRET_KEY",
+    "JWT_SECRET_KEY",
+    "DB_USERNAME",
+    "DB_PASSWORD"
+  ],
+  "appConfig": {
+    "APP_NAME": "#vss365 today",
+    "FLASK_APP": "wsgi.py",
+    "FLASK_SKIP_DOTENV": 1,
+    "DB_DBNAME": "vss365today",
+    "DB_HOST": "vss365today-db",
+    "IMAGES_DIR": "/app/prompt-images",
+    "IMAGES_DIR_TEMP": "/app/prompt-images/temp",
+    "ENABLE_EMAIL_SENDING": false
+  }
+}
