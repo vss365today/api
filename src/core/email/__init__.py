@@ -1,5 +1,6 @@
 from json import dumps
 from typing import Dict, List
+from src.core.email.EmailTemplate import EmailTemplate
 
 import requests
 
@@ -10,7 +11,9 @@ from flask import render_template
 __all__ = ["batch_construct", "construct", "render", "send", "make_and_send"]
 
 
-def batch_construct(mailing_list: List[str], subject: str, content: dict) -> dict:
+def batch_construct(
+    mailing_list: List[str], subject: str, content: EmailTemplate
+) -> dict:
     """Construct a Mailgun email dictionary for batching sending.
 
     https://documentation.mailgun.com/en/latest/user_manual.html#batch-sending
@@ -25,13 +28,13 @@ def batch_construct(mailing_list: List[str], subject: str, content: dict) -> dic
         ),
         "to": mailing_list,
         "subject": subject,
-        "text": content["text"],
-        "html": content["html"],
+        "text": content.text,
+        "html": content.html,
         "recipient-variables": dumps(rvs),
     }
 
 
-def construct(email_addr: str, subject: str, content: dict) -> dict:
+def construct(email_addr: str, subject: str, content: EmailTemplate) -> dict:
     """Construct a Mailgun email dictionary."""
     return {
         "from": (
@@ -40,18 +43,17 @@ def construct(email_addr: str, subject: str, content: dict) -> dict:
         ),
         "to": email_addr,
         "subject": subject,
-        "text": content["text"],
-        "html": content["html"],
+        "text": content.text,
+        "html": content.html,
     }
 
 
-def render(template_name: str, **render_opts: str) -> Dict[str, str]:
-    """Render a email template with all info."""
-    rendered = {
-        "html": render_template(f"emails/{template_name}.jinja2", **render_opts),
-        "text": render_template(f"emails/{template_name}.txt", **render_opts),
-    }
-    return rendered
+def render(template_name: str, **render_opts: str) -> EmailTemplate:
+    """Render a email template with text and HTML sections."""
+    return EmailTemplate(
+        render_template(f"emails/{template_name}.txt", **render_opts),
+        render_template(f"emails/{template_name}.jinja2", **render_opts),
+    )
 
 
 def send(email: Dict[str, str]) -> bool:
