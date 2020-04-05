@@ -20,6 +20,7 @@ def create_app():
 
     # Load the extensions
     init_extensions(app)
+
     # Register the resources
     for bp in all_blueprints:
         import_module(bp.import_name)
