@@ -49,7 +49,7 @@ def construct(email_addr: str, subject: str, content: EmailTemplate) -> dict:
 
 
 def render(template_name: str, **render_opts: str) -> EmailTemplate:
-    """Render a email template with text and HTML sections."""
+    """Render a email message with text and HTML sections."""
     return EmailTemplate(
         render_template(f"emails/{template_name}.txt", **render_opts),
         render_template(f"emails/{template_name}.jinja2", **render_opts),
