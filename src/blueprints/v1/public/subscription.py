@@ -1,3 +1,6 @@
+from pprint import pprint
+from time import sleep
+
 from flask import jsonify
 
 from webargs import fields
@@ -62,15 +65,24 @@ def broadcast(args: dict):
     # Render out the email template once
     email_content = email.render("email", **prompt[0])
 
+    for addr in mailing_list:
+        email_msg = email.construct(
+            addr, helpers.format_datetime_pretty(prompt[0].date), email_content
+        )
+        r = email.send(email_msg)
+        print("MG response")
+        pprint(r)
+        sleep(1)
+
     # Batch send out the emails
     # NOTE: According to the MG docs,
     # "The maximum number of recipients allowed for Batch Sending is 1,000."
     # This code may need to be updated to support that,
     # though hopefully that won't need to happen too soon
-    email_msgs = email.batch_construct(
-        mailing_list, helpers.format_datetime_pretty(prompt[0].date), email_content
-    )
-    email.send(email_msgs)
+    # email_msgs = email.batch_construct(
+    #     mailing_list, helpers.format_datetime_pretty(prompt[0].date), email_content
+    # )
+    # email.send(email_msgs)
 
     # There's no easy way to tell if they all sent, so just pretend they did
     # TODO No easy way until I add some number tracking, that is
