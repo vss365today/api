@@ -11,8 +11,8 @@
     "FLASK_APP": "wsgi.py",
     "DB_DBNAME": "vss365today",
     "DB_HOST": "vss365today-db",
-    "IMAGES_DIR": "/app/prompt-images",
-    "IMAGES_DIR_TEMP": "/app/prompt-images/temp",
+    "IMAGES_DIR": "/app/images",
+    "IMAGES_DIR_TEMP": "/app/images/temp",
     "ENABLE_EMAIL_SENDING": false
   }
 }
