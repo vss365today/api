@@ -54,16 +54,6 @@ def broadcast(args: dict):
             503, f"Unable to send out email broadcast for the {date} prompt!"
         )
 
-    # Get the mailing list from the local database
-    # We don't need to get it from MG bc we have a local copy still
-    mailing_list = database.subscription_list_get()
-
-    #  We couldn't get the mailing list
-    if not mailing_list:
-        return helpers.make_error_response(
-            503, f"Unable to send email broadcast for date {args['date']}!"
-        )
-
     # Construct the mailing list address. It is written this way
     # because the development and production lists are different
     # and we need to use the proper one depending on the env
