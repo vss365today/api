@@ -76,9 +76,6 @@ def get(args: dict):
         "word": fields.Str(required=True),
         "media": fields.Str(missing=None, allow_none=True),
         "date": fields.DateTime(required=True),
-        # TODO This is only present so the webapp can correctly pass the data
-        # and everything work. Remove it from args
-        "handle": fields.Str(),
     },
     location="json",
 )
