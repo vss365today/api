@@ -1,11 +1,10 @@
 from json import dumps
 from typing import Dict, List
-from src.core.models.v1.EmailTemplate import EmailTemplate
 
+from flask import current_app, render_template
 import requests
 
-from flask import current_app
-from flask import render_template
+from src.core.models.v1.EmailTemplate import EmailTemplate
 
 
 __all__ = ["batch_construct", "construct", "render", "send", "make_and_send"]
