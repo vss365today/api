@@ -1,6 +1,6 @@
 from json import dumps
 from typing import Dict, List
-from src.core.email.EmailTemplate import EmailTemplate
+from src.core.models.v1.EmailTemplate import EmailTemplate
 
 import requests
 
