@@ -1,6 +1,6 @@
 from pprint import pprint
 
-from flask import current_app, jsonify
+from flask import jsonify
 from webargs import fields
 from webargs.flaskparser import use_args
 
@@ -57,7 +57,7 @@ def broadcast(args: dict):
     # Construct the mailing list address. It is written this way
     # because the development and production lists are different
     # and we need to use the proper one depending on the env
-    mg_list_addr = f'{current_app.config["MG_MAILING_LIST_ADDR"]}@{current_app.config["MG_DOMAIN"]}'
+    mg_list_addr = mailgun.mailing_list_addr_get()
 
     # Send an email to the MG mailing list
     # This helps us keep track of who is on the list at any given moment
