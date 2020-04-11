@@ -13,4 +13,3 @@ To view this email in your browser, visit https://vss365today.com/view/{{ date.s
 To help support #vss365 today, visit https://vss365today.com/donate
 To unsubscribe, visit https://vss365today.com/unsubscribe
 To view our privacy policy, visit https://vss365today.com/privacy
-This email has been sent to %recipient.email%

@@ -4,6 +4,7 @@
     "MG_DOMAIN"
   ],
   "appConfig": {
-    "ENABLE_EMAIL_SENDING": true
+    "ENABLE_EMAIL_SENDING": true,
+    "MG_MAILING_LIST_ADDR": "vss365today"
   }
 }
