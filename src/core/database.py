@@ -2,7 +2,7 @@ from typing import Dict, List, Literal, Optional
 
 from flask import current_app
 import records
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import DatabaseError, IntegrityError
 
 from src.core.models.v1.Prompt import Prompt
 from src.core.models.v1.Host import Host
@@ -54,8 +54,15 @@ def subscription_email_create(addr: str) -> bool:
             db.query(sql, **{"addr": addr.lower()})
         return True
 
-    # An error occurred trying to record the email
+    # That address aleady exists in the database.
+    # However, to prevent data leakage, pretend it added
     except IntegrityError as exc:
+        print(f"New subscription exception: {exc}")
+        print(addr)
+        return True
+
+    # An error occurred trying to record the email
+    except DatabaseError as exc:
         print(f"New subscription exception: {exc}")
         print(addr)
         return False
