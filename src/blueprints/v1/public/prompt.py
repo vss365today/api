@@ -41,6 +41,7 @@ def __is_valid_url(url: str) -> bool:
 @prompt.route("/", methods=["GET"])
 @use_args({"date": fields.DateTime()}, location="query")
 def get(args: dict):
+    """Get a Prompt, either the latest or from a specific date."""
     # We want the prompt from a particular day
     if "date" in args:
         # Format the date in the proper format before fetching
@@ -80,6 +81,7 @@ def get(args: dict):
     location="json",
 )
 def post(args: dict):
+    """Create a new Prompt."""
     # Format the date in the proper format before writing
     args["date"] = helpers.format_datetime_iso(args["date"])
 
@@ -120,6 +122,7 @@ def post(args: dict):
     location="json",
 )
 def put(query_args: dict, json_args: dict):
+    """Update an existing Prompt."""
     # Merge the two args dicts into a single dict for easier use
     args = {**query_args, **json_args}
 

@@ -13,6 +13,7 @@ from src.core.helpers import make_response, make_error_response, format_datetime
     {"id": fields.Str(missing=""), "handle": fields.Str(missing="")}, location="query"
 )
 def get(args: dict):
+    """Get a Host by their Twitter ID or handle."""
     # We need something to search by
     if not args["id"] and not args["handle"]:
         return make_error_response(422, "Either a Host id or handle must be provided!")
@@ -47,6 +48,7 @@ def get(args: dict):
     location="json",
 )
 def post(args: dict):
+    """Create a new Host."""
     # Rewrite the date into the proper format
     args["date"] = format_datetime_iso(args["date"])
 

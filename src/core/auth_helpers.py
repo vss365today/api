@@ -13,6 +13,7 @@ __all__ = ["authorize_endpoints", "authorize_route", "fake_authorize"]
 
 
 def authorize_endpoints():
+    """Determine if the request to an endpoint has been properly authorized."""
     # Was an Authorization header sent?
     if "Authorization" in request.headers:
         bearer = request.headers["Authorization"]
@@ -50,4 +51,5 @@ def authorize_route(func):
 
 
 def fake_authorize():
+    """Just a no-op for dummy authorization."""
     pass
