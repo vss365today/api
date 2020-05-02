@@ -3,6 +3,7 @@ from typing import Dict, List, Literal, Optional
 from flask import current_app
 import records
 from sqlalchemy.exc import DBAPIError, IntegrityError
+from sqlalchemy.sql import text
 
 from src.core.models.v1.Prompt import Prompt
 from src.core.models.v1.Host import Host
@@ -22,6 +23,7 @@ __all__ = [
     "prompt_search",
     "prompts_get_by_date",
     "prompts_get_by_host",
+    "host_create",
     "host_get",
     "host_get_by_date",
     "hosts_get_by_year",
@@ -38,6 +40,11 @@ def __connect_to_db() -> records.Database:
     )
     conn = records.Database(conn_str)
     return conn
+
+
+def __create_transaction(db):
+    """Reach into SQLAlchemy to start a transaction."""
+    return db._engine.begin()
 
 
 def __flatten_tuple_list(tup) -> list:
@@ -232,6 +239,33 @@ def prompts_get_by_host(handle: str) -> List[Prompt]:
     """
     with __connect_to_db() as db:
         return [Prompt(record) for record in db.query(sql, **{"handle": handle})]
+
+
+def host_create(host_info: dict):
+    """Create a new Host."""
+    # Create the SQL needed to insert
+    sql_host = text("INSERT INTO writers (uid, handle) VALUES (:uid, :handle)")
+    sql_host_date = text("INSERT INTO writer_dates (uid, date) VALUES (:uid, :date)")
+
+    with __connect_to_db() as db:
+        # Perform the insertion using a transaction
+        # since both parts are required for it to be successful
+        try:
+            # Reach into sqlalchemy to perform a transaction as Records
+            # utterly fails to properly support this
+            with __create_transaction(db) as tx:
+                tx.execute(
+                    sql_host, **{"uid": host_info["id"], "handle": host_info["handle"]}
+                )
+                tx.execute(
+                    sql_host_date, **{"uid": host_info["id"], "date": host_info["date"]}
+                )
+                return True
+
+        # The transaction failed
+        except DBAPIError as exc:
+            print(exc)
+            return False
 
 
 def host_get(*, uid: str, handle: str) -> Optional[List[Host]]:

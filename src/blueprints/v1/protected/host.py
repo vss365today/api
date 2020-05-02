@@ -5,7 +5,7 @@ from webargs.flaskparser import use_args
 
 from src.blueprints import host
 from src.core import database
-from src.core.helpers import make_response, make_error_response
+from src.core.helpers import make_response, make_error_response, format_datetime_iso
 
 
 @host.route("/", methods=["GET"])
@@ -28,21 +28,13 @@ def get(args: dict):
     if found_host:
         return make_response(200, jsonify(found_host))
 
-    # We don't have that host
+    # Determine which param was given
     given_param = [(k, v) for k, v in args.items() if v][0]
+
+    # We don't have that host
     return make_error_response(
         404, f"Unable to get details for Host {given_param[0]} {given_param[1]}!"
     )
-
-
-@host.route("/date/", methods=["GET"])
-@use_args({"date": fields.DateTime(required=True)}, location="query")
-def get_date(args: dict):
-    # We want the host for a given month
-    found_host = database.host_get_by_date(args["date"].strftime("%Y-%m"))
-    if found_host:
-        return make_response(200, jsonify(found_host))
-    return make_error_response(404, "Unable to get Host details!")
 
 
 @host.route("/", methods=["POST"])
@@ -55,8 +47,23 @@ def get_date(args: dict):
     location="json",
 )
 def post(args: dict):
-    # TODO Create a single host with all their details
-    result = True
+    # Rewrite the date into the proper format
+    args["date"] = format_datetime_iso(args["date"])
+
+    # Create a host with all their details
+    result = database.host_create(args)
     if result:
         return make_response(201)
-    return make_error_response(503, "Unable to create a new Host!")
+    return make_error_response(
+        503, f'Unable to create a new Host {args["handle"]} for {args["date"]}!'
+    )
+
+
+@host.route("/date/", methods=["GET"])
+@use_args({"date": fields.DateTime(required=True)}, location="query")
+def get_date(args: dict):
+    # We want the host for a given month
+    found_host = database.host_get_by_date(args["date"].strftime("%Y-%m"))
+    if found_host:
+        return make_response(200, jsonify(found_host))
+    return make_error_response(404, "Unable to get Host details!")
