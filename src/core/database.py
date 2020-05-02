@@ -2,7 +2,7 @@ from typing import Dict, List, Literal, Optional
 
 from flask import current_app
 import records
-from sqlalchemy.exc import DatabaseError, IntegrityError
+from sqlalchemy.exc import DBAPIError, IntegrityError
 
 from src.core.models.v1.Prompt import Prompt
 from src.core.models.v1.Host import Host
@@ -61,7 +61,7 @@ def subscription_email_create(addr: str) -> bool:
         return True
 
     # An error occurred trying to record the email
-    except DatabaseError as exc:
+    except DBAPIError as exc:
         print(f"New subscription exception: {exc}")
         print(addr)
         return False
