@@ -62,7 +62,7 @@ def post(args: dict):
 @host.route("/date/", methods=["GET"])
 @use_args({"date": fields.DateTime(required=True)}, location="query")
 def get_date(args: dict):
-    # We want the host for a given month
+    """Get the assigned Host for the specified month."""
     found_host = database.host_get_by_date(args["date"].strftime("%Y-%m"))
     if found_host:
         return make_response(200, jsonify(found_host))

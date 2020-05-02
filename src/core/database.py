@@ -44,7 +44,7 @@ def __connect_to_db() -> records.Database:
 
 def __create_transaction(db):
     """Reach into SQLAlchemy to start a transaction."""
-    return db._engine.begin()
+    return db._engine.begin()  # skipcq: PYL-W0212
 
 
 def __flatten_tuple_list(tup) -> list:
