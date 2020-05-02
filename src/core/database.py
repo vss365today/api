@@ -11,7 +11,6 @@ from src.core.models.v1.Host import Host
 __all__ = [
     "subscription_email_create",
     "subscription_email_delete",
-    "subscription_list_get",
     "admin_user_get",
     "is_auth_token_valid",
     "prompt_create",
@@ -74,13 +73,6 @@ def subscription_email_delete(addr: str) -> Literal[True]:
     with __connect_to_db() as db:
         db.query(sql, **{"addr": addr})
     return True
-
-
-def subscription_list_get() -> list:
-    """Get all emails in the subscription list."""
-    sql = "SELECT email FROM emails"
-    with __connect_to_db() as db:
-        return __flatten_tuple_list(db.query(sql).all())
 
 
 def admin_user_get(user: str, password: str) -> Optional[records.Record]:

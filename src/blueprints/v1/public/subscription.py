@@ -1,22 +1,11 @@
 from pprint import pprint
 
-from flask import jsonify
 from webargs import fields
 from webargs.flaskparser import use_args
 
 from src.blueprints import subscription
 from src.core import database, email, helpers
 from src.core.email import mailgun
-
-
-# TODO This needs to be protected via @authorize_route
-@subscription.route("/", methods=["GET"])
-def get():
-    """Retrieve the entire mailing list."""
-    mailing_list = database.subscription_list_get()
-    if mailing_list:
-        return helpers.make_response(200, jsonify(mailing_list))
-    return helpers.make_error_response(503, "Unable to get mailing list!")
 
 
 @subscription.route("/", methods=["POST"])
