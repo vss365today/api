@@ -73,10 +73,10 @@ def get(args: dict):
     {
         "id": fields.Str(required=True),
         "uid": fields.Str(required=True),
-        "content": fields.Str(required=True),
-        "word": fields.Str(required=True),
-        "media": fields.Str(missing=None, allow_none=True),
         "date": fields.DateTime(required=True),
+        "word": fields.Str(required=True),
+        "content": fields.Str(required=True),
+        "media": fields.Str(missing=None, allow_none=True),
     },
     location="json",
 )
