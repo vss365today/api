@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  vss365-today-api:
+  vss365today-api:
     image: vss365today-api:latest
     container_name: vss365today-api
     restart: unless-stopped
@@ -25,7 +25,7 @@ services:
     volumes:
       - ../db:/docker-entrypoint-initdb.d
       - ../secrets:/secrets
-      - ../mysql:/var/lib/mysql
+      - ../../db:/var/lib/mysql
     ports:
       - 127.0.0.1:3306:3306
     environment:

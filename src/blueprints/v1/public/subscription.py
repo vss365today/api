@@ -1,5 +1,6 @@
 from pprint import pprint
 
+from flask import current_app
 from webargs import fields
 from webargs.flaskparser import use_args
 
@@ -33,6 +34,10 @@ def delete(args: dict):
 @use_args({"date": fields.DateTime()}, location="query")
 def broadcast(args: dict):
     """Trigger an email broadcast for the given day's prompt."""
+    # If email sending is not allowed, just pretend it worked
+    if not current_app.config["ENABLE_EMAIL_SENDING"]:
+        return helpers.make_response(200)
+
     # Put the date in the proper format
     date = helpers.format_datetime_iso(args["date"])
 
