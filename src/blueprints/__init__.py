@@ -27,7 +27,7 @@ def _factory(
         partial_module_string, import_path, url_prefix=f"/{api_version}{url_prefix}"
     )
 
-        # Protect the endpoint with an authorization routine
+    # Protect the endpoint with an authorization routine
     # if one was given
     if auth_function is not None:
         blueprint.before_request(auth_function)
@@ -39,6 +39,7 @@ browse = _factory("browse", "/browse", "v1")
 prompt = _factory("prompt", "/prompt", "v1")
 search = _factory("search", "/search", "v1")
 subscription = _factory("subscription", "/subscription", "v1")
+broadcast = _factory("broadcast", "/broadcast", "v1", fake_authorize)
 host = _factory("host", "/host", "v1", fake_authorize)
 
-all_blueprints = (browse, host, prompt, search, subscription)
+all_blueprints = (browse, host, prompt, search, subscription, broadcast)
