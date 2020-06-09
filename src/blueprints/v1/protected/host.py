@@ -61,6 +61,33 @@ def post(args: dict):
     )
 
 
+@host.route("/", methods=["PUT"])
+@use_args(
+    {
+        "id": fields.Str(required=True),
+        "handle": fields.Str(required=True),
+        "date": fields.DateTime(required=True),
+    },
+    location="json",
+)
+def put(args: dict):
+    """Update a Host."""
+    # Rewrite the date into the proper format,
+    # resetting the day to be the first of the month,
+    # as is required for everything to work correctly
+    args["date"] = args["date"].replace(day=1)
+    args["date"] = format_datetime_iso(args["date"])
+
+    # Attempt to find the host, bc they must exist to be updated
+    existing_host = database.host_get(uid=args["id"], handle="")
+    if not existing_host:
+        return make_error_response(400, "Unable to update Host details!")
+
+    # Update the host with the new info
+    database.host_update(args)
+    return make_response(200)
+
+
 @host.route("/date/", methods=["GET"])
 @use_args({"date": fields.DateTime(required=True)}, location="query")
 def get_date(args: dict):

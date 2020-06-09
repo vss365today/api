@@ -283,8 +283,33 @@ def host_get(*, uid: str, handle: str) -> Optional[List[Host]]:
         return [Host(host) for host in db.query(sql, **{"uid": uid, "handle": handle})]
 
 
+def host_update(host_info: dict) -> None:
+    """Update an existing Host."""
+    sql_host = text(
+        """
+    UPDATE writers
+    SET
+       handle = :handle
+    WHERE uid = :id;
+    """
+    )
+    sql_host_date = text(
+        """UPDATE writer_dates
+    SET
+        date =  STR_TO_DATE(:date, '%Y-%m-%d')
+    WHERE uid = :id;
+    """
+    )
+
+    # Update the host info in a transaction
+    with __connect_to_db() as db:
+        with __create_transaction(db) as tx:
+            tx.execute(sql_host, **host_info)
+            tx.execute(sql_host_date, **host_info)
+
+
 def host_get_by_date(date: str) -> List[Host]:
-    """Get a Host by the date they delievered the prompts. """
+    """Get a Host by the date they delievered the prompts."""
     sql = """
     SELECT writers.uid, handle, writer_dates.date
     FROM writers
