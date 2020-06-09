@@ -103,11 +103,11 @@ def admin_user_get(user: str, password: str) -> Optional[records.Record]:
     return user_record
 
 
-def is_auth_token_valid(user: str, token: str) -> bool:
+def is_auth_token_valid(token: dict) -> bool:
     """Check if the given username and auth token combo is valid."""
     sql = "SELECT 1 FROM users WHERE username = :user AND token = :token"
     with __connect_to_db() as db:
-        return bool(db.query(sql, **{"user": user, "token": token}).first())
+        return bool(db.query(sql, **token).first())
 
 
 def prompt_create(prompt: Dict[str, Optional[str]]) -> bool:

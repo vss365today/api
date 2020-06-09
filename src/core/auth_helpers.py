@@ -9,11 +9,11 @@ from jwt.exceptions import DecodeError, InvalidSignatureError
 from src.core.database import is_auth_token_valid
 
 
-__all__ = ["authorize_endpoints", "authorize_route", "fake_authorize"]
+__all__ = ["authorize_blueprint", "authorize_route", "fake_authorize"]
 
 
-def authorize_endpoints():
-    """Determine if the request to an endpoint has been properly authorized."""
+def authorize_blueprint():
+    """Determine if the request to a blueprint has been properly authorized."""
     # Was an Authorization header sent?
     if "Authorization" in request.headers:
         bearer = request.headers["Authorization"]
@@ -26,11 +26,13 @@ def authorize_endpoints():
     except IndexError:
         abort(422)
 
-    # The given username and token combo is not valid
+    # Decode the passed token
     try:
         token = decode(identity, verify=True, algorithms=["HS256"])
-        if not is_auth_token_valid(token["user"], token["token"]):
+        if not is_auth_token_valid(token):
             raise KeyError
+
+    # The given username and token combo is not valid
     except (KeyError, DecodeError, InvalidSignatureError):
         abort(401)
 
@@ -44,7 +46,7 @@ def authorize_route(func):
 
     @functools.wraps(func)
     def wrap(*args, **kwargs):
-        authorize_endpoints()
+        authorize_blueprint()
         return func(*args, **kwargs)
 
     return wrap
