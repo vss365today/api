@@ -2,7 +2,6 @@
   "env": [],
   "secrets": [
     "SECRET_KEY",
-    "JWT_SECRET_KEY",
     "DB_USERNAME",
     "DB_PASSWORD"
   ],

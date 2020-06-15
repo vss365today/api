@@ -5,7 +5,6 @@
 ## Required Configuration
 
 * Flask secret key
-* JWT secret key
 * MySQL/MariaDB instance + login keys
 * Mailgun API key, authorized domain, and mailing list address
 
