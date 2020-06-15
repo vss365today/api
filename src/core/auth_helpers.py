@@ -3,9 +3,6 @@ import functools
 from flask import request
 from flask import abort
 
-from jwt import decode
-from jwt.exceptions import DecodeError, InvalidSignatureError
-
 from src.core.database import is_auth_token_valid
 
 
@@ -20,20 +17,12 @@ def authorize_blueprint():
     else:
         abort(400)
 
-    # No token was given or the provided token is not in the proper format
+    # Attempt to get the API key and validate it
     try:
-        identity = bearer.split("Bearer")[1].strip()
-    except IndexError:
-        abort(422)
-
-    # Decode the passed token
-    try:
-        token = decode(identity, verify=True, algorithms=["HS256"])
-        if not is_auth_token_valid(token):
+        api_key = bearer.split("Bearer")[1].strip()
+        if not is_auth_token_valid(api_key):
             raise KeyError
-
-    # The given username and token combo is not valid
-    except (KeyError, DecodeError, InvalidSignatureError):
+    except (KeyError, IndexError):
         abort(401)
 
 
