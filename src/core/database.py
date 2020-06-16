@@ -254,12 +254,8 @@ def host_create(host_info: dict):
             # Reach into sqlalchemy to perform a transaction as Records
             # utterly fails to properly support this
             with __create_transaction(db) as tx:
-                tx.execute(
-                    sql_host, **{"uid": host_info["id"], "handle": host_info["handle"]}
-                )
-                tx.execute(
-                    sql_host_date, **{"uid": host_info["id"], "date": host_info["date"]}
-                )
+                tx.execute(sql_host, uid=host_info["id"], handle=host_info["handle"])
+                tx.execute(sql_host_date, uid=host_info["id"], date=host_info["date"])
                 return True
 
         # The transaction failed
