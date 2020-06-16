@@ -23,7 +23,7 @@ def authorize_blueprint():
         if not is_auth_token_valid(api_key):
             raise KeyError
     except (KeyError, IndexError):
-        abort(401)
+        abort(403)
 
 
 def authorize_route(func):
