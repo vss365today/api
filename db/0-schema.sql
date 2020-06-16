@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS writer_dates (
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
 
-CREATE TABLE IF NOT EXISTS tweets (
+CREATE TABLE IF NOT EXISTS prompts (
   tweet_id VARCHAR(25) NOT NULL UNIQUE,
   date DATE NOT NULL,
   uid VARCHAR(30) NOT NULL,
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS tweets (
   word VARCHAR(30) NOT NULL,
   media VARCHAR(512),
   PRIMARY KEY(tweet_id),
-  CONSTRAINT `writer_uid-tweets_uid`
+  CONSTRAINT `writer_uid-prompts_uid`
     FOREIGN KEY (uid) REFERENCES writers (uid)
     ON UPDATE CASCADE
     ON DELETE RESTRICT

@@ -113,7 +113,7 @@ def is_auth_token_valid(token: str) -> bool:
 def prompt_create(prompt: Dict[str, Optional[str]]) -> bool:
     """Create a new prompt."""
     sql = """
-    INSERT INTO tweets (
+    INSERT INTO prompts (
         tweet_id, date, uid, content, word, media
     )
     VALUES (
@@ -134,7 +134,7 @@ def prompt_create(prompt: Dict[str, Optional[str]]) -> bool:
 
 def prompt_delete(pid: str) -> Literal[True]:
     """Delete an existing prompt."""
-    sql = "DELETE FROM tweets WHERE tweet_id = :id"
+    sql = "DELETE FROM prompts WHERE tweet_id = :id"
     with __connect_to_db() as db:
         db.query(sql, **{"id": pid})
     return True
@@ -143,7 +143,7 @@ def prompt_delete(pid: str) -> Literal[True]:
 def prompt_update(prompt: Dict[str, Optional[str]]) -> None:
     """Update an existing prompt."""
     sql = """
-    UPDATE tweets
+    UPDATE prompts
     SET
         date = :date,
         content = :content,
@@ -158,7 +158,7 @@ def prompt_update(prompt: Dict[str, Optional[str]]) -> None:
 def prompt_find_existing(*, pid: str, date: str) -> bool:
     """Find an existing prompt."""
     sql = """SELECT 1
-    FROM tweets
+    FROM prompts
     WHERE (tweet_id = :tweet_id OR date = :date)"""
     with __connect_to_db() as db:
         return bool(db.query(sql, tweet_id=pid, date=date).first())
@@ -167,9 +167,9 @@ def prompt_find_existing(*, pid: str, date: str) -> bool:
 def prompt_get_latest() -> List[Prompt]:
     """Get the newest prompt."""
     sql = """
-    SELECT tweets.*, writers.handle AS writer_handle
-    FROM tweets
-        JOIN writers ON tweets.uid = writers.uid
+    SELECT prompts.*, writers.handle AS writer_handle
+    FROM prompts
+        JOIN writers ON prompts.uid = writers.uid
     ORDER BY date DESC
     LIMIT 1
     """
@@ -192,11 +192,11 @@ def prompt_get_years() -> List[str]:
 def prompt_search(word: str) -> List[Prompt]:
     """Search for prompts by partial or full word."""
     sql = """
-    SELECT tweets.*, writers.handle AS writer_handle
-    FROM tweets
-        JOIN writers ON writers.uid = tweets.uid
-    WHERE tweets.date <= CURRENT_TIMESTAMP()
-        AND tweets.word LIKE CONCAT('%', :word, '%')
+    SELECT prompts.*, writers.handle AS writer_handle
+    FROM prompts
+        JOIN writers ON writers.uid = prompts.uid
+    WHERE prompts.date <= CURRENT_TIMESTAMP()
+        AND prompts.word LIKE CONCAT('%', :word, '%')
     ORDER BY UPPER(word)
     """
     with __connect_to_db() as db:
@@ -207,20 +207,20 @@ def prompts_get_by_date(date: str, *, date_range: bool = False) -> List[Prompt]:
     """Get prompts by a single date or in a date range."""
     # Base query info
     sql = """
-    SELECT tweets.*, writers.handle as writer_handle
-    FROM tweets
-        JOIN writers ON tweets.uid = writers.uid"""
+    SELECT prompts.*, writers.handle as writer_handle
+    FROM prompts
+        JOIN writers ON prompts.uid = writers.uid"""
 
     # Use the proper filter depending on if
     # we want a date range or single date
     if date_range:
         sql = f"""{sql}
-        WHERE DATE_FORMAT(tweets.date, '%Y-%m') = :date
-            AND tweets.date <= CURRENT_TIMESTAMP()
-        ORDER BY tweets.date ASC"""
+        WHERE DATE_FORMAT(prompts.date, '%Y-%m') = :date
+            AND prompts.date <= CURRENT_TIMESTAMP()
+        ORDER BY prompts.date ASC"""
     else:
         sql = f"""{sql}
-        WHERE tweets.date = STR_TO_DATE(:date, '%Y-%m-%d')
+        WHERE prompts.date = STR_TO_DATE(:date, '%Y-%m-%d')
             AND STR_TO_DATE(:date, '%Y-%m-%d') <= CURRENT_TIMESTAMP()"""
 
     # Finally perform the query
@@ -231,10 +231,10 @@ def prompts_get_by_date(date: str, *, date_range: bool = False) -> List[Prompt]:
 def prompts_get_by_host(handle: str) -> List[Prompt]:
     """Get a prompt tweet by the Host who prompted it."""
     sql = """
-    SELECT tweets.*, writers.handle AS writer_handle
-    FROM tweets
-        JOIN writers ON writers.uid = tweets.uid
-    WHERE tweets.date <= CURRENT_TIMESTAMP()
+    SELECT prompts.*, writers.handle AS writer_handle
+    FROM prompts
+        JOIN writers ON writers.uid = prompts.uid
+    WHERE prompts.date <= CURRENT_TIMESTAMP()
         AND writers.handle = :handle
     """
     with __connect_to_db() as db:
