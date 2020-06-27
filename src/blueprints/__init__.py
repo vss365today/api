@@ -2,7 +2,8 @@ from typing import Callable, Optional
 
 from flask import Blueprint
 
-from src.core.auth_helpers import fake_authorize
+# TODO Import the actual authorization method
+from src.core.auth_helpers import fake_authorize as authorize_blueprint
 
 
 def _factory(
@@ -39,7 +40,7 @@ browse = _factory("browse", "/browse", "v1")
 prompt = _factory("prompt", "/prompt", "v1")
 search = _factory("search", "/search", "v1")
 subscription = _factory("subscription", "/subscription", "v1")
-broadcast = _factory("broadcast", "/broadcast", "v1", fake_authorize)
-host = _factory("host", "/host", "v1", fake_authorize)
+broadcast = _factory("broadcast", "/broadcast", "v1", authorize_blueprint)
+host = _factory("host", "/host", "v1", authorize_blueprint)
 
 all_blueprints = (browse, host, prompt, search, subscription, broadcast)
