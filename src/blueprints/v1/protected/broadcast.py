@@ -5,12 +5,10 @@ from webargs import fields
 from webargs.flaskparser import use_args
 
 from src.blueprints import broadcast
-from src.core.auth_helpers import authorize_route
 from src.core import database, email, helpers
 from src.core.email import mailgun
 
 
-@authorize_route
 @broadcast.route("/", methods=["POST"])
 @use_args({"date": fields.DateTime()}, location="query")
 def post(args: dict):
