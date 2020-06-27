@@ -20,10 +20,12 @@ def format_datetime_pretty(date_obj: datetime) -> str:
 
 
 def make_response(status: int, data: dict = None) -> Tuple[dict, int]:
+    """Construct a non-error endpoint response."""
     if data is None:
         data = {}
     return (data, status)
 
 
 def make_error_response(status: int, msg: str) -> Tuple[Dict[str, str], int]:
+    """Construct an error endpoint response."""
     return make_response(status, {"error_msg": msg})

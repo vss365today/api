@@ -161,6 +161,7 @@ def put(query_args: dict, json_args: dict):
 @prompt.route("/", methods=["DELETE"])
 @use_args({"id": fields.Str(required=True)}, location="query")
 def delete(args: dict):
+    """Delete an existing Prompt."""
     # Going to mimic SQL's behavior and pretend
     # we deleted something even if we didn't
     media.delete(args["id"])
