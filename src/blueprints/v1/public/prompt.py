@@ -2,15 +2,14 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from flask import jsonify
-
-from urllib3.util import parse_url
 from urllib3.exceptions import LocationParseError
+from urllib3.util import parse_url
 from webargs import fields
 from webargs.flaskparser import use_args
 
 from src.blueprints import prompt
-from src.core import database
-from src.core import helpers
+from src.core import database, helpers
+from src.core.auth_helpers import authorize_route
 from src.core.helpers import media
 from src.core.models.v1.Prompt import Prompt
 
@@ -67,7 +66,7 @@ def get(args: dict):
     return jsonify([latest_prompt])
 
 
-# TODO This needs to be protected via @authorize_route
+@authorize_route
 @prompt.route("/", methods=["POST"])
 @use_args(
     {
@@ -108,7 +107,7 @@ def post(args: dict):
     return helpers.make_response(status_code)
 
 
-# TODO This needs to be protected via @authorize_route
+@authorize_route
 @prompt.route("/", methods=["PUT"])
 @use_args({"id": fields.Str(required=True)}, location="query")
 @use_args(
