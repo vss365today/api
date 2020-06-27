@@ -22,7 +22,8 @@ def get_package(package_info: dict) -> str:
 
 
 def filter_packages(packages: list, key: str) -> list:
-    return list(filter(lambda p: p["category"] == key, packages))
+    """Filter out packages based on the given category."""
+    return [p for p in packages if p["category"] == key]
 
 
 # Does the user want to include the dev packages?
