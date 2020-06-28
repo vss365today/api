@@ -1,3 +1,4 @@
+from flask import current_app
 from requests import codes
 from webargs import fields
 from webargs.flaskparser import use_args
@@ -14,9 +15,12 @@ def post(args: dict):
     # Define the error response
     error = helpers.make_error_response(503, "Unable to add email to mailing list!")
 
-    # Validate the address before we decide if we record it
-    if not mailgun.validate_email_address(args["email"]):
-        return error
+    # Because this endpoint costs money with each hit, block it off
+    # if we're not planning on sending out any emails
+    if current_app.config["ENABLE_EMAIL_SENDING"]:
+        # Validate the address to decide if we record it
+        if not mailgun.validate_email_address(args["email"]):
+            return error
 
     # Add the address to the Mailgun mailing list and local database
     mg_result = mailgun.subscription_email_create(args["email"])
