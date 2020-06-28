@@ -34,6 +34,7 @@ def browse_by_month(year: str, month: str) -> dict:
     location="query",
 )
 def get(args: dict):
+    """Browse available Prompts by year or month-year combo."""
     # We always need a year
     if "year" not in args:
         return make_error_response(422, "At the least, a prompt year must be provided!")

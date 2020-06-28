@@ -42,6 +42,7 @@ def search_by_writer(handle: str) -> dict:
     location="query",
 )
 def get(args: dict):
+    """Search for a Prompt by word or host."""
     # Both parameters were provided, and that is not supporte
     if len(args) > 1:
         return make_error_response(422, "Only one search parameter can be provided!")
