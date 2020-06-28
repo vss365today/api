@@ -27,6 +27,7 @@ __all__ = [
     "host_get",
     "host_get_by_date",
     "hosts_get_by_year",
+    "hosts_get_by_year_month",
 ]
 
 
@@ -329,3 +330,17 @@ def hosts_get_by_year(year: str) -> List[Host]:
     """
     with __connect_to_db() as db:
         return [Host(host) for host in db.query(sql, year=year)]
+
+
+def hosts_get_by_year_month(year: str, month: str) -> List[Host]:
+    """Get all the Hosts in a year-month combination."""
+    sql = """
+    SELECT writers.uid, handle, writer_dates.date
+    FROM writers
+        JOIN writer_dates ON writer_dates.uid = writers.uid
+    WHERE
+        YEAR(writer_dates.date) = :year
+        AND MONTH(writer_dates.date) = :month
+    """
+    with __connect_to_db() as db:
+        return [Host(host) for host in db.query(sql, year=year, month=month)]

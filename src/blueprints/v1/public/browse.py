@@ -18,9 +18,8 @@ def browse_by_year(year: str) -> dict:
 def browse_by_month(year: str, month: str) -> dict:
     year = year.strip()
     month = month.strip()
-    date: str = f"{year}-{month}"
-    hosts = database.host_get_by_date(date)
-    prompts = database.prompts_get_by_date(date, date_range=True)
+    hosts = database.hosts_get_by_year_month(year, month)
+    prompts = database.prompts_get_by_date(f"{year}-{month}", date_range=True)
     return {"hosts": hosts, "prompts": prompts, "total": len(prompts)}
 
 
