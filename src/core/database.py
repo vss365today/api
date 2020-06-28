@@ -305,12 +305,12 @@ def host_update(host_info: dict) -> None:
 
 
 def host_get_by_date(date: str) -> List[Host]:
-    """Get a Host by the date they delievered the prompts."""
+    """Get the Host for the exact date given."""
     sql = """
     SELECT writers.uid, handle, writer_dates.date
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
-    WHERE writer_dates.date = STR_TO_DATE(CONCAT(:date, '-01'), '%Y-%m-%d')
+    WHERE writer_dates.date = :date
     """
     with __connect_to_db() as db:
         return [Host(host) for host in db.query(sql, date=date)]

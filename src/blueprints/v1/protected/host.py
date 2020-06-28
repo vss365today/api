@@ -88,11 +88,11 @@ def put(args: dict):
     return make_response(200)
 
 
-@host.route("/date/", methods=["GET"])
+@host.route("date/", methods=["GET"])
 @use_args({"date": fields.DateTime(required=True)}, location="query")
 def get_date(args: dict):
     """Get the assigned Host for the specified month."""
-    found_host = database.host_get_by_date(args["date"].strftime("%Y-%m"))
+    found_host = database.host_get_by_date(format_datetime_iso(args["date"]))
     if found_host:
         return make_response(200, jsonify(found_host))
     return make_error_response(404, "Unable to get Host details!")
