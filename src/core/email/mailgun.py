@@ -5,6 +5,7 @@ __all__ = [
     "mailing_list_addr_get",
     "subscription_email_create",
     "subscription_email_delete",
+    "validate_email_address",
 ]
 
 
@@ -13,7 +14,7 @@ def mailing_list_addr_get() -> str:
     # Construct the mailing list address. It is written this way
     # because the development and production lists are different
     # and we need to use the proper one depending on the env
-    return f'{current_app.config["MG_MAILING_LIST_ADDR"]}@{current_app.config["MG_DOMAIN"]}'
+    return f'{current_app.config["MG_MAILING_LIST_ADDR"]}@{current_app.config["MG_DOMAIN"]}'  # skipcq: FLK-E501
 
 
 def subscription_email_create(addr: str) -> requests.Response:
@@ -33,3 +34,15 @@ def subscription_email_delete(addr: str) -> requests.Response:
         f"https://api.mailgun.net/v3/lists/{mg_list_addr}/members/{addr}",
         auth=("api", current_app.config["MG_API_KEY"]),
     )
+
+
+def validate_email_address(addr: str) -> bool:
+    """Validate an email address using the Mailgun Email Validation API."""
+    r = requests.get(
+        "https://api.mailgun.net/v4/address/validate",
+        auth=("api", current_app.config["MG_API_KEY"]),
+        params={"address": addr},
+    ).json()
+
+    # The address can be added if it's marked as deliverable
+    return r["result"] == "deliverable"
