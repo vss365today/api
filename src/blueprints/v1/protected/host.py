@@ -87,6 +87,22 @@ def put(args: dict):
     return make_response(200)
 
 
+@host.route("/", methods=["DELETE"])
+@use_args({"id": fields.Str(required=True)}, location="query")
+def delete(args: dict):
+    """Delete a Host.
+
+    This will only succeed if the Host does not have any associated
+    Prompts to prevent orphaned records or an incomplete record."""
+    result = database.host_delete(args["id"])
+    if result:
+        return make_response(204)
+    return make_error_response(
+        403,
+        f"Unable to delete Host {args['id']}! They have Prompts associated with them.",
+    )
+
+
 @host.route("date/", methods=["GET"])
 @use_args({"date": fields.DateTime(required=True)}, location="query")
 def get_date(args: dict):

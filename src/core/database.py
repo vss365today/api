@@ -24,6 +24,7 @@ __all__ = [
     "prompts_get_by_date",
     "prompts_get_by_host",
     "host_create",
+    "host_delete",
     "host_get",
     "host_get_by_date",
     "hosts_get_by_year",
@@ -270,6 +271,22 @@ def host_create(host_info: dict) -> bool:
         except DBAPIError as exc:
             print(exc)
             return False
+
+
+def host_delete(host_id: str) -> bool:
+    """Delete a Host from the database by their Twitter ID.
+
+    Due to database FK constraints, this will only succeed
+    if the Host does not have any Prompts associated with them.
+    The presence of any Prompts will stop all deletion so as to
+    prevent orphaned records or an incomplete record."""
+    sql = "DELETE FROM writers WHERE uid = :host_id"
+    try:
+        with __connect_to_db() as db:
+            db.query(sql, host_id=host_id)
+            return True
+    except IntegrityError:
+        return False
 
 
 def host_get(*, uid: str, handle: str) -> Optional[List[Host]]:
