@@ -43,22 +43,21 @@ def get(args: dict):
     {
         "id": fields.Str(required=True),
         "handle": fields.Str(required=True),
-        "date": fields.DateTime(required=True),
+        "date": fields.DateTime(missing=None, allow_none=True),
     },
     location="json",
 )
 def post(args: dict):
     """Create a new Host."""
-    # Rewrite the date into the proper format
+    # Rewrite the date into the proper format if it's present
+    if args["date"] is not None:
     args["date"] = format_datetime_iso(args["date"])
 
     # Create a host with all their details
     result = database.host_create(args)
     if result:
         return make_response(201)
-    return make_error_response(
-        503, f'Unable to create a new Host {args["handle"]} for {args["date"]}!'
-    )
+    return make_error_response(503, f'Unable to create new Host {args["handle"]}!')
 
 
 @host.route("/", methods=["PUT"])

@@ -242,11 +242,10 @@ def prompts_get_by_host(handle: str) -> List[Prompt]:
         return [Prompt(record) for record in db.query(sql, handle=handle)]
 
 
-def host_create(host_info: dict):
+def host_create(host_info: dict) -> bool:
     """Create a new Host."""
     # Create the SQL needed to insert
     sql_host = text("INSERT INTO writers (uid, handle) VALUES (:uid, :handle)")
-    sql_host_date = text("INSERT INTO writer_dates (uid, date) VALUES (:uid, :date)")
 
     with __connect_to_db() as db:
         # Perform the insertion using a transaction
@@ -256,7 +255,15 @@ def host_create(host_info: dict):
             # utterly fails to properly support this
             with __create_transaction(db) as tx:
                 tx.execute(sql_host, uid=host_info["id"], handle=host_info["handle"])
-                tx.execute(sql_host_date, uid=host_info["id"], date=host_info["date"])
+
+                # Only insert a date if one was given
+                if host_info["date"] is not None:
+                    sql_host_date = text(
+                        "INSERT INTO writer_dates (uid, date) VALUES (:uid, :date)"
+                    )
+                    tx.execute(
+                        sql_host_date, uid=host_info["id"], date=host_info["date"]
+                    )
                 return True
 
         # The transaction failed
