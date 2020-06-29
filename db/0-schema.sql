@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS writer_dates (
   CONSTRAINT `writer_uid-writer_dates_uid`
     FOREIGN KEY (uid) REFERENCES writers (uid)
     ON UPDATE CASCADE
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
 )
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
