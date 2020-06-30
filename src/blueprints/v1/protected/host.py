@@ -51,7 +51,7 @@ def post(args: dict):
     """Create a new Host."""
     # Rewrite the date into the proper format if it's present
     if args["date"] is not None:
-    args["date"] = format_datetime_iso(args["date"])
+        args["date"] = format_datetime_iso(args["date"])
 
     # Create a host with all their details
     result = database.host_create(args)
@@ -64,18 +64,16 @@ def post(args: dict):
 @use_args(
     {
         "id": fields.Str(required=True),
-        "handle": fields.Str(required=True),
-        "date": fields.DateTime(required=True),
+        "handle": fields.Str(missing=None, allow_none=True),
+        "date": fields.DateTime(issing=None, allow_none=True),
     },
     location="json",
 )
 def patch(args: dict):
     """Update a Host."""
-    # Rewrite the date into the proper format,
-    # resetting the day to be the first of the month,
-    # as is required for everything to work correctly
-    args["date"] = args["date"].replace(day=1)
-    args["date"] = format_datetime_iso(args["date"])
+    # Rewrite the date into the proper format if it's present
+    if args["date"] is not None:
+        args["date"] = format_datetime_iso(args["date"])
 
     # Attempt to find the host, bc they must exist to be updated
     existing_host = database.host_get(uid=args["id"], handle="")
