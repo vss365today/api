@@ -60,7 +60,7 @@ def post(args: dict):
     return make_error_response(503, f'Unable to create new Host {args["handle"]}!')
 
 
-@host.route("/", methods=["PUT"])
+@host.route("/", methods=["PATCH"])
 @use_args(
     {
         "id": fields.Str(required=True),
@@ -69,7 +69,7 @@ def post(args: dict):
     },
     location="json",
 )
-def put(args: dict):
+def patch(args: dict):
     """Update a Host."""
     # Rewrite the date into the proper format,
     # resetting the day to be the first of the month,
