@@ -65,7 +65,7 @@ def post(args: dict):
     {
         "id": fields.Str(required=True),
         "handle": fields.Str(missing=None, allow_none=True),
-        "date": fields.DateTime(issing=None, allow_none=True),
+        "date": fields.DateTime(missing=None, allow_none=True),
     },
     location="json",
 )

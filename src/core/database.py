@@ -247,6 +247,7 @@ def host_create(host_info: dict) -> bool:
     """Create a new Host."""
     # Create the SQL needed to insert
     sql_host = text("INSERT INTO writers (uid, handle) VALUES (:uid, :handle)")
+    sql_host_date = text("INSERT INTO writer_dates (uid, date) VALUES (:uid, :date)")
 
     with __connect_to_db() as db:
         # Perform the insertion using a transaction
@@ -259,9 +260,6 @@ def host_create(host_info: dict) -> bool:
 
                 # Only insert a date if one was given
                 if host_info["date"] is not None:
-                    sql_host_date = text(
-                        "INSERT INTO writer_dates (uid, date) VALUES (:uid, :date)"
-                    )
                     tx.execute(
                         sql_host_date, uid=host_info["id"], date=host_info["date"]
                     )
@@ -273,17 +271,17 @@ def host_create(host_info: dict) -> bool:
             return False
 
 
-def host_delete(host_id: str) -> bool:
+def host_delete(uid: str) -> bool:
     """Delete a Host from the database by their Twitter ID.
 
     Due to database FK constraints, this will only succeed
     if the Host does not have any Prompts associated with them.
     The presence of any Prompts will stop all deletion so as to
     prevent orphaned records or an incomplete record."""
-    sql = "DELETE FROM writers WHERE uid = :host_id"
+    sql = "DELETE FROM writers WHERE uid = :uid"
     try:
         with __connect_to_db() as db:
-            db.query(sql, host_id=host_id)
+            db.query(sql, uid=uid)
             return True
     except IntegrityError:
         return False
@@ -305,28 +303,19 @@ def host_get(*, uid: str, handle: str) -> Optional[List[Host]]:
 
 
 def host_update(host_info: dict) -> None:
-    """Update an existing Host."""
-    sql_host = text(
-        """
-    UPDATE writers
-    SET
-       handle = :handle
-    WHERE uid = :id;
-    """
-    )
+    """Update a Host's information."""
+    sql_host = text("UPDATE writers SET handle = :handle WHERE uid = :uid;")
     sql_host_date = text(
-        """UPDATE writer_dates
-    SET
-        date =  STR_TO_DATE(:date, '%Y-%m-%d')
-    WHERE uid = :id;
-    """
+        "UPDATE writer_dates SET date =  STR_TO_DATE(:date, '%Y-%m-%d') WHERE uid = :uid;"
     )
 
     # Update the host info in a transaction
     with __connect_to_db() as db:
         with __create_transaction(db) as tx:
-            tx.execute(sql_host, **host_info)
-            tx.execute(sql_host_date, **host_info)
+            if host_info["handle"] is not None:
+                tx.execute(sql_host, uid=host_info["id"], handle=host_info["handle"])
+            if host_info["date"] is not None:
+                tx.execute(sql_host_date, uid=host_info["id"], date=host_info["date"])
 
 
 def host_get_by_date(date: str) -> List[Host]:
