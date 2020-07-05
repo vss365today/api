@@ -1,19 +1,20 @@
 from typing import Dict, List, Literal, Optional
 
-from flask import current_app
 import records
+from flask import current_app
 from sqlalchemy.exc import DBAPIError, IntegrityError
 from sqlalchemy.sql import text
 
-from src.core.models.v1.Prompt import Prompt
 from src.core.models.v1.Host import Host
+from src.core.models.v1.Prompt import Prompt
 
 
 __all__ = [
     "subscription_email_create",
     "subscription_email_delete",
     "admin_user_get",
-    "is_auth_token_valid",
+    "api_key_has_permission",
+    "api_key_is_valid",
     "prompt_create",
     "prompt_delete",
     "prompt_update",
@@ -105,11 +106,18 @@ def admin_user_get(user: str, password: str) -> Optional[records.Record]:
     return user_record
 
 
-def is_auth_token_valid(token: str) -> bool:
-    """Check if the given auth token is valid."""
+def api_key_has_permission(route: str, token: str) -> bool:
+    """Determine if the given API key has permission to access a route."""
+    sql = f"SELECT has_{route} AS has_permission FROM api_keys WHERE token = :token"
+    with __connect_to_db() as db:
+        return bool(db.query(sql, token=token).one()[0])
+
+
+def api_key_is_valid(token: str) -> bool:
+    """Determine if the given API key is valid."""
     sql = "SELECT 1 FROM api_keys WHERE token = :token"
     with __connect_to_db() as db:
-        return bool(db.query(sql, token=token).first())
+        return bool(db.query(sql, token=token).one())
 
 
 def prompt_create(prompt: Dict[str, Optional[str]]) -> bool:
