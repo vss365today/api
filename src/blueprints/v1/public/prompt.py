@@ -76,6 +76,7 @@ def get(args: dict):
         "word": fields.Str(required=True),
         "content": fields.Str(required=True),
         "media": fields.Str(missing=None, allow_none=True),
+        "is_duplicate_date": fields.Bool(required=False, missing=False),
     },
     location="json",
 )
@@ -84,11 +85,15 @@ def post(args: dict):
     # Format the date in the proper format before writing
     args["date"] = helpers.format_datetime_iso(args["date"])
 
-    # Don't create a prompt if it already exists
-    if database.prompt_find_existing(pid="", date=args["date"]):
-        return helpers.make_error_response(
-            422, f"A prompt for {args['date']} already exists!"
-        )
+    # If we've not recieved an explict flag that this a duplicate data
+    # (which can occur because there happened to more >1 prompt for the day),
+    # we need to enforce a one-prompt-a-day constraint
+    if not args["is_duplicate_date"]:
+        # Don't create a prompt if it already exists
+        if database.prompt_find_existing(pid="", date=args["date"]):
+            return helpers.make_error_response(
+                422, f"A prompt for {args['date']} already exists!"
+            )
 
     # Download the given media
     media_result = True
