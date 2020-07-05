@@ -41,8 +41,12 @@ def __is_valid_url(url: str) -> bool:
 @use_args({"date": fields.DateTime()}, location="query")
 def get(args: dict):
     """Get a Prompt, either the latest or from a specific date."""
+    # Hitting the endpoint without a date returns the latest prompt(s)
+    if "date" not in args:
+        prompts = database.prompt_get_latest()
+
     # We want the prompt from a particular day
-    if "date" in args:
+    else:
         # Format the date in the proper format before fetching
         date = helpers.format_datetime_iso(args["date"])
 
@@ -53,17 +57,11 @@ def get(args: dict):
                 404, f"No prompt exists for date {date}!"
             )
 
-        # Find out if we have a prompt for tomorrow or yesterday
-        for day_prompt in prompts:
-            day_prompt["previous_day"] = prompt_yesterday_exists(day_prompt)
-            day_prompt["next_day"] = prompt_tomorrow_exists(day_prompt)
-        return jsonify(prompts)
-
-    # Hitting the endpoint without a date returns the latest prompt
-    latest_prompt = database.prompt_get_latest()[0]
-    latest_prompt["previous_day"] = prompt_yesterday_exists(latest_prompt)
-    latest_prompt["next_day"] = None
-    return jsonify([latest_prompt])
+    # Find out if we have a prompt for tomorrow or yesterday
+    for day_prompt in prompts:
+        day_prompt["previous_day"] = prompt_yesterday_exists(day_prompt)
+        day_prompt["next_day"] = prompt_tomorrow_exists(day_prompt)
+    return jsonify(prompts)
 
 
 @authorize_route

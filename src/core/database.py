@@ -176,15 +176,21 @@ def prompt_find_existing(*, pid: str, date: str) -> bool:
 
 def prompt_get_latest() -> List[Prompt]:
     """Get the newest prompt."""
+    # Get the latest date in the database
+    latest_date_sql = "SELECT date FROM prompts ORDER BY date DESC LIMIT 1"
+    with __connect_to_db() as db:
+        latest_date = db.query(latest_date_sql).one().date
+
+    # Using the latest date, fetch the prompt(s) for the date
     sql = """
     SELECT prompts.*, writers.handle AS writer_handle
     FROM prompts
         JOIN writers ON prompts.uid = writers.uid
+    WHERE date = :latest_date
     ORDER BY date DESC
-    LIMIT 1
     """
     with __connect_to_db() as db:
-        return [Prompt(record) for record in db.query(sql)]
+        return [Prompt(record) for record in db.query(sql, latest_date=latest_date)]
 
 
 def prompt_get_years() -> List[str]:
