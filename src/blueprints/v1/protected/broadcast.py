@@ -15,9 +15,10 @@ def post(args: dict):
     """Trigger an email broadcast for the given day's prompt."""
     # Put the date in the proper format
     date = helpers.format_datetime_iso(args["date"])
+
     # A prompt for that date doesn't exist
-    prompt = database.prompts_get_by_date(date, date_range=False)
-    if not prompt:
+    prompts = database.prompts_get_by_date(date, date_range=False)
+    if not prompts:
         return helpers.make_error_response(
             503, f"Unable to send out email broadcast for the {date} prompt!"
         )
@@ -26,10 +27,11 @@ def post(args: dict):
     if not current_app.config["ENABLE_EMAIL_SENDING"]:
         return helpers.make_response(200)
 
-    # Construct the mailing list address. It is written this way
-    # because the development and production lists are different
-    # and we need to use the proper one depending on the env
+    # Get the mailing list address
     mg_list_addr = mailgun.mailing_list_addr_get()
+
+    # If there's more than one prompt for this day, we want the newest one
+    prompt = prompts[-1] if len(prompts) > 1 else prompts[0]
 
     # Send an email to the MG mailing list
     # This helps us keep track of who is on the list at any given moment
@@ -37,10 +39,7 @@ def post(args: dict):
     # when it comes to sending out a large amount of email messages
     # https://documentation.mailgun.com/en/latest/api-mailinglists.html#examples
     r = email.make_and_send(
-        mg_list_addr,
-        helpers.format_datetime_pretty(prompt[0].date),
-        "email",
-        **prompt[0],
+        mg_list_addr, helpers.format_datetime_pretty(prompt.date), "email", **prompt
     )
     pprint(r)
 
