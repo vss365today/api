@@ -60,7 +60,13 @@ CREATE TABLE IF NOT EXISTS api_keys (
   id TINYINT(3) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE,
   token VARCHAR(64) NOT NULL UNIQUE COLLATE 'utf8mb4_unicode_ci',
   date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `desc` VARCHAR(256) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci'
+  desc VARCHAR(256) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+  has_admin TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
+  has_broadcast TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
+  has_host TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
+  has_prompt TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
+  has_subscription TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
 )
+COMMENT='Authorization keys for accessing protected API endpoints. By default, keys can only access public, unprotected endpoints and actions. Authorization can be granted on a granular level for complete control over key permissions.'
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
