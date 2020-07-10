@@ -10,7 +10,10 @@ from src.core.email import mailgun
 
 
 @broadcast.route("/", methods=["POST"])
-@use_args({"date": fields.DateTime()}, location="query")
+@use_args(
+    {"date": fields.DateTime(required=True), "which": fields.Int(missing=0)},
+    location="query",
+)
 def post(args: dict):
     """Trigger an email broadcast for the given day's prompt."""
     # Put the date in the proper format
@@ -30,8 +33,11 @@ def post(args: dict):
     # Get the mailing list address
     mg_list_addr = mailgun.mailing_list_addr_get()
 
-    # If there's more than one prompt for this day, we want the newest one
-    prompt = prompts[-1] if len(prompts) > 1 else prompts[0]
+    # Pull out the exact prompt we want to broadcast.
+    # If there's more than one prompt for this day,
+    # it'll use whichever was requested.
+    # By default, the first index is the first recorded/only prompt
+    prompt = prompts[args["which"]]
 
     # Send an email to the MG mailing list
     # This helps us keep track of who is on the list at any given moment

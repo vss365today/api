@@ -12,6 +12,7 @@ services:
     environment:
       - FLASK_ENV=production
       - DOCKER_SECRETS_PATH=/app/secrets
+      - DOWNLOADS_PATH=/app/downloads
     entrypoint:
       - sh
       - ./run-app.sh
