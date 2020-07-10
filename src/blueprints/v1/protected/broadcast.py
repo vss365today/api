@@ -11,7 +11,7 @@ from src.core.email import mailgun
 
 @broadcast.route("/", methods=["POST"])
 @use_args(
-    {"date": fields.DateTime(required=True), "which": fields.Int(missing=0)},
+    {"date": fields.DateTime(required=True), "which": fields.Int(missing=-1)},
     location="query",
 )
 def post(args: dict):
@@ -36,7 +36,7 @@ def post(args: dict):
     # Pull out the exact prompt we want to broadcast.
     # If there's more than one prompt for this day,
     # it'll use whichever was requested.
-    # By default, the first index is the first recorded/only prompt
+    # By default, the latest recorded/only prompt is selected
     prompt = prompts[args["which"]]
 
     # Send an email to the MG mailing list
