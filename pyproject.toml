@@ -15,6 +15,7 @@ pymysql = "^0.9.3"
 Flask-Cors = "^3.0.8"
 requests = "^2.23.0"
 sys-vars = {url = "https://github.com/le717/sys-vars/releases/download/v3.0.0/sys_vars-3.0.0-py3-none-any.whl"}
+XlsxWriter = "^1.2.9"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.7.9"
