@@ -15,28 +15,32 @@ from src.core.helpers import format_datetime_iso, make_response
 @archive.route("/", methods=["POST"])
 def post():
     # Get the full word archive
-    word_archive = db_archive.get_archive()
     archive_years = database.prompt_get_years()
 
     # Put together the save path and file name
     today = format_datetime_iso(datetime.now())
     file_name = f"vss365today-word-archive-{today}.xlsx"
-    save_dir = Path(current_app.config["DOWNLOADS_PATH"]).resolve()
+    save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
     full_save_path = save_dir / file_name
 
     # Create a new spreadsheet file
-    # with xlsxwriter.Workbook(full_save_path) as workbook:
-    #     for year in archive_years:
-    #         worksheet = workbook.add_worksheet(year)
+    with xlsxwriter.Workbook(full_save_path) as workbook:
+        # Start by creating a page with basic file generation info
+        worksheet = workbook.add_worksheet("Info")
 
-    #     worksheet.write("A1", "Hello world")
+        # Group each year's prompts in their own sheet
+        for year in archive_years:
+            worksheet = workbook.add_worksheet(str(year))
+
+            for prompt in db_archive.get_archive(year):
+                print(prompt)
+            worksheet.write("A1", "Hello world")
 
     # TODO Should be kicked off by finder
     # TODO Generates only once a day
     # TODO Should there be a no-dup words option?
     # TODO Generate new spreadsheet
     # - https://xlsxwriter.readthedocs.io/getting_started.html
-    # TODO Generate a new sheet for each year
     # TODO Basic archive stats?
     # - Can these just be excel formulas?
     # TODO Generate archive generation metadata

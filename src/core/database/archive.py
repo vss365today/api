@@ -15,19 +15,17 @@ def get_unique_word_count() -> Record:
         return db.query(sql).one()
 
 
-def get_archive() -> List[Record]:
-    """Get the full word archive for public use.
-
-    Note: this method can take a while to run as the archive grows.
-    """
+def get_archive(year: int) -> List[Record]:
+    """Get the full word archive for the given year."""
     sql = """
 SELECT
     `date`,
     word,
     handle AS `host`,
-    CONCAT('https://twitter.com/', handle, '/status/', tweet_id) AS url
+    tweet_id
 FROM prompts
 JOIN writers ON writers.uid = prompts.uid
+WHERE YEAR(`date`) = :year
 ORDER BY `date` DESC"""
     with __connect_to_db() as db:
-        return db.query(sql).all()
+        return db.query(sql, year=year)
