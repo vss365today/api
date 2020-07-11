@@ -36,9 +36,9 @@ def _factory(
 
 
 account = _factory("account", "/account", "v1")
+archive = _factory("archive", "/archive", "v1")
 broadcast = _factory("broadcast", "/broadcast", "v1", authorize_blueprint)
 browse = _factory("browse", "/browse", "v1")
-archive = _factory("archive", "/archive", "v1")
 host = _factory("host", "/host", "v1", authorize_blueprint)
 prompt = _factory("prompt", "/prompt", "v1")
 search = _factory("search", "/search", "v1")
