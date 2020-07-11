@@ -1,4 +1,5 @@
-from typing import List
+from datetime import date
+from typing import Dict, List
 
 from records import Record
 
@@ -13,6 +14,22 @@ def get_unique_word_count() -> Record:
     sql = "SELECT DISTINCT COUNT(word) AS total_num_of_words FROM prompts"
     with __connect_to_db() as db:
         return db.query(sql).one()
+
+
+def prompt_date_range() -> Dict[str, date]:
+
+    dates = {}
+
+    # Get the old prompt date
+    sql = "SELECT DISTINCT `date` FROM prompts ORDER BY `date` ASC LIMIT 1"
+    with __connect_to_db() as db:
+        dates["oldest"] = db.query(sql).one().date
+
+    # Get the newest prompt date
+    sql = "SELECT DISTINCT `date` FROM prompts ORDER BY `date` DESC LIMIT 1"
+    with __connect_to_db() as db:
+        dates["newest"] = db.query(sql).one().date
+    return dates
 
 
 def get_archive(year: int) -> List[Record]:
