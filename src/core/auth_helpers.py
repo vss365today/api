@@ -3,7 +3,7 @@ import functools
 from flask import request
 from flask import abort
 
-from src.core.database import api_key_is_valid, api_key_has_permission
+from src.core.database.api import api_key_is_valid, api_key_has_permission
 
 
 __all__ = ["authorize_blueprint", "authorize_route", "fake_authorize"]
