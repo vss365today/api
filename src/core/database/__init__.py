@@ -10,8 +10,6 @@ from src.core.models.v1.Prompt import Prompt
 
 
 __all__ = [
-    "subscription_email_create",
-    "subscription_email_delete",
     "admin_user_get",
     "prompt_create",
     "prompt_delete",
@@ -51,36 +49,6 @@ def __create_transaction(db):
 def __flatten_tuple_list(tup) -> list:
     """Flatten a list of tuples into a tuple of actual data."""
     return [item[0] for item in tup]
-
-
-def subscription_email_create(addr: str) -> bool:
-    """Add a subscription email address."""
-    try:
-        sql = "INSERT INTO emails (email) VALUES (:addr)"
-        with __connect_to_db() as db:
-            db.query(sql, addr=addr.lower())
-        return True
-
-    # That address aleady exists in the database.
-    # However, to prevent data leakage, pretend it added
-    except IntegrityError as exc:
-        print(f"New subscription exception: {exc}")
-        print(addr)
-        return True
-
-    # An error occurred trying to record the email
-    except DBAPIError as exc:
-        print(f"New subscription exception: {exc}")
-        print(addr)
-        return False
-
-
-def subscription_email_delete(addr: str) -> Literal[True]:
-    """Remove a subscription email address."""
-    sql = "DELETE FROM emails WHERE email = :addr"
-    with __connect_to_db() as db:
-        db.query(sql, addr=addr)
-    return True
 
 
 def admin_user_get(user: str, password: str) -> Optional[records.Record]:
