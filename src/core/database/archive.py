@@ -38,7 +38,7 @@ def get_archive(year: int) -> List[Record]:
 SELECT
     `date`,
     word,
-    handle AS `host`,
+    handle AS `writer_handle`,
     tweet_id
 FROM prompts
 JOIN writers ON writers.uid = prompts.uid
