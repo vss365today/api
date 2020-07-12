@@ -54,6 +54,13 @@ def post():
         for year in archive_years:
             worksheet = workbook.add_worksheet(str(year))
 
+            # Set the column widths
+            widths = db_archive.get_column_widths(year)
+            worksheet.set_column(0, 0, 10)
+            worksheet.set_column(1, 1, widths.longest_word)
+            worksheet.set_column(2, 2, widths.longest_handle)
+            worksheet.set_column(3, 3, widths.longest_url)
+
             # Write the headings
             worksheet.write(0, 0, "Date", bolded_text)
             worksheet.write(0, 1, "Word", bolded_text)

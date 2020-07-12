@@ -6,7 +6,7 @@ from records import Record
 from src.core.database import __connect_to_db
 
 
-__all__ = ["get", "prompt_date_range"]
+__all__ = ["get", "get_column_widths", "prompt_date_range"]
 
 
 def prompt_date_range() -> Dict[str, date]:
@@ -39,3 +39,17 @@ WHERE YEAR(`date`) = :year
 ORDER BY word ASC"""
     with __connect_to_db() as db:
         return db.query(sql, year=year)
+
+
+def get_column_widths(year: int) -> List[Record]:
+    """TODO"""
+    sql = """
+SELECT
+    MAX(LENGTH(word)) + 2 AS longest_word,
+    MAX(LENGTH(handle)) + 2 AS longest_handle,
+    MAX(LENGTH(handle)) + MAX(LENGTH(tweet_id)) + 29 AS longest_url
+FROM prompts
+JOIN writers ON writers.uid = prompts.uid
+WHERE YEAR(`date`) = :year"""
+    with __connect_to_db() as db:
+        return db.query(sql, year=year).one()
