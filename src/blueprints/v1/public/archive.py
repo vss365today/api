@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from flask import current_app
@@ -8,28 +8,50 @@ from src.blueprints import archive
 from src.core import database, helpers
 from src.core.auth_helpers import authorize_route
 from src.core.database import archive as db_archive
-
 from src.core.models.v1.Prompt import Prompt
 
 
 @archive.route("/", methods=["GET"])
 def get():
-    return {}
+    """Get the filename for the newest word archive spreadsheet."""
+    # Set up all date values we need
+    today = datetime.now()
+    today_iso = helpers.format_datetime_iso(today)
+    yesterday_iso = helpers.format_datetime_iso(today - timedelta(days=1))
+
+    # Build out all the paths we need
+    save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
+    today_file_name = f"vss365today-word-archive-{today_iso}.xlsx"
+    yesterday_file_name = f"vss365today-word-archive-{yesterday_iso}.xlsx"
+    today_full_path = save_dir / today_file_name
+    yesterday_full_path = save_dir / yesterday_file_name
+
+    # If a file with today's date exists, return it
+    # Otherwise, attempt to return yesterday's file
+    # If neither exist, error so the consumer knows to wait
+    if today_full_path.exists():
+        return {"file": today_file_name}
+    if yesterday_full_path.exists():
+        return {"file": yesterday_file_name}
+    return helpers.make_error_response(
+        404, "Word archive currently unavailable for download!"
+    )
 
 
 @authorize_route
 @archive.route("/", methods=["POST"])
 def post():
+    """Generate a new word archive spreadsheet."""
     # Set up all date values we need
     archive_years = database.prompt_get_years()
     archive_range = db_archive.prompt_date_range()
     oldest_date = helpers.format_datetime_pretty(archive_range["oldest"])
     newest_date = helpers.format_datetime_pretty(archive_range["newest"])
-
-    # Put together the save path and file name
     today = datetime.now()
     today_iso = helpers.format_datetime_iso(today)
     today_pretty = helpers.format_datetime_pretty(today)
+
+    # Put together the save path and file name
     file_name = f"vss365today-word-archive-{today_iso}.xlsx"
     save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
     full_save_path = save_dir / file_name
@@ -81,5 +103,4 @@ def post():
                 worksheet.write_url(row, 3, url)
 
     # TODO Delete old spreadsheet or maybe have a 5 day backup?
-    # - Doing so would add a GET option to return the latest filename
     return helpers.make_response(201)
