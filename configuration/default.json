@@ -12,6 +12,7 @@
     "DB_HOST": "vss365today-db",
     "IMAGES_DIR": "/app/images",
     "IMAGES_DIR_TEMP": "/app/images/temp",
+    "DOWNLOADS_DIR": "/app/downloads",
     "ENABLE_EMAIL_SENDING": false
   }
 }
