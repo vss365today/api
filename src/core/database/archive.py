@@ -41,8 +41,8 @@ ORDER BY word ASC"""
         return db.query(sql, year=year)
 
 
-def get_column_widths(year: int) -> List[Record]:
-    """TODO"""
+def get_column_widths(year: int) -> Record:
+    """Determine the best column widths for the yearly data."""
     sql = """
 SELECT
     MAX(LENGTH(word)) + 2 AS longest_word,
