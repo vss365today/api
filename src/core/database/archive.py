@@ -6,14 +6,7 @@ from records import Record
 from src.core.database import __connect_to_db
 
 
-__all__ = ["get_unique_word_count", "get_archive"]
-
-
-def get_unique_word_count() -> Record:
-
-    sql = "SELECT DISTINCT COUNT(word) AS total_num_of_words FROM prompts"
-    with __connect_to_db() as db:
-        return db.query(sql).one()
+__all__ = ["get", "prompt_date_range"]
 
 
 def prompt_date_range() -> Dict[str, date]:
@@ -32,7 +25,7 @@ def prompt_date_range() -> Dict[str, date]:
     return dates
 
 
-def get_archive(year: int) -> List[Record]:
+def get(year: int) -> List[Record]:
     """Get the full word archive for the given year."""
     sql = """
 SELECT
