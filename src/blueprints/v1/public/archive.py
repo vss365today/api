@@ -101,6 +101,4 @@ def post():
                 worksheet.write(row, 2, prompt.writer_handle)
                 url = Prompt.make_url(prompt.writer_handle, prompt.tweet_id)
                 worksheet.write_url(row, 3, url)
-
-    # TODO Delete old spreadsheet or maybe have a 5 day backup?
     return helpers.make_response(201)
