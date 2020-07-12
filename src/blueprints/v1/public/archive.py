@@ -12,6 +12,11 @@ from src.core.database import archive as db_archive
 from src.core.models.v1.Prompt import Prompt
 
 
+@archive.route("/", methods=["GET"])
+def get():
+    return {}
+
+
 @authorize_route
 @archive.route("/", methods=["POST"])
 def post():
