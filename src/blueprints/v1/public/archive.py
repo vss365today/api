@@ -51,8 +51,6 @@ def post():
                 tweet_url = Prompt.make_url(prompt.host, prompt.tweet_id)
             worksheet.write("A1", "Hello world")
 
-    # TODO Should be kicked off by finder
-    # TODO Generates only once a day
     # TODO Should there be a no-dup words option?
     # TODO Generate new spreadsheet
     # - https://xlsxwriter.readthedocs.io/getting_started.html
@@ -60,4 +58,5 @@ def post():
     # - Can these just be excel formulas?
     # TODO Delete old spreadsheet or maybe have a 5 day backup?
     # - Doing so would add a GET option to return the latest filename
+    # TODO User-configurable "option" for sort order?
     return helpers.make_response(201)

@@ -17,10 +17,10 @@ def get_unique_word_count() -> Record:
 
 
 def prompt_date_range() -> Dict[str, date]:
-
+    """Get the first and last recorded Prompt dates."""
     dates = {}
 
-    # Get the old prompt date
+    # Get the oldest prompt date
     sql = "SELECT DISTINCT `date` FROM prompts ORDER BY `date` ASC LIMIT 1"
     with __connect_to_db() as db:
         dates["oldest"] = db.query(sql).one().date
@@ -43,6 +43,6 @@ SELECT
 FROM prompts
 JOIN writers ON writers.uid = prompts.uid
 WHERE YEAR(`date`) = :year
-ORDER BY `date` DESC"""
+ORDER BY word ASC"""
     with __connect_to_db() as db:
         return db.query(sql, year=year)
