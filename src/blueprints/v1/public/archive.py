@@ -11,6 +11,11 @@ from src.core.database import archive as db_archive
 from src.core.models.v1.Prompt import Prompt
 
 
+# Set some constants for a consistent filename
+BASE_FILE_NAME = "vss365today-word-archive-"
+FILE_NAME_EXT = ".xlsx"
+
+
 @archive.route("/", methods=["GET"])
 def get():
     """Get the filename for the newest word archive spreadsheet."""
@@ -21,8 +26,8 @@ def get():
 
     # Build out all the paths we need
     save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
-    today_file_name = f"vss365today-word-archive-{today_iso}.xlsx"
-    yesterday_file_name = f"vss365today-word-archive-{yesterday_iso}.xlsx"
+    today_file_name = f"{BASE_FILE_NAME}{today_iso}{FILE_NAME_EXT}"
+    yesterday_file_name = f"{BASE_FILE_NAME}{yesterday_iso}{FILE_NAME_EXT}"
     today_full_path = save_dir / today_file_name
     yesterday_full_path = save_dir / yesterday_file_name
 
@@ -52,7 +57,7 @@ def post():
     today_pretty = helpers.format_datetime_pretty(today)
 
     # Put together the save path and file name
-    file_name = f"vss365today-word-archive-{today_iso}.xlsx"
+    file_name = f"{BASE_FILE_NAME}{today_iso}{FILE_NAME_EXT}"
     save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
     full_save_path = save_dir / file_name
 
