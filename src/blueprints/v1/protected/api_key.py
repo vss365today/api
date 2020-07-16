@@ -6,8 +6,8 @@ from src.blueprints import api_key
 from src.core import database, helpers
 
 
-@use_args({"token": fields.Str()}, location="query")
 @api_key.route("/", methods=["GET"])
+@use_args({"token": fields.Str()}, location="query")
 def get(args: dict):
     # Fetch the key permissions
     database.api_key.get(args["token"])
@@ -26,8 +26,8 @@ def put():
     return {}
 
 
-@use_args({"token": fields.Str()}, location="query")
 @api_key.route("/", methods=["DELETE"])
+@use_args({"token": fields.Str()}, location="query")
 def delete(args: dict):
     """DELETE request for deleting an API key."""
     database.api_key.delete(args["token"])

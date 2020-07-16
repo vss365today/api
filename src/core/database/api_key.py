@@ -24,7 +24,7 @@ def get(token: str) -> Record:
     with __connect_to_db() as db:
         info = db.query(sql, token=token).one()
 
-    # Delete the token from the fetched results
+    # Delete unneeded from the fetched results
     del info["id"]
     del info["token"]
     return info
