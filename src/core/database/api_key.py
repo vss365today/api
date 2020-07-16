@@ -3,7 +3,12 @@ from records import Record
 from src.core.database import __connect_to_db
 
 
-__all__ = ["delete", "has_permission", "get", "is_valid", "update"]
+__all__ = ["create", "delete", "has_permission", "get", "is_valid", "update"]
+
+
+def create(permissions: dict):
+    """Create an API key with specified permissions."""
+    raise NotImplementedError
 
 
 def delete(token: str) -> bool:
