@@ -1,3 +1,5 @@
+from secrets import token_hex
+
 from records import Record
 
 from src.core.database import __connect_to_db
@@ -22,11 +24,16 @@ def get(token: str) -> Record:
     """Get an API key's permissions."""
     sql = "SELECT * FROM api_keys WHERE token = :token LIMIT 1"
     with __connect_to_db() as db:
-        info = db.query(sql, token=token).one()
+        info = db.query(sql, token=token).one(as_dict=True)
 
-    # Delete unneeded from the fetched results
+    # Delete unneeded info from the result set
     del info["id"]
     del info["token"]
+
+    # Convert all bool columns into proper booleans
+    for k, v in info.items():
+        if "has_" in k:
+            info[k] = bool(v)
     return info
 
 

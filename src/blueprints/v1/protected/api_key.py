@@ -10,8 +10,7 @@ from src.core import database, helpers
 @use_args({"token": fields.Str()}, location="query")
 def get(args: dict):
     # Fetch the key permissions
-    database.api_key.get(args["token"])
-    return {}
+    return database.api_key.get(args["token"])
 
 
 @api_key.route("/", methods=["POST"])
