@@ -3,7 +3,7 @@ import functools
 from flask import request
 from flask import abort
 
-from src.core.database.api import api_key_is_valid, api_key_has_permission
+from src.core.database import api_key
 
 
 __all__ = ["authorize_blueprint", "authorize_route", "fake_authorize"]
@@ -19,15 +19,15 @@ def authorize_blueprint():
 
     # Attempt to get the API key and validate it
     try:
-        api_key = bearer.split("Bearer")[1].strip()
-        if not api_key_is_valid(api_key):
+        key = bearer.split("Bearer")[1].strip()
+        if not api_key.is_valid(key):
             raise KeyError
     except (KeyError, IndexError):
         abort(403)
 
     # The key is valid, now see if it has permission to access this route
     flask_route = request.endpoint.split(".")[0]
-    if not api_key_has_permission(flask_route, api_key):
+    if not api_key.has_permission(flask_route, key):
         abort(403)
 
 
