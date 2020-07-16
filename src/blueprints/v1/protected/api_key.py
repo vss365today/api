@@ -4,13 +4,13 @@ from webargs.flaskparser import use_args
 
 from src.blueprints import api_key
 from src.core import database, helpers
-from src.core.auth_helpers import get_auth_token
 
 
+@use_args({"token": fields.Str()}, location="query")
 @api_key.route("/", methods=["GET"])
-def get():
-    token = get_auth_token()
-    database.api_key.info(token)
+def get(args: dict):
+    # Fetch the key permissions
+    database.api_key.get(args["token"])
     return {}
 
 

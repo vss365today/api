@@ -13,27 +13,21 @@ def create(permissions: dict):
 
 def delete(token: str) -> bool:
     """Delete an API key."""
-    raise NotImplementedError
+    sql = "DELETE FROM api_keys WHERE token = :token"
+    with __connect_to_db() as db:
+        return bool(db.query(sql, token=token))
 
 
 def get(token: str) -> Record:
     """Get an API key's permissions."""
-    sql = """
-    SELECT
-        id,
-        date_created,
-        `desc`,
-        has_admin,
-        has_archive,
-        has_broadcast,
-        has_host,
-        has_prompt,
-        has_subscription
-    FROM api_keys
-    WHERE token = :token
-    LIMIT 1"""
+    sql = "SELECT * FROM api_keys WHERE token = :token LIMIT 1"
     with __connect_to_db() as db:
-        return db.query(sql, token=token).one()
+        info = db.query(sql, token=token).one()
+
+    # Delete the token from the fetched results
+    del info["id"]
+    del info["token"]
+    return info
 
 
 def has_permission(route: str, token: str) -> bool:
