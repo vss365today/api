@@ -24,8 +24,7 @@ def authorize_blueprint():
         abort(403)
 
     # The key is valid, now see if it has permission to access this route
-    # TODO Handle api_key route as it may be special (uses has_admin instead?)
-    flask_route = request.endpoint.split(".")[0]
+    flask_route = request.endpoint.split(".")[0].replace("-", "_")
     if not api_key.has_permission(flask_route, token):
         abort(403)
 

@@ -20,20 +20,22 @@ def delete(token: str) -> bool:
         return bool(db.query(sql, token=token))
 
 
-def get(token: str) -> Record:
+def get(token: str) -> dict:
     """Get an API key's permissions."""
     sql = "SELECT * FROM api_keys WHERE token = :token LIMIT 1"
     with __connect_to_db() as db:
         info = db.query(sql, token=token).one(as_dict=True)
 
-    # Delete unneeded info from the result set
-    del info["id"]
-    del info["token"]
+    # The requested key has information
+    if info:
+        # Delete unneeded info from the result set
+        del info["id"]
+        del info["token"]
 
-    # Convert all bool columns into proper booleans
-    for k, v in info.items():
-        if "has_" in k:
-            info[k] = bool(v)
+        # Convert all bool columns into proper booleans
+        for k, v in info.items():
+            if "has_" in k:
+                info[k] = bool(v)
     return info
 
 
