@@ -18,7 +18,7 @@ def authorize_blueprint():
     # Attempt to get the API key and validate it
     try:
         token = get_auth_token()
-        if not api_key.is_valid(token):
+        if not api_key.exists(token):
             raise KeyError
     except (KeyError, IndexError):
         abort(403)
