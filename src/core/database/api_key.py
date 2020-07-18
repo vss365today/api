@@ -1,4 +1,3 @@
-from typing import Dict
 from secrets import token_hex
 
 from src.core.database import __connect_to_db
@@ -7,14 +6,14 @@ from src.core.database import __connect_to_db
 __all__ = ["create", "delete", "exists", "has_permission", "get", "update"]
 
 
-def __int_to_bool(records: Dict[str, int]) -> Dict[str, bool]:
+def __int_to_bool(records: dict) -> dict:
     for k, v in records.items():
         if isinstance(v, int):
             records[k] = bool(v)
     return records
 
 
-def __bool_to_int(records: Dict[str, bool]) -> Dict[str, int]:
+def __bool_to_int(records: dict) -> dict:
     for k, v in records.items():
         if isinstance(v, bool):
             records[k] = int(v)
