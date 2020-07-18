@@ -64,7 +64,7 @@ def post(args: dict):
     {
         "token": fields.Str(),
         "desc": fields.Str(),
-        "has_admin": fields.Bool(),
+        "has_api_key": fields.Bool(),
         "has_archive": fields.Bool(),
         "has_broadcast": fields.Bool(),
         "has_host": fields.Bool(),
@@ -77,10 +77,15 @@ def put(args: dict):
     """PUT request to update an existing API key."""
     # That key doesn't exist
     if not database.api_key.exists(args["token"]):
-        return helpers.make_error_response(404, "The requested API key does not exist!")
+        return helpers.make_error_response(
+            404, "The requested API key does not exist!",
+        )
 
-    # result = database.api_key.update(args)
-    return {}
+    # Update and respond accordingly
+    result = database.api_key.update(args)
+    if result:
+        return helpers.make_response(200)
+    return helpers.make_error_response(422, "Unable to update the API key!")
 
 
 @api_key.route("/", methods=["DELETE"])

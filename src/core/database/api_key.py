@@ -88,9 +88,27 @@ def has_permission(route: str, token: str) -> bool:
         return bool(db.query(sql, token=token).one()[0])
 
 
-def update(permissions: dict):
+def update(permissions: dict) -> bool:
     """Update an API key's permissions."""
-    raise NotImplementedError
-
     # Convert the boolean fields to integers
     permissions = __bool_to_int(permissions)
+
+    # Update the key
+    sql = """UPDATE api_keys
+    SET
+        `desc` = :desc,
+        has_api_key = :has_api_key,
+        has_archive = :has_archive,
+        has_broadcast = :has_broadcast,
+        has_host = :has_host,
+        has_prompt = :has_prompt,
+        has_subscription = :has_subscription
+    WHERE token = :token
+    """
+    try:
+        with __connect_to_db() as db:
+            db.query(sql, **permissions)
+            return True
+    except DataError as exc:
+        print(f"API key update exception: {exc}")
+        return False
