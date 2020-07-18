@@ -1,6 +1,5 @@
+from typing import Dict
 from secrets import token_hex
-
-from records import Record
 
 from src.core.database import __connect_to_db
 
@@ -8,9 +7,30 @@ from src.core.database import __connect_to_db
 __all__ = ["create", "delete", "exists", "has_permission", "get", "update"]
 
 
+def __int_to_bool(records: Dict[str, int]) -> Dict[str, bool]:
+    for k, v in records.items():
+        if isinstance(v, int):
+            records[k] = bool(v)
+    return records
+
+
+def __bool_to_int(records: Dict[str, bool]) -> Dict[str, int]:
+    for k, v in records.items():
+        if isinstance(v, bool):
+            records[k] = int(v)
+    return records
+
+
 def create(permissions: dict):
     """Create an API key with specified permissions."""
+    # Convert the boolean fields to integers
+    permissions = __bool_to_int(permissions)
+
+    # Generate a new token as an API key
+    new_token = token_hex()
+
     raise NotImplementedError
+    return {"token": new_token}
 
 
 def delete(token: str) -> bool:
@@ -39,10 +59,8 @@ def get(token: str) -> dict:
         del info["id"]
         del info["token"]
 
-        # Convert all bool columns into proper booleans
-        for k, v in info.items():
-            if "has_" in k:
-                info[k] = bool(v)
+        # Convert all boolean columns into proper booleans
+        info = __int_to_bool(info)
     return info
 
 

@@ -18,7 +18,6 @@ def get(args: dict):
 @api_key.route("/", methods=["POST"])
 @use_args(
     {
-        "token": fields.Str(),
         "desc": fields.Str(),
         "has_admin": fields.Bool(),
         "has_archive": fields.Bool(),
@@ -30,9 +29,16 @@ def get(args: dict):
     location="json",
 )
 def post(args: dict):
+    """POST request to create a new API key."""
+    # Create the token
+    result = database.api_key.create(args)
 
-    # database.api_key.create()
-    return {}
+    # Respond according to if it was successful or not
+    if result:
+        return helpers.make_response(201, {"token": result["token"]})
+    return helpers.make_error_response(
+        422, "Unable to successfully create a new API key!"
+    )
 
 
 @api_key.route("/", methods=["PUT"])
@@ -50,8 +56,12 @@ def post(args: dict):
     location="json",
 )
 def put(args: dict):
+    """PUT request to update an existing API key."""
+    # That key doesn't exist
+    if not database.api_key.exists(args["token"]):
+        return helpers.make_error_response(404, "The requested API key does not exist!")
 
-    # database.api_key.update()
+    # result = database.api_key.update(args)
     return {}
 
 
