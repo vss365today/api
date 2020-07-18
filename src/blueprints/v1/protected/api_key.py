@@ -9,9 +9,9 @@ from src.core import database, helpers
 @use_args({"token": fields.Str()}, location="query")
 def get(args: dict):
     """GET request to fetch the key permissions."""
-    info = database.api_key.get(args["token"])
-    if info:
-        return helpers.make_response(200, info)
+    record = database.api_key.get(args["token"])
+    if record is not None:
+        return helpers.make_response(200, record)
     return helpers.make_error_response(404, "Could not get key information!")
 
 

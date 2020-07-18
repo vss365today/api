@@ -1,12 +1,13 @@
-from typing import Dict
+from typing import Dict, List, Optional
 from secrets import token_hex
 
 from sqlalchemy.exc import DataError
 
 from src.core.database import __connect_to_db
+from src.core.models.v1.ApiKey import ApiKey
 
 
-__all__ = ["create", "delete", "exists", "has_permission", "get", "update"]
+__all__ = ["create", "delete", "exists", "has_permission", "get", "get_all", "update"]
 
 
 def __int_to_bool(records: dict) -> dict:
@@ -65,21 +66,19 @@ def exists(token: str) -> bool:
         return bool(db.query(sql, token=token).one())
 
 
-def get(token: str) -> dict:
+def get(token: str) -> Optional[ApiKey]:
     """Get an API key's permissions."""
     sql = "SELECT * FROM api_keys WHERE token = :token LIMIT 1"
     with __connect_to_db() as db:
-        info = db.query(sql, token=token).one(as_dict=True)
+        record = db.query(sql, token=token).one()
+        return ApiKey(record) if record else None
 
-    # The requested key has information
-    if info:
-        # Delete unneeded info from the result set
-        del info["id"]
-        del info["token"]
 
-        # Convert all boolean columns into proper booleans
-        info = __int_to_bool(info)
-    return info
+def get_all(token: str) -> List[ApiKey]:
+    """Get an API key's permissions."""
+    sql = "SELECT * FROM api_keys"
+    with __connect_to_db() as db:
+        return [ApiKey(record) for record in db.query(sql, token=token)]
 
 
 def has_permission(route: str, token: str) -> bool:
@@ -89,6 +88,9 @@ def has_permission(route: str, token: str) -> bool:
         return bool(db.query(sql, token=token).one()[0])
 
 
-def update():
+def update(permissions: dict):
     """Update an API key's permissions."""
     raise NotImplementedError
+
+    # Convert the boolean fields to integers
+    permissions = __bool_to_int(permissions)
