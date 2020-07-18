@@ -74,11 +74,11 @@ def get(token: str) -> Optional[ApiKey]:
         return ApiKey(record) if record else None
 
 
-def get_all(token: str) -> List[ApiKey]:
-    """Get an API key's permissions."""
+def get_all() -> List[ApiKey]:
+    """Get all recorded API key's permissions."""
     sql = "SELECT * FROM api_keys"
     with __connect_to_db() as db:
-        return [ApiKey(record) for record in db.query(sql, token=token)]
+        return [ApiKey(record) for record in db.query(sql)]
 
 
 def has_permission(route: str, token: str) -> bool:

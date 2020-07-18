@@ -6,13 +6,33 @@ from src.core import database, helpers
 
 
 @api_key.route("/", methods=["GET"])
-@use_args({"token": fields.Str()}, location="query")
+@use_args(
+    {"token": fields.Str(), "all": fields.Bool()}, location="query",
+)
 def get(args: dict):
-    """GET request to fetch the key permissions."""
-    record = database.api_key.get(args["token"])
-    if record is not None:
-        return helpers.make_response(200, record)
-    return helpers.make_error_response(404, "Could not get key information!")
+    """GET request to fetch key permissions."""
+    # Cannot request info for a single key and all keys
+    if "token" in args and "all" in args:
+        return helpers.make_error_response(
+            422, "Cannot request individual and all key info together!"
+        )
+
+    # We want all key info
+    if "all" in args:
+        records = database.api_key.get_all()
+        return helpers.make_response(200, records)
+
+    # We want info on a singke key
+    if "token" in args:
+        record = database.api_key.get(args["token"])
+        if record is not None:
+            return helpers.make_response(200, record)
+        return helpers.make_error_response(404, "Could not get key information!")
+
+    # Some form of info must be requested
+    return helpers.make_error_response(
+        422, "Must request some form of key information!"
+    )
 
 
 @api_key.route("/", methods=["POST"])
