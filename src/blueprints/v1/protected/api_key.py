@@ -19,7 +19,7 @@ def get(args: dict):
 @use_args(
     {
         "desc": fields.Str(),
-        "has_admin": fields.Bool(),
+        "has_api_key": fields.Bool(),
         "has_archive": fields.Bool(),
         "has_broadcast": fields.Bool(),
         "has_host": fields.Bool(),
@@ -35,10 +35,8 @@ def post(args: dict):
 
     # Respond according to if it was successful or not
     if result:
-        return helpers.make_response(201, {"token": result["token"]})
-    return helpers.make_error_response(
-        422, "Unable to successfully create a new API key!"
-    )
+        return helpers.make_response(201, result)
+    return helpers.make_error_response(422, "Unable to create a new API key!")
 
 
 @api_key.route("/", methods=["PUT"])

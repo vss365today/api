@@ -1,4 +1,7 @@
+from typing import Dict
 from secrets import token_hex
+
+from sqlalchemy.exc import DataError
 
 from src.core.database import __connect_to_db
 
@@ -20,16 +23,32 @@ def __bool_to_int(records: dict) -> dict:
     return records
 
 
-def create(permissions: dict):
+def create(permissions: dict) -> Dict[str, str]:
     """Create an API key with specified permissions."""
     # Convert the boolean fields to integers
     permissions = __bool_to_int(permissions)
 
-    # Generate a new token as an API key
+    # Generate a new token for the API key
     new_token = token_hex()
 
-    raise NotImplementedError
-    return {"token": new_token}
+    # Create the record
+    sql = """INSERT INTO api_keys (
+        token, `desc`, has_api_key, has_archive,
+        has_broadcast, has_host, has_prompt,
+        has_subscription
+    ) VALUES (
+        :token, :desc, :has_api_key, :has_archive,
+        :has_broadcast, :has_host, :has_prompt,
+        :has_subscription
+    )
+    """
+    try:
+        with __connect_to_db() as db:
+            db.query(sql, token=new_token, **permissions)
+            return {"token": new_token}
+    except DataError as exc:
+        print(f"API key creation exception: {exc}")
+        return {}
 
 
 def delete(token: str) -> bool:
