@@ -253,7 +253,7 @@ def host_delete(uid: str) -> bool:
         return False
 
 
-def host_get(*, uid: str, handle: str) -> Optional[List[Host]]:
+def host_get(*, uid: str, handle: str) -> List[Host]:
     """Get Host info by either their Twitter ID or handle."""
     sql = """
     SELECT writers.uid, handle, writer_dates.date
