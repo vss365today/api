@@ -4,13 +4,10 @@ from sqlalchemy.exc import DBAPIError, IntegrityError
 
 from src.core.database import __connect_to_db
 
-__all__ = [
-    "subscription_email_create",
-    "subscription_email_delete",
-]
+__all__ = ["email_create", "email_delete"]
 
 
-def subscription_email_create(addr: str) -> bool:
+def email_create(addr: str) -> bool:
     """Add a subscription email address."""
     try:
         sql = "INSERT INTO emails (email) VALUES (:addr)"
@@ -32,7 +29,7 @@ def subscription_email_create(addr: str) -> bool:
         return False
 
 
-def subscription_email_delete(addr: str) -> Literal[True]:
+def email_delete(addr: str) -> Literal[True]:
     """Remove a subscription email address."""
     sql = "DELETE FROM emails WHERE email = :addr"
     with __connect_to_db() as db:

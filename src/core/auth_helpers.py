@@ -12,22 +12,20 @@ __all__ = ["authorize_blueprint", "authorize_route", "fake_authorize"]
 def authorize_blueprint():
     """Determine if the request to a blueprint has been properly authorized."""
     # Was an Authorization header sent?
-    if "Authorization" in request.headers:
-        bearer = request.headers["Authorization"]
-    else:
+    if "Authorization" not in request.headers:
         abort(400)
 
     # Attempt to get the API key and validate it
     try:
-        key = bearer.split("Bearer")[1].strip()
-        if not api_key.is_valid(key):
+        token = get_auth_token()
+        if not api_key.exists(token):
             raise KeyError
     except (KeyError, IndexError):
         abort(403)
 
     # The key is valid, now see if it has permission to access this route
-    flask_route = request.endpoint.split(".")[0]
-    if not api_key.has_permission(flask_route, key):
+    flask_route = request.endpoint.split(".")[0].replace("-", "_")
+    if not api_key.can_access(flask_route, token):
         abort(403)
 
 
@@ -45,6 +43,11 @@ def authorize_route(func):
         return func(*args, **kwargs)
 
     return wrap
+
+
+def get_auth_token() -> str:
+    """Attempt to extract the auth token from the request."""
+    return request.headers["Authorization"].split("Bearer")[1].strip()
 
 
 def fake_authorize():

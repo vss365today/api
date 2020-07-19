@@ -106,8 +106,9 @@ def post(args: dict):
     db_result = database.prompt_create(args)
 
     # Return the proper status depending on adding result
-    status_code = 201 if db_result and media_result else 422
-    return helpers.make_response(status_code)
+    if db_result and media_result:
+        return helpers.make_response(201)
+    return helpers.make_error_response(422, "Unable to record new Prompt!")
 
 
 @authorize_route

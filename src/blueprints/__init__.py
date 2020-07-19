@@ -35,6 +35,7 @@ def _factory(
     return blueprint
 
 
+api_key = _factory("api_key", "/api-key", "v1", authorize_blueprint)
 account = _factory("account", "/account", "v1")
 archive = _factory("archive", "/archive", "v1")
 broadcast = _factory("broadcast", "/broadcast", "v1", authorize_blueprint)
@@ -44,4 +45,13 @@ prompt = _factory("prompt", "/prompt", "v1")
 search = _factory("search", "/search", "v1")
 subscription = _factory("subscription", "/subscription", "v1")
 
-all_blueprints = (archive, broadcast, browse, host, prompt, search, subscription)
+all_blueprints = (
+    api_key,
+    archive,
+    broadcast,
+    browse,
+    host,
+    prompt,
+    search,
+    subscription,
+)

@@ -1,5 +1,7 @@
 from datetime import datetime
-from typing import Dict, Tuple
+from typing import Any, Dict, Tuple
+
+from flask import jsonify
 
 __all__ = [
     "format_datetime_iso",
@@ -19,11 +21,11 @@ def format_datetime_pretty(date_obj: datetime) -> str:
     return date_obj.strftime("%B %d, %Y")
 
 
-def make_response(status: int, data: dict = None) -> Tuple[dict, int]:
+def make_response(status: int, data: Any = None) -> Tuple[dict, int]:
     """Construct a non-error endpoint response."""
     if data is None:
         data = {}
-    return (data, status)
+    return (jsonify(data), status)
 
 
 def make_error_response(status: int, msg: str) -> Tuple[Dict[str, str], int]:
