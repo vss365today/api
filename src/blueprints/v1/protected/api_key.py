@@ -1,3 +1,4 @@
+from flask import jsonify
 from webargs import fields
 from webargs.flaskparser import use_args
 
@@ -20,7 +21,7 @@ def get(args: dict):
     # We want all key info
     if "all" in args:
         records = database.api_key.get_all()
-        return helpers.make_response(200, records)
+        return helpers.make_response(200, jsonify(records))
 
     # We want info on a singke key
     if "token" in args:
