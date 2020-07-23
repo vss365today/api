@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS prompts (
   tweet_id VARCHAR(25) NOT NULL UNIQUE,
   date DATE NOT NULL,
   uid VARCHAR(30) NOT NULL,
-  content VARCHAR(512) NOT NULL,
+  content VARCHAR(2048) NOT NULL,
   word VARCHAR(30) NOT NULL,
   media VARCHAR(512),
   PRIMARY KEY(tweet_id),
