@@ -10,7 +10,6 @@ from src.core.models.v1.Prompt import Prompt
 
 
 __all__ = [
-    "admin_user_get",
     "prompt_create",
     "prompt_delete",
     "prompt_update",
@@ -49,27 +48,6 @@ def __create_transaction(db):
 def __flatten_tuple_list(tup) -> list:
     """Flatten a list of tuples into a tuple of actual data."""
     return [item[0] for item in tup]
-
-
-def admin_user_get(user: str, password: str) -> Optional[records.Record]:
-    sql = """SELECT username, token
-    FROM users
-    WHERE username = :user AND password = :password
-    """
-    with __connect_to_db() as db:
-        user_record = db.query(sql, user=user, password=password).first()
-    if not user_record:
-        return None
-
-    # We have a user, update their last sign in date/time
-    with __connect_to_db() as db:
-        sql = """
-        UPDATE users
-        SET last_signin = CURRENT_TIMESTAMP()
-        WHERE username = :user
-        """
-        db.query(sql, **{"user": user})
-    return user_record
 
 
 def prompt_create(prompt: Dict[str, Optional[str]]) -> bool:

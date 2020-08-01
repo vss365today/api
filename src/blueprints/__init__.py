@@ -36,7 +36,6 @@ def _factory(
 
 
 api_key = _factory("api_key", "/api-key", "v1", authorize_blueprint)
-account = _factory("account", "/account", "v1")
 archive = _factory("archive", "/archive", "v1")
 broadcast = _factory("broadcast", "/broadcast", "v1", authorize_blueprint)
 browse = _factory("browse", "/browse", "v1")
