@@ -36,7 +36,7 @@ def search_by_host(handle: str) -> dict:
 @search.route("/", methods=["GET"])
 @use_args(
     {
-        "prompt": fields.Str(validate=lambda x: len(x) > 2),
+        "prompt": fields.Str(validate=lambda x: len(x) >= 1),
         "host": fields.Str(validate=lambda x: len(x) > 1),
     },
     location="query",
