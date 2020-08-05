@@ -5,6 +5,7 @@ from webargs.flaskparser import use_args
 
 from src.blueprints import host
 from src.core import database
+from src.core.auth_helpers import authorize_route
 from src.core.helpers import make_response, make_error_response, format_datetime_iso
 
 
@@ -38,6 +39,7 @@ def get(args: dict):
     )
 
 
+@authorize_route
 @host.route("/", methods=["POST"])
 @use_args(
     {
@@ -60,6 +62,7 @@ def post(args: dict):
     return make_error_response(503, f'Unable to create new Host {args["handle"]}!')
 
 
+@authorize_route
 @host.route("/", methods=["PATCH"])
 @use_args(
     {
@@ -85,6 +88,7 @@ def patch(args: dict):
     return make_response(200)
 
 
+@authorize_route
 @host.route("/", methods=["DELETE"])
 @use_args({"id": fields.Str(required=True)}, location="query")
 def delete(args: dict):
