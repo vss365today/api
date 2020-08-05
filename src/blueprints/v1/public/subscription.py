@@ -4,7 +4,8 @@ from webargs import fields
 from webargs.flaskparser import use_args
 
 from src.blueprints import subscription
-from src.core import database, helpers
+from src.core import helpers
+from src.core.database import subscription as sub_archive
 from src.core.email import mailgun
 
 
@@ -24,7 +25,7 @@ def post(args: dict):
 
     # Add the address to the Mailgun mailing list and local database
     mg_result = mailgun.subscription_email_create(args["email"])
-    db_result = database.subscription.email_create(args["email"])
+    db_result = sub_archive.email_create(args["email"])
 
     # The address was successfully recorded
     if db_result and (mg_result.status_code == codes.ok):
@@ -39,5 +40,5 @@ def post(args: dict):
 def delete(args: dict):
     """Remove an email from the mailing list."""
     mailgun.subscription_email_delete(args["email"])
-    database.subscription.email_delete(args["email"])
+    sub_archive.email_delete(args["email"])
     return helpers.make_response(204)

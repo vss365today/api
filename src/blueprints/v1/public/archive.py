@@ -1,15 +1,14 @@
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from flask import current_app
 import xlsxwriter
+from flask import current_app
 
 from src.blueprints import archive
 from src.core import database, helpers
 from src.core.auth_helpers import authorize_route
 from src.core.database import archive as db_archive
 from src.core.models.v1.Prompt import Prompt
-
 
 # Set some constants for a consistent filename
 BASE_FILE_NAME = "vss365today-word-archive-"
