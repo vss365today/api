@@ -10,10 +10,10 @@ __all__ = [
     "create",
     "delete",
     "get",
+    "get_by_date",
+    "get_by_year",
+    "get_by_year_month",
     "update",
-    "host_get_by_date",
-    "hosts_get_by_year",
-    "hosts_get_by_year_month",
 ]
 
 
@@ -76,23 +76,7 @@ def get(*, uid: str, handle: str) -> List[Host]:
         return [Host(host) for host in db.query(sql, uid=uid, handle=handle)]
 
 
-def update(host_info: dict) -> None:
-    """Update a Host's information."""
-    sql_host = text("UPDATE writers SET handle = :handle WHERE uid = :uid;")
-    sql_host_date = text(
-        "UPDATE writer_dates SET date =  STR_TO_DATE(:date, '%Y-%m-%d') WHERE uid = :uid;"
-    )
-
-    # Update the host info in a transaction
-    with connect_to_db() as db:
-        with create_transaction(db) as tx:
-            if host_info["handle"] is not None:
-                tx.execute(sql_host, uid=host_info["id"], handle=host_info["handle"])
-            if host_info["date"] is not None:
-                tx.execute(sql_host_date, uid=host_info["id"], date=host_info["date"])
-
-
-def host_get_by_date(date: str) -> List[Host]:
+def get_by_date(date: str) -> List[Host]:
     """Get the Host for the exact date given."""
     sql = """
     SELECT writers.uid, handle, writer_dates.date
@@ -104,7 +88,7 @@ def host_get_by_date(date: str) -> List[Host]:
         return [Host(host) for host in db.query(sql, date=date)]
 
 
-def hosts_get_by_year(year: str) -> List[Host]:
+def get_by_year(year: str) -> List[Host]:
     """Get a list of all Hosts for a particular year."""
     sql = """
     SELECT writers.uid, handle, writer_dates.date
@@ -119,7 +103,7 @@ def hosts_get_by_year(year: str) -> List[Host]:
         return [Host(host) for host in db.query(sql, year=year)]
 
 
-def hosts_get_by_year_month(year: str, month: str) -> List[Host]:
+def get_by_year_month(year: str, month: str) -> List[Host]:
     """Get all the Hosts in a year-month combination."""
     sql = """
     SELECT writers.uid, handle, writer_dates.date
@@ -131,3 +115,19 @@ def hosts_get_by_year_month(year: str, month: str) -> List[Host]:
     """
     with connect_to_db() as db:
         return [Host(host) for host in db.query(sql, year=year, month=month)]
+
+
+def update(host_info: dict) -> None:
+    """Update a Host's information."""
+    sql_host = text("UPDATE writers SET handle = :handle WHERE uid = :uid;")
+    sql_host_date = text(
+        "UPDATE writer_dates SET date =  STR_TO_DATE(:date, '%Y-%m-%d') WHERE uid = :uid;"
+    )
+
+    # Update the host info in a transaction
+    with connect_to_db() as db:
+        with create_transaction(db) as tx:
+            if host_info["handle"] is not None:
+                tx.execute(sql_host, uid=host_info["id"], handle=host_info["handle"])
+            if host_info["date"] is not None:
+                tx.execute(sql_host_date, uid=host_info["id"], date=host_info["date"])

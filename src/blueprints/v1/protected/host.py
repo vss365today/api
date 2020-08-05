@@ -25,7 +25,7 @@ def get(args: dict):
         )
 
     # Get the host information
-    found_host = database.host_get(uid=args["id"], handle=args["handle"])
+    found_host = database.host.get(uid=args["id"], handle=args["handle"])
     if found_host:
         return make_response(200, jsonify(found_host))
 
@@ -54,7 +54,7 @@ def post(args: dict):
         args["date"] = format_datetime_iso(args["date"])
 
     # Create a host with all their details
-    result = database.host_create(args)
+    result = database.host.create(args)
     if result:
         return make_response(201)
     return make_error_response(503, f'Unable to create new Host {args["handle"]}!')
@@ -76,12 +76,12 @@ def patch(args: dict):
         args["date"] = format_datetime_iso(args["date"])
 
     # Attempt to find the host, bc they must exist to be updated
-    existing_host = database.host_get(uid=args["id"], handle="")
+    existing_host = database.host.get(uid=args["id"], handle="")
     if not existing_host:
         return make_error_response(400, "Unable to update Host details!")
 
     # Update the host with the new info
-    database.host_update(args)
+    database.host.update(args)
     return make_response(200)
 
 
@@ -92,7 +92,7 @@ def delete(args: dict):
 
     This will only succeed if the Host does not have any associated
     Prompts to prevent orphaned records or an incomplete record."""
-    result = database.host_delete(args["id"])
+    result = database.host.delete(args["id"])
     if result:
         return make_response(204)
     return make_error_response(
@@ -105,7 +105,7 @@ def delete(args: dict):
 @use_args({"date": fields.DateTime(required=True)}, location="query")
 def get_date(args: dict):
     """Get the assigned Host for the specified month."""
-    found_host = database.host_get_by_date(format_datetime_iso(args["date"]))
+    found_host = database.host.get_by_date(format_datetime_iso(args["date"]))
     if found_host:
         return make_response(200, jsonify(found_host))
     return make_error_response(404, "Unable to get Host details!")

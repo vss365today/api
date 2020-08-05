@@ -11,15 +11,15 @@ from src.core.helpers import make_error_response
 
 def browse_by_year(year: str) -> dict:
     year = year.strip()
-    hosts: list = database.hosts_get_by_year(year)
+    hosts: list = database.host.get_by_year(year)
     return {"query": year, "hosts": hosts, "total": len(hosts)}
 
 
 def browse_by_month(year: str, month: str) -> dict:
     year = year.strip()
     month = month.strip()
-    hosts = database.hosts_get_by_year_month(year, month)
-    prompts = database.prompts_get_by_date(f"{year}-{month}", date_range=True)
+    hosts = database.host.get_by_year_month(year, month)
+    prompts = database.prompt.prompts_get_by_date(f"{year}-{month}", date_range=True)
     return {"hosts": hosts, "prompts": prompts, "total": len(prompts)}
 
 
@@ -67,4 +67,4 @@ def get(args: dict):
 @browse.route("/years/", methods=["GET"])
 def get_years():
     """Get the years of recorded prompts."""
-    return jsonify(database.prompt_get_years())
+    return jsonify(database.prompt.prompt_get_years())

@@ -7,7 +7,8 @@ from flask import current_app
 from src.blueprints import archive
 from src.core import database, helpers
 from src.core.auth_helpers import authorize_route
-from src.core.database import archive as db_archive
+
+from src.core.database import prompt as db_prompt
 from src.core.models.v1.Prompt import Prompt
 
 # Set some constants for a consistent filename
@@ -47,8 +48,8 @@ def get():
 def post():
     """Generate a new word archive spreadsheet."""
     # Set up all date values we need
-    archive_years = database.prompt_get_years()
-    archive_range = db_archive.prompt_date_range()
+    archive_years = db_prompt.prompt_get_years()
+    archive_range = database.archive.prompt_date_range()
     oldest_date = helpers.format_datetime_pretty(archive_range["oldest"])
     newest_date = helpers.format_datetime_pretty(archive_range["newest"])
     today = datetime.now()
@@ -81,7 +82,7 @@ def post():
             worksheet = workbook.add_worksheet(str(year))
 
             # Set the column widths
-            widths = db_archive.get_column_widths(year)
+            widths = database.archive.get_column_widths(year)
             worksheet.set_column(0, 0, 10)
             worksheet.set_column(1, 1, widths.longest_word)
             worksheet.set_column(2, 2, widths.longest_handle)
@@ -94,7 +95,7 @@ def post():
             worksheet.write(0, 3, "URL", bolded_text)
 
             # Get the word archive for the current year
-            for row, prompt in enumerate(db_archive.get(year)):
+            for row, prompt in enumerate(database.archive.get(year)):
                 # Rows are zero-indexed, meaning we need to increment
                 # so we don't clobber the headings
                 row += 1

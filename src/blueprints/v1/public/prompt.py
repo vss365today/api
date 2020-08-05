@@ -16,14 +16,14 @@ from src.core.models.v1.Prompt import Prompt
 
 def prompt_yesterday_exists(given_prompt: Prompt) -> Optional[datetime]:
     yesterday_date = given_prompt.date - timedelta(1)
-    if database.prompts_get_by_date(helpers.format_datetime_iso(yesterday_date)):
+    if database.prompt.prompts_get_by_date(helpers.format_datetime_iso(yesterday_date)):
         return yesterday_date
     return None
 
 
 def prompt_tomorrow_exists(given_prompt: Prompt) -> Optional[datetime]:
     tomorrow_date = given_prompt.date + timedelta(1)
-    if database.prompts_get_by_date(helpers.format_datetime_iso(tomorrow_date)):
+    if database.prompt.prompts_get_by_date(helpers.format_datetime_iso(tomorrow_date)):
         return tomorrow_date
     return None
 
@@ -43,7 +43,7 @@ def get(args: dict):
     """Get a Prompt, either the latest or from a specific date."""
     # Hitting the endpoint without a date returns the latest prompt(s)
     if "date" not in args:
-        prompts = database.prompt_get_latest()
+        prompts = database.prompt.prompt_get_latest()
 
     # We want the prompt from a particular day
     else:
@@ -51,7 +51,7 @@ def get(args: dict):
         date = helpers.format_datetime_iso(args["date"])
 
         # A prompt for that date doesn't exist
-        prompts = database.prompts_get_by_date(date, date_range=False)
+        prompts = database.prompt.prompts_get_by_date(date, date_range=False)
         if not prompts:
             return helpers.make_error_response(
                 404, f"No prompt exists for date {date}!"
@@ -88,7 +88,7 @@ def post(args: dict):
     # we need to enforce a one-prompt-a-day constraint
     if not args["is_duplicate_date"]:
         # Don't create a prompt if it already exists
-        if database.prompt_find_existing(pid="", date=args["date"]):
+        if database.prompt.prompt_find_existing(pid="", date=args["date"]):
             return helpers.make_error_response(
                 422, f"A prompt for {args['date']} already exists!"
             )
@@ -103,7 +103,7 @@ def post(args: dict):
         args["media"] = media.saved_name(args["id"], media_url)
 
     # Write the prompt to the database
-    db_result = database.prompt_create(args)
+    db_result = database.prompt.prompt_create(args)
 
     # Return the proper status depending on adding result
     if db_result and media_result:
@@ -158,7 +158,7 @@ def put(query_args: dict, json_args: dict):
     args["date"] = helpers.format_datetime_iso(args["date"])
 
     # Finally, save all this to the database
-    database.prompt_update(args)
+    database.prompt.prompt_update(args)
     return helpers.make_response(204)
 
 
@@ -169,5 +169,5 @@ def delete(args: dict):
     # Going to mimic SQL's behavior and pretend
     # we deleted something even if we didn't
     media.delete(args["id"])
-    database.prompt_delete(args["id"])
+    database.prompt.prompt_delete(args["id"])
     return helpers.make_response(204)
