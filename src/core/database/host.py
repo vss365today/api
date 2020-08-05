@@ -10,6 +10,7 @@ __all__ = [
     "create",
     "delete",
     "get",
+    "get_all",
     "get_by_date",
     "get_by_year",
     "get_by_year_month",
@@ -74,6 +75,19 @@ def get(*, uid: str, handle: str) -> List[Host]:
     """
     with connect_to_db() as db:
         return [Host(host) for host in db.query(sql, uid=uid, handle=handle)]
+
+
+def get_all() -> List[Host]:
+    """Get a list of all Hosts."""
+    sql = """
+    SELECT DISTINCT writers.uid, handle
+    FROM writers
+        JOIN writer_dates ON writer_dates.uid = writers.uid
+    WHERE writer_dates.date <= CURRENT_TIMESTAMP()
+    ORDER BY handle
+    """
+    with connect_to_db() as db:
+        return [Host(host) for host in db.query(sql)]
 
 
 def get_by_date(date: str) -> List[Host]:
