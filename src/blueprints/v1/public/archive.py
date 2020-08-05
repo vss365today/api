@@ -48,7 +48,7 @@ def get():
 def post():
     """Generate a new word archive spreadsheet."""
     # Set up all date values we need
-    archive_years = db_prompt.prompt_get_years()
+    archive_years = db_prompt.get_years()
     archive_range = database.archive.prompt_date_range()
     oldest_date = helpers.format_datetime_pretty(archive_range["oldest"])
     newest_date = helpers.format_datetime_pretty(archive_range["newest"])

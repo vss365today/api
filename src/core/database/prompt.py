@@ -6,19 +6,19 @@ from src.core.database import connect_to_db, flatten_tuple_list
 from src.core.models.v1.Prompt import Prompt
 
 __all__ = [
-    "prompt_create",
-    "prompt_delete",
-    "prompt_update",
-    "prompt_find_existing",
-    "prompt_get_latest",
-    "prompt_get_years",
-    "prompt_search",
-    "prompts_get_by_date",
-    "prompts_get_by_host",
+    "delete",
+    "create",
+    "exists",
+    "get_by_date",
+    "get_by_host",
+    "get_latest",
+    "get_years",
+    "search",
+    "update",
 ]
 
 
-def prompt_create(prompt: Dict[str, Optional[str]]) -> bool:
+def create(prompt: Dict[str, Optional[str]]) -> bool:
     """Create a new prompt."""
     sql = """
     INSERT INTO prompts (
@@ -40,7 +40,7 @@ def prompt_create(prompt: Dict[str, Optional[str]]) -> bool:
         return False
 
 
-def prompt_delete(pid: str) -> Literal[True]:
+def delete(pid: str) -> Literal[True]:
     """Delete an existing prompt."""
     sql = "DELETE FROM prompts WHERE tweet_id = :id"
     with connect_to_db() as db:
@@ -48,7 +48,7 @@ def prompt_delete(pid: str) -> Literal[True]:
     return True
 
 
-def prompt_update(prompt: Dict[str, Optional[str]]) -> None:
+def update(prompt: Dict[str, Optional[str]]) -> None:
     """Update an existing prompt."""
     sql = """
     UPDATE prompts
@@ -63,7 +63,7 @@ def prompt_update(prompt: Dict[str, Optional[str]]) -> None:
         db.query(sql, **prompt)
 
 
-def prompt_find_existing(*, pid: str, date: str) -> bool:
+def exists(*, pid: str, date: str) -> bool:
     """Find an existing prompt."""
     sql = """SELECT 1
     FROM prompts
@@ -72,7 +72,7 @@ def prompt_find_existing(*, pid: str, date: str) -> bool:
         return bool(db.query(sql, tweet_id=pid, date=date).first())
 
 
-def prompt_get_latest() -> List[Prompt]:
+def get_latest() -> List[Prompt]:
     """Get the newest prompt."""
     # Get the latest date in the database
     latest_date_sql = "SELECT date FROM prompts ORDER BY date DESC LIMIT 1"
@@ -91,7 +91,7 @@ def prompt_get_latest() -> List[Prompt]:
         return [Prompt(record) for record in db.query(sql, latest_date=latest_date)]
 
 
-def prompt_get_years() -> List[str]:
+def get_years() -> List[str]:
     """Get a list of years of recorded prompts."""
     sql = """
     SELECT DISTINCT YEAR(date)
@@ -103,7 +103,7 @@ def prompt_get_years() -> List[str]:
         return flatten_tuple_list(db.query(sql).all())
 
 
-def prompt_search(word: str) -> List[Prompt]:
+def search(word: str) -> List[Prompt]:
     """Search for prompts by partial or full word."""
     sql = """
     SELECT prompts.*, writers.handle AS writer_handle
@@ -117,7 +117,7 @@ def prompt_search(word: str) -> List[Prompt]:
         return [Prompt(record) for record in db.query(sql, word=word)]
 
 
-def prompts_get_by_date(date: str, *, date_range: bool = False) -> List[Prompt]:
+def get_by_date(date: str, *, date_range: bool = False) -> List[Prompt]:
     """Get prompts by a single date or in a date range."""
     # Base query info
     sql = """
@@ -142,7 +142,7 @@ def prompts_get_by_date(date: str, *, date_range: bool = False) -> List[Prompt]:
         return [Prompt(record) for record in db.query(sql, date=date)]
 
 
-def prompts_get_by_host(handle: str) -> List[Prompt]:
+def get_by_host(handle: str) -> List[Prompt]:
     """Get a prompt tweet by the Host who prompted it."""
     sql = """
     SELECT prompts.*, writers.handle AS writer_handle

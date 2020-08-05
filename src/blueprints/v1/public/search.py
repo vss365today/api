@@ -18,7 +18,7 @@ def __build_search_response(prompts: list) -> dict:
 def search_by_prompt(prompt: str) -> dict:
     """Search for prompts by prompt word."""
     word: str = prompt.strip()
-    prompts: list = database.prompt.prompt_search(word)
+    prompts: list = database.prompt.search(word)
     response: dict = __build_search_response(prompts)
     response["query"] = word
     return response
@@ -27,7 +27,7 @@ def search_by_prompt(prompt: str) -> dict:
 def search_by_host(handle: str) -> dict:
     """Search for all prompts from a specific Host."""
     host: str = handle.strip()
-    prompts: list = database.prompt.prompts_get_by_host(host)
+    prompts: list = database.prompt.get_by_host(host)
     response: dict = __build_search_response(prompts)
     response["query"] = host
     return response

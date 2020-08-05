@@ -20,7 +20,7 @@ def post(args: dict):
     date = helpers.format_datetime_iso(args["date"])
 
     # A prompt for that date doesn't exist
-    prompts = database.prompt.prompts_get_by_date(date, date_range=False)
+    prompts = database.prompt.get_by_date(date, date_range=False)
     if not prompts:
         return helpers.make_error_response(
             503, f"Unable to send out email broadcast for the {date} prompt!"
