@@ -1,0 +1,155 @@
+from typing import Dict, List, Literal, Optional
+
+from sqlalchemy.exc import IntegrityError
+
+from src.core.database import connect_to_db, flatten_tuple_list
+from src.core.models.v1.Prompt import Prompt
+
+__all__ = [
+    "prompt_create",
+    "prompt_delete",
+    "prompt_update",
+    "prompt_find_existing",
+    "prompt_get_latest",
+    "prompt_get_years",
+    "prompt_search",
+    "prompts_get_by_date",
+    "prompts_get_by_host",
+]
+
+
+def prompt_create(prompt: Dict[str, Optional[str]]) -> bool:
+    """Create a new prompt."""
+    sql = """
+    INSERT INTO prompts (
+        tweet_id, date, uid, content, word, media
+    )
+    VALUES (
+        :id, :date, :uid, :content, :word, :media
+    )
+    """
+    try:
+        with connect_to_db() as db:
+            db.query(sql, **prompt)
+            return True
+
+    # A prompt with this ID already exists
+    except IntegrityError as exc:
+        print(f"Prompt creation exception: {exc}")
+        print(prompt)
+        return False
+
+
+def prompt_delete(pid: str) -> Literal[True]:
+    """Delete an existing prompt."""
+    sql = "DELETE FROM prompts WHERE tweet_id = :id"
+    with connect_to_db() as db:
+        db.query(sql, **{"id": pid})
+    return True
+
+
+def prompt_update(prompt: Dict[str, Optional[str]]) -> None:
+    """Update an existing prompt."""
+    sql = """
+    UPDATE prompts
+    SET
+        date = :date,
+        content = :content,
+        word = :word,
+        media =  :media
+    WHERE tweet_id = :id
+    """
+    with connect_to_db() as db:
+        db.query(sql, **prompt)
+
+
+def prompt_find_existing(*, pid: str, date: str) -> bool:
+    """Find an existing prompt."""
+    sql = """SELECT 1
+    FROM prompts
+    WHERE (tweet_id = :tweet_id OR date = :date)"""
+    with connect_to_db() as db:
+        return bool(db.query(sql, tweet_id=pid, date=date).first())
+
+
+def prompt_get_latest() -> List[Prompt]:
+    """Get the newest prompt."""
+    # Get the latest date in the database
+    latest_date_sql = "SELECT date FROM prompts ORDER BY date DESC LIMIT 1"
+    with connect_to_db() as db:
+        latest_date = db.query(latest_date_sql).one().date
+
+    # Using the latest date, fetch the prompt(s) for the date
+    sql = """
+    SELECT prompts.*, writers.handle AS writer_handle
+    FROM prompts
+        JOIN writers ON prompts.uid = writers.uid
+    WHERE date = :latest_date
+    ORDER BY date DESC
+    """
+    with connect_to_db() as db:
+        return [Prompt(record) for record in db.query(sql, latest_date=latest_date)]
+
+
+def prompt_get_years() -> List[str]:
+    """Get a list of years of recorded prompts."""
+    sql = """
+    SELECT DISTINCT YEAR(date)
+    FROM writer_dates
+    WHERE YEAR(date) <= YEAR(CURRENT_TIMESTAMP())
+    ORDER BY date ASC
+    """
+    with connect_to_db() as db:
+        return flatten_tuple_list(db.query(sql).all())
+
+
+def prompt_search(word: str) -> List[Prompt]:
+    """Search for prompts by partial or full word."""
+    sql = """
+    SELECT prompts.*, writers.handle AS writer_handle
+    FROM prompts
+        JOIN writers ON writers.uid = prompts.uid
+    WHERE prompts.date <= CURRENT_TIMESTAMP()
+        AND prompts.word LIKE CONCAT('%', :word, '%')
+    ORDER BY UPPER(word)
+    """
+    with connect_to_db() as db:
+        return [Prompt(record) for record in db.query(sql, word=word)]
+
+
+def prompts_get_by_date(date: str, *, date_range: bool = False) -> List[Prompt]:
+    """Get prompts by a single date or in a date range."""
+    # Base query info
+    sql = """
+    SELECT prompts.*, writers.handle as writer_handle
+    FROM prompts
+        JOIN writers ON prompts.uid = writers.uid"""
+
+    # Use the proper filter depending on if
+    # we want a date range or single date
+    if date_range:
+        sql = f"""{sql}
+        WHERE DATE_FORMAT(prompts.date, '%Y-%m') = :date
+            AND prompts.date <= CURRENT_TIMESTAMP()
+        ORDER BY prompts.date ASC"""
+    else:
+        sql = f"""{sql}
+        WHERE prompts.date = STR_TO_DATE(:date, '%Y-%m-%d')
+            AND STR_TO_DATE(:date, '%Y-%m-%d') <= CURRENT_TIMESTAMP()"""
+
+    # Finally perform the query
+    with connect_to_db() as db:
+        return [Prompt(record) for record in db.query(sql, date=date)]
+
+
+def prompts_get_by_host(handle: str) -> List[Prompt]:
+    """Get a prompt tweet by the Host who prompted it."""
+    sql = """
+    SELECT prompts.*, writers.handle AS writer_handle
+    FROM prompts
+        JOIN writers ON writers.uid = prompts.uid
+    WHERE prompts.date <= CURRENT_TIMESTAMP()
+        AND writers.handle = :handle
+    """
+    with connect_to_db() as db:
+        return [Prompt(record) for record in db.query(sql, handle=handle)]
