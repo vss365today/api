@@ -23,7 +23,7 @@ def get(args: dict):
         records = database.api_key.get_all()
         return helpers.make_response(200, jsonify(records))
 
-    # We want info on a singke key
+    # We want info on a single key
     if "token" in args:
         record = database.api_key.get(args["token"])
         if record is not None:

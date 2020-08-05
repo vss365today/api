@@ -2,7 +2,7 @@ from typing import Dict, List, Literal, Optional
 
 from sqlalchemy.exc import IntegrityError
 
-from src.core.database import connect_to_db, flatten_tuple_list
+from src.core.database.base import connect_to_db, flatten_tuple_list
 from src.core.models.v1.Prompt import Prompt
 
 __all__ = [
