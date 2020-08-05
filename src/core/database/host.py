@@ -87,7 +87,7 @@ def get_all() -> List[Host]:
     ORDER BY handle
     """
     with connect_to_db() as db:
-        return [Host(host) for host in db.query(sql)]
+        return db.query(sql).all(as_dict=True)
 
 
 def get_by_date(date: str) -> List[Host]:
