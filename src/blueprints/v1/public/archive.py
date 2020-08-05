@@ -7,8 +7,6 @@ from flask import current_app
 from src.blueprints import archive
 from src.core import database, helpers
 from src.core.auth_helpers import authorize_route
-
-from src.core.database import prompt as db_prompt
 from src.core.models.v1.Prompt import Prompt
 
 # Set some constants for a consistent filename
@@ -48,7 +46,7 @@ def get():
 def post():
     """Generate a new word archive spreadsheet."""
     # Set up all date values we need
-    archive_years = db_prompt.get_years()
+    archive_years = database.prompt.get_years()
     archive_range = database.archive.prompt_date_range()
     oldest_date = helpers.format_datetime_pretty(archive_range["oldest"])
     newest_date = helpers.format_datetime_pretty(archive_range["newest"])

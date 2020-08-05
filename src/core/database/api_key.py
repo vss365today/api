@@ -3,7 +3,7 @@ from secrets import token_hex
 
 from sqlalchemy.exc import DataError
 
-from src.core.database.base import connect_to_db
+from src.core.database.core import connect_to_db
 from src.core.models.v1.ApiKey import ApiKey
 
 

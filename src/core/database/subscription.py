@@ -2,7 +2,7 @@ from typing import Literal
 
 from sqlalchemy.exc import DBAPIError, IntegrityError
 
-from src.core.database.base import connect_to_db
+from src.core.database.core import connect_to_db
 
 __all__ = ["email_create", "email_delete"]
 

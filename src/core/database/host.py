@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy.exc import DBAPIError, IntegrityError
 from sqlalchemy.sql import text
 
-from src.core.database.base import connect_to_db, create_transaction
+from src.core.database.core import connect_to_db, create_transaction
 from src.core.models.v1.Host import Host
 
 __all__ = [

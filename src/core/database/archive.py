@@ -3,7 +3,7 @@ from typing import Dict, List
 
 from records import Record
 
-from src.core.database.base import connect_to_db
+from src.core.database.core import connect_to_db
 
 
 __all__ = ["get", "get_column_widths", "prompt_date_range"]
