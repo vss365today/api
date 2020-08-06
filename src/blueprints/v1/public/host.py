@@ -20,7 +20,7 @@ from src.core.auth_helpers import authorize_route
 def get(args: dict):
     """Get a Host by their Twitter ID or handle."""
     # Return a list of all Hosts
-    if "all" in args:
+    if "all" in args and args["all"]:
         return helpers.make_response(200, jsonify(database.host.get_all()))
 
     # We need something to search by

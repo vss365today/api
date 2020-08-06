@@ -19,7 +19,7 @@ def get(args: dict):
         )
 
     # We want all key info
-    if "all" in args:
+    if "all" in args and args["all"]:
         records = database.api_key.get_all()
         return helpers.make_response(200, jsonify(records))
 
