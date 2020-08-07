@@ -2,7 +2,7 @@ from typing import Literal
 
 from sqlalchemy.exc import DBAPIError, IntegrityError
 
-from src.core.database import __connect_to_db
+from src.core.database.core import connect_to_db
 
 __all__ = ["email_create", "email_delete"]
 
@@ -11,7 +11,7 @@ def email_create(addr: str) -> bool:
     """Add a subscription email address."""
     try:
         sql = "INSERT INTO emails (email) VALUES (:addr)"
-        with __connect_to_db() as db:
+        with connect_to_db() as db:
             db.query(sql, addr=addr.lower())
         return True
 
@@ -32,6 +32,6 @@ def email_create(addr: str) -> bool:
 def email_delete(addr: str) -> Literal[True]:
     """Remove a subscription email address."""
     sql = "DELETE FROM emails WHERE email = :addr"
-    with __connect_to_db() as db:
+    with connect_to_db() as db:
         db.query(sql, addr=addr)
     return True

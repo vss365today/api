@@ -3,7 +3,7 @@ from secrets import token_hex
 
 from sqlalchemy.exc import DataError
 
-from src.core.database import __connect_to_db
+from src.core.database.core import connect_to_db
 from src.core.models.v1.ApiKey import ApiKey
 
 
@@ -27,7 +27,7 @@ def __bool_to_int(records: dict) -> dict:
 def can_access(route: str, token: str) -> bool:
     """Determine if the given API key has permission to access a route."""
     sql = f"SELECT has_{route} FROM api_keys WHERE token = :token"
-    with __connect_to_db() as db:
+    with connect_to_db() as db:
         return bool(db.query(sql, token=token).one()[0])
 
 
@@ -51,7 +51,7 @@ def create(permissions: dict) -> Dict[str, str]:
     )
     """
     try:
-        with __connect_to_db() as db:
+        with connect_to_db() as db:
             db.query(sql, token=new_token, **permissions)
             return {"token": new_token}
     except DataError as exc:
@@ -62,21 +62,21 @@ def create(permissions: dict) -> Dict[str, str]:
 def delete(token: str) -> bool:
     """Delete an API key."""
     sql = "DELETE FROM api_keys WHERE token = :token"
-    with __connect_to_db() as db:
+    with connect_to_db() as db:
         return bool(db.query(sql, token=token).one())
 
 
 def exists(token: str) -> bool:
     """Determine if an API key exists."""
     sql = "SELECT 1 FROM api_keys WHERE token = :token"
-    with __connect_to_db() as db:
+    with connect_to_db() as db:
         return bool(db.query(sql, token=token).one())
 
 
 def get(token: str) -> Optional[ApiKey]:
     """Get an API key's permissions."""
     sql = "SELECT * FROM api_keys WHERE token = :token LIMIT 1"
-    with __connect_to_db() as db:
+    with connect_to_db() as db:
         record = db.query(sql, token=token).one()
         return ApiKey(record) if record else None
 
@@ -84,7 +84,7 @@ def get(token: str) -> Optional[ApiKey]:
 def get_all() -> List[ApiKey]:
     """Get all recorded API key's permissions."""
     sql = "SELECT * FROM api_keys"
-    with __connect_to_db() as db:
+    with connect_to_db() as db:
         return [ApiKey(record) for record in db.query(sql)]
 
 
@@ -106,7 +106,7 @@ def update(permissions: dict) -> bool:
     WHERE token = :token
     """
     try:
-        with __connect_to_db() as db:
+        with connect_to_db() as db:
             db.query(sql, **permissions)
             return True
     except DataError as exc:
