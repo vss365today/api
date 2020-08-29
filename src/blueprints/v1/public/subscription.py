@@ -1,4 +1,3 @@
-from flask import current_app
 from requests import codes
 from webargs import fields
 from webargs.flaskparser import use_args
