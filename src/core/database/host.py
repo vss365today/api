@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Literal
 
 from sqlalchemy.exc import DBAPIError, IntegrityError
 from sqlalchemy.sql import text
@@ -9,6 +9,7 @@ from src.core.models.v1.Host import Host
 __all__ = [
     "create",
     "delete",
+    "delete_date",
     "get",
     "get_all",
     "get_by_date",
@@ -62,6 +63,14 @@ def delete(uid: str) -> bool:
         return False
 
 
+def delete_date(uid: str, date: str) -> Literal[True]:
+    """Delete a specific date for a Host."""
+    sql = "DELETE FROM writer_dates WHERE uid = :uid AND date = :date"
+    with connect_to_db() as db:
+        db.query(sql, uid=uid, date=date)
+    return True
+
+
 def get(*, uid: str, handle: str) -> List[Host]:
     """Get Host info by either their Twitter ID or handle."""
     sql = """
@@ -91,7 +100,7 @@ def get_all() -> List[Host]:
 
 
 def get_by_date(date: str) -> List[Host]:
-    """Get the Host for the exact date given."""
+    """Get the Host for the given date."""
     sql = """
     SELECT writers.uid, handle, writer_dates.date
     FROM writers
@@ -103,7 +112,7 @@ def get_by_date(date: str) -> List[Host]:
 
 
 def get_by_year(year: str) -> List[Host]:
-    """Get a list of all Hosts for a particular year."""
+    """Get a list of all Hosts for a given year."""
     sql = """
     SELECT writers.uid, handle, writer_dates.date
     FROM writers

@@ -119,9 +119,20 @@ def delete(args: dict):
 
 @host.route("/date/", methods=["GET"])
 @use_args({"date": fields.DateTime(required=True)}, location="query")
-def get_date(args: dict):
-    """Get the assigned Host for the specified month."""
-    found_host = database.host.get_by_date(helpers.format_datetime_iso(args["date"]))
-    if found_host:
-        return helpers.make_response(200, jsonify(found_host))
+def date_get(args: dict):
+    """Get the assigned Host for the specified date."""
+    host = database.host.get_by_date(helpers.format_datetime_iso(args["date"]))
+    if host:
+        return helpers.make_response(200, jsonify(host))
     return helpers.make_error_response(404, "Unable to get Host details!")
+
+
+@host.route("/date/", methods=["DELETE"])
+@use_args(
+    {"id": fields.Str(required=True), "date": fields.DateTime(required=True)},
+    location="query",
+)
+def date_delete(args: dict):
+    """Delete a Host's assigned date."""
+    database.host.delete_date(args["id"], helpers.format_datetime_iso(args["date"]))
+    return helpers.make_response(200)
