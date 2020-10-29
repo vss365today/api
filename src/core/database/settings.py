@@ -21,9 +21,9 @@ def update(content: dict) -> bool:
     return True
 
 
-def timer_get():
-    """TK."""
-    pass
+def timings_get():
+    """Return the runtime timings for the finder service."""
+    return json.loads(__get_path().read_text())["timings"]
 
 
 def timer_update():

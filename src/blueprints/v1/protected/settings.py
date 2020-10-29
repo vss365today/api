@@ -1,3 +1,4 @@
+from flask import jsonify
 from webargs import fields
 from webargs.flaskparser import use_args
 
@@ -26,14 +27,14 @@ def put(args: dict):
     return helpers.make_response(201)
 
 
-@settings.route("/timer/", methods=["GET"])
+@settings.route("/timings/", methods=["GET"])
 def timer_get():
-    """GET request to fetch fetch time values."""
-    return helpers.make_response(200)
+    """GET request to fetch finder timing values."""
+    return helpers.make_response(200, jsonify(database.settings.timings_get()))
 
 
-@settings.route("/timer/", methods=["PUT"])
+@settings.route("/timings/", methods=["PUT"])
 @use_args({"tk": fields.Str()}, location="json")
 def timer_put(args: dict):
-    """POST request to update finder time values."""
+    """POST request to update finder timing values."""
     return helpers.make_response(201)
