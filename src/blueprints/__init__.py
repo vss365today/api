@@ -12,6 +12,7 @@ def _factory(
     api_version: str,
     auth_function: Optional[Callable] = None,
 ) -> Blueprint:
+    """Generate a blueprint registration."""
     # Build out the module import path
     endpoint_folder = "public" if auth_function is None else "protected"
     import_name = [

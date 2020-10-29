@@ -22,7 +22,7 @@ def get():
     location="json",
 )
 def put(args: dict):
-    """"PUT request to update configuration values."""
+    """PUT request to update configuration values."""
     database.settings.update(args)
     return helpers.make_response(201)
 
