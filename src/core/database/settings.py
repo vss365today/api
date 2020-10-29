@@ -5,18 +5,20 @@ from pathlib import Path
 __all__ = ["get", "update", "timer_get", "timer_update"]
 
 
-def __get_content() -> Path:
-    return json.loads((Path() / "settings" / "settings.json").resolve().read_text())
+def __get_path() -> Path:
+    """Provide a Path object to the settings file."""
+    return (Path() / "settings" / "settings.json").resolve()
 
 
-def get():
-    """TK."""
-    pass
+def get() -> dict:
+    """Return the JSON contents of the settings file."""
+    return json.loads(__get_path().read_text())
 
 
-def update():
-    """TK."""
-    pass
+def update(content: dict) -> bool:
+    """Update the JSON contents of the settings file."""
+    __get_path().write_text(json.dumps(content, indent=2, sort_keys=True))
+    return True
 
 
 def timer_get():
