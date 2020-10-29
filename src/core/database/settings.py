@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import List
 
 
 __all__ = ["get", "update", "timings_get", "timings_update"]
@@ -11,7 +12,7 @@ def __get_path() -> Path:
 
 
 def get() -> dict:
-    """Return the JSON contents of the settings file."""
+    """Retrieve the app settings values."""
     file_path = __get_path()
     content = json.loads(file_path.read_text())
 
@@ -21,7 +22,7 @@ def get() -> dict:
 
 
 def update(content: dict) -> bool:
-    """Update the JSON contents of the settings file."""
+    """Update the app settings values."""
     file_path = __get_path()
     existing_content = json.loads(file_path.read_text())
 
@@ -31,11 +32,17 @@ def update(content: dict) -> bool:
     return True
 
 
-def timings_get():
+def timings_get() -> List[str]:
     """Return the runtime timings for the finder service."""
     return json.loads(__get_path().read_text())["timings"]
 
 
-def timer_update():
-    """TK."""
-    pass
+def timings_update(times: List[str]) -> bool:
+    """Update the runtime timings for the finder service.."""
+    file_path = __get_path()
+    content = json.loads(file_path.read_text())
+
+    # Modify just the timings section of the settings
+    content["timings"] = times
+    file_path.write_text(json.dumps(content, indent=2, sort_keys=True))
+    return True

@@ -22,7 +22,7 @@ def get():
     location="json",
 )
 def put(args: dict):
-    """"POST request to update configuration values."""
+    """"PUT request to update configuration values."""
     database.settings.update(args)
     return helpers.make_response(201)
 
@@ -34,7 +34,8 @@ def timer_get():
 
 
 @settings.route("/timings/", methods=["PUT"])
-@use_args({"tk": fields.Str()}, location="json")
+@use_args({"timings": fields.List(fields.Str())}, location="json")
 def timer_put(args: dict):
-    """POST request to update finder timing values."""
+    """PUT request to update finder timing values."""
+    database.settings.timings_update(args["timings"])
     return helpers.make_response(201)
