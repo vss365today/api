@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 
 
-__all__ = ["get", "update", "timer_get", "timer_update"]
+__all__ = ["get", "update", "timings_get", "timings_update"]
 
 
 def __get_path() -> Path:
@@ -12,7 +12,12 @@ def __get_path() -> Path:
 
 def get() -> dict:
     """Return the JSON contents of the settings file."""
-    return json.loads(__get_path().read_text())
+    file_path = __get_path()
+    content = json.loads(file_path.read_text())
+
+    # Don't provide the timings in the result
+    del content["timings"]
+    return content
 
 
 def update(content: dict) -> bool:
