@@ -39,20 +39,20 @@ api_key = _factory("api_key", "/api-key", "v1", authorize_blueprint)
 archive = _factory("archive", "/archive", "v1")
 broadcast = _factory("broadcast", "/broadcast", "v1", authorize_blueprint)
 browse = _factory("browse", "/browse", "v1")
-config = _factory("config", "/config", "v1", authorize_blueprint)
 host = _factory("host", "/host", "v1")
 prompt = _factory("prompt", "/prompt", "v1")
 search = _factory("search", "/search", "v1")
 subscription = _factory("subscription", "/subscription", "v1")
+settings = _factory("settings", "/settings", "v1", authorize_blueprint)
 
 all_blueprints = (
     api_key,
     archive,
     broadcast,
     browse,
-    config,
     host,
     prompt,
     search,
     subscription,
+    settings,
 )
