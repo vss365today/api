@@ -22,7 +22,12 @@ def get() -> dict:
 
 def update(content: dict) -> bool:
     """Update the JSON contents of the settings file."""
-    __get_path().write_text(json.dumps(content, indent=2, sort_keys=True))
+    file_path = __get_path()
+    existing_content = json.loads(file_path.read_text())
+
+    # Add the existing timings into the new settings
+    content["timings"] = existing_content["timings"]
+    file_path.write_text(json.dumps(content, indent=2, sort_keys=True))
     return True
 
 
