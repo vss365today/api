@@ -121,9 +121,9 @@ def delete(args: dict):
 @use_args({"date": fields.DateTime(required=True)}, location="query")
 def date_get(args: dict):
     """Get the assigned Host for the specified date."""
-    host = database.host.get_by_date(helpers.format_datetime_iso(args["date"]))
-    if host:
-        return helpers.make_response(200, jsonify(host))
+    current_host = database.host.get_by_date(helpers.format_datetime_iso(args["date"]))
+    if current_host:
+        return helpers.make_response(200, jsonify(current_host))
     return helpers.make_error_response(404, "Unable to get Host details!")
 
 

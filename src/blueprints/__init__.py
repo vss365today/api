@@ -12,6 +12,7 @@ def _factory(
     api_version: str,
     auth_function: Optional[Callable] = None,
 ) -> Blueprint:
+    """Generate a blueprint registration."""
     # Build out the module import path
     endpoint_folder = "public" if auth_function is None else "protected"
     import_name = [
@@ -43,6 +44,7 @@ host = _factory("host", "/host", "v1")
 prompt = _factory("prompt", "/prompt", "v1")
 search = _factory("search", "/search", "v1")
 subscription = _factory("subscription", "/subscription", "v1")
+settings = _factory("settings", "/settings", "v1", authorize_blueprint)
 
 all_blueprints = (
     api_key,
@@ -53,4 +55,5 @@ all_blueprints = (
     prompt,
     search,
     subscription,
+    settings,
 )
