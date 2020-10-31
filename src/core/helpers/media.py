@@ -1,6 +1,7 @@
+from os import fspath
 from pathlib import Path, PurePath
 import secrets
-from typing import Dict, Literal
+from typing import Dict
 from urllib import parse
 
 from flask import current_app
@@ -9,13 +10,9 @@ import requests
 __all__ = ["delete", "download", "move", "saved_name"]
 
 
-def delete(prompt_id: str) -> Literal[True]:
+def delete(prompt_id: str) -> bool:
     """Delete a media file."""
-    f_name = [
-        f
-        for f in Path(current_app.config["IMAGES_DIR"]).iterdir()
-        if f.is_file() and f.name.startswith(prompt_id)
-    ]
+    f_name = sorted(Path(current_app.config["IMAGES_DIR"]).glob(f"{prompt_id}*"))
     if len(f_name) == 1:
         f_name[0].unlink()
     return True
