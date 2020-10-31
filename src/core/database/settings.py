@@ -13,8 +13,7 @@ def __get_path() -> Path:
 
 def get() -> dict:
     """Retrieve the app settings values."""
-    file_path = __get_path()
-    content = json.loads(file_path.read_text())
+    content = json.loads(__get_path().read_text())
 
     # Don't provide the timings in the result
     del content["timings"]
