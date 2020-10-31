@@ -1,4 +1,3 @@
-from os import fspath
 from pathlib import Path, PurePath
 import secrets
 from typing import Dict
