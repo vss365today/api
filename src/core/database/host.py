@@ -4,7 +4,9 @@ from sqlalchemy.exc import DBAPIError, IntegrityError
 from sqlalchemy.sql import text
 
 from src.core.database.core import connect_to_db, create_transaction
+from src.core.helpers import connect_to_twitter
 from src.core.models.v1.Host import Host
+
 
 __all__ = [
     "create",
@@ -19,8 +21,18 @@ __all__ = [
 ]
 
 
+def __get_host_id(handle: str) -> str:
+    """Get the Host's Twitter user ID."""
+    # TODO Handle user not found exception
+    api = connect_to_twitter()
+    host = api.get_user(handle)
+    return host.id_str
+
+
 def create(host_info: dict) -> bool:
     """Create a new Host."""
+    __get_host_id(host_info["handle"])
+
     # Create the SQL needed to insert
     sql_host = text("INSERT INTO writers (uid, handle) VALUES (:uid, :handle)")
     sql_host_date = text("INSERT INTO writer_dates (uid, date) VALUES (:uid, :date)")
