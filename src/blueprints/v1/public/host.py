@@ -53,7 +53,6 @@ def get(args: dict):
 @host.route("/", methods=["POST"])
 @use_args(
     {
-        "id": fields.Str(required=True),
         "handle": fields.Str(required=True),
         "date": fields.DateTime(missing=None, allow_none=True),
     },
@@ -65,7 +64,15 @@ def post(args: dict):
     if args["date"] is not None:
         args["date"] = helpers.format_datetime_iso(args["date"])
 
+    # Get the Twitter user ID for this Host
+    host_id = database.host.lookup(args["handle"])
+    if not host_id:
+        return helpers.make_error_response(
+            503, f'Unable to find Twitter account {args["handle"]}!'
+        )
+
     # Create a host with all their details
+    args["id"] = host_id
     result = database.host.create(args)
     if result:
         return helpers.make_response(201)

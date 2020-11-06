@@ -1,15 +1,19 @@
-from typing import List, Literal
+from typing import List, Literal, Union
 
+from tweepy.error import TweepError
 from sqlalchemy.exc import DBAPIError, IntegrityError
 from sqlalchemy.sql import text
 
 from src.core.database.core import connect_to_db, create_transaction
+from src.core.helpers import connect_to_twitter
 from src.core.models.v1.Host import Host
+
 
 __all__ = [
     "create",
     "delete",
     "delete_date",
+    "lookup",
     "get",
     "get_all",
     "get_by_date",
@@ -53,7 +57,8 @@ def delete(uid: str) -> bool:
     Due to database FK constraints, this will only succeed
     if the Host does not have any Prompts associated with them.
     The presence of any Prompts will stop all deletion so as to
-    prevent orphaned records or an incomplete record."""
+    prevent orphaned records or an incomplete record.
+    """
     sql = "DELETE FROM writers WHERE uid = :uid"
     try:
         with connect_to_db() as db:
@@ -138,6 +143,18 @@ def get_by_year_month(year: str, month: str) -> List[Host]:
     """
     with connect_to_db() as db:
         return [Host(host) for host in db.query(sql, year=year, month=month)]
+
+
+def lookup(handle: str) -> Union[str, Literal[False]]:
+    """Get the Host's Twitter user ID."""
+    try:
+        api = connect_to_twitter()
+        host = api.get_user(handle)
+        return host.id_str
+
+    # That handle couldn't be found
+    except TweepError:
+        return False
 
 
 def update(host_info: dict) -> None:
