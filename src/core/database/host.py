@@ -57,7 +57,8 @@ def delete(uid: str) -> bool:
     Due to database FK constraints, this will only succeed
     if the Host does not have any Prompts associated with them.
     The presence of any Prompts will stop all deletion so as to
-    prevent orphaned records or an incomplete record."""
+    prevent orphaned records or an incomplete record.
+    """
     sql = "DELETE FROM writers WHERE uid = :uid"
     try:
         with connect_to_db() as db:
