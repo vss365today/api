@@ -1,5 +1,6 @@
-from typing import List, Literal
+from typing import List, Literal, Union
 
+from tweepy.error import TweepError
 from sqlalchemy.exc import DBAPIError, IntegrityError
 from sqlalchemy.sql import text
 
@@ -12,6 +13,7 @@ __all__ = [
     "create",
     "delete",
     "delete_date",
+    "lookup",
     "get",
     "get_all",
     "get_by_date",
@@ -21,18 +23,8 @@ __all__ = [
 ]
 
 
-def __get_host_id(handle: str) -> str:
-    """Get the Host's Twitter user ID."""
-    # TODO Handle user not found exception
-    api = connect_to_twitter()
-    host = api.get_user(handle)
-    return host.id_str
-
-
 def create(host_info: dict) -> bool:
     """Create a new Host."""
-    __get_host_id(host_info["handle"])
-
     # Create the SQL needed to insert
     sql_host = text("INSERT INTO writers (uid, handle) VALUES (:uid, :handle)")
     sql_host_date = text("INSERT INTO writer_dates (uid, date) VALUES (:uid, :date)")
@@ -150,6 +142,18 @@ def get_by_year_month(year: str, month: str) -> List[Host]:
     """
     with connect_to_db() as db:
         return [Host(host) for host in db.query(sql, year=year, month=month)]
+
+
+def lookup(handle: str) -> Union[str, Literal[False]]:
+    """Get the Host's Twitter user ID."""
+    try:
+        api = connect_to_twitter()
+        host = api.get_user(handle)
+        return host.id_str
+
+    # That handle couldn't be found
+    except TweepError:
+        return False
 
 
 def update(host_info: dict) -> None:
