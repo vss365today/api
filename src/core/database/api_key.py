@@ -43,11 +43,11 @@ def create(permissions: dict) -> Dict[str, str]:
     sql = """INSERT INTO api_keys (
         token, `desc`, has_api_key, has_archive,
         has_broadcast, has_host, has_prompt,
-        has_subscription
+        has_settings, has_subscription
     ) VALUES (
         :token, :desc, :has_api_key, :has_archive,
         :has_broadcast, :has_host, :has_prompt,
-        :has_subscription
+        :has_settings, :has_subscription
     )
     """
     try:

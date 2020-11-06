@@ -8,8 +8,7 @@ from src.core import database, helpers
 
 @api_key.route("/", methods=["GET"])
 @use_args(
-    {"token": fields.Str(), "all": fields.Bool()},
-    location="query",
+    {"token": fields.Str(), "all": fields.Bool()}, location="query",
 )
 def get(args: dict):
     """GET request to fetch key permissions."""
@@ -46,6 +45,7 @@ def get(args: dict):
         "has_broadcast": fields.Bool(),
         "has_host": fields.Bool(),
         "has_prompt": fields.Bool(),
+        "has_settings": fields.Bool(),
         "has_subscription": fields.Bool(),
     },
     location="json",
@@ -80,8 +80,7 @@ def put(args: dict):
     # That key doesn't exist
     if not database.api_key.exists(args["token"]):
         return helpers.make_error_response(
-            404,
-            "The requested API key does not exist!",
+            404, "The requested API key does not exist!",
         )
 
     # Update and respond accordingly
