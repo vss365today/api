@@ -17,6 +17,10 @@ def create_app():
     app.config.update(config.get_app_config("default"))
     app.config.update(config.get_app_config(app.config["ENV"]))
 
+    # Put the app secret key into the expected key
+    app.config["SECRET_KEY"] = app.config["SECRET_KEY_API"]
+    del app.config["SECRET_KEY_API"]
+
     # Load the extensions
     init_extensions(app)
 
