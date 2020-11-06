@@ -2,8 +2,7 @@ from typing import Callable, Optional
 
 from flask import Blueprint
 
-# TODO Import the actual authorization method
-from src.core.auth_helpers import fake_authorize as authorize_blueprint
+from src.core.auth_helpers import authorize_blueprint
 
 
 def _factory(
