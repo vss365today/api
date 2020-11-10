@@ -38,8 +38,7 @@ def authorize_route(func):
 
     @functools.wraps(func)
     def wrap(*args, **kwargs):
-        # TODO Change this back to authorize_blueprint
-        fake_authorize()
+        authorize_blueprint()
         return func(*args, **kwargs)
 
     return wrap
