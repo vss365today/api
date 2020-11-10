@@ -10,6 +10,7 @@ class ApiKey(dict):
         self.has_broadcast: bool = bool(record["has_broadcast"])
         self.has_host: bool = bool(record["has_host"])
         self.has_prompt: bool = bool(record["has_prompt"])
+        self.has_settings: bool = bool(record["has_settings"])
         self.has_subscription: bool = bool(record["has_subscription"])
 
         # Make the class JSON serializable
