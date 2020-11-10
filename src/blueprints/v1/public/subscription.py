@@ -4,6 +4,7 @@ from webargs.flaskparser import use_args
 
 from src.blueprints import subscription
 from src.core import database, helpers
+from src.core.auth_helpers import authorize_route
 from src.core.email import mailgun
 
 
@@ -23,6 +24,7 @@ def post(args: dict):
     return helpers.make_error_response(503, "Unable to add email to mailing list!")
 
 
+@authorize_route
 @subscription.route("/", methods=["DELETE"])
 @use_args({"email": fields.Email(required=True)}, location="query")
 def delete(args: dict):
