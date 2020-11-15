@@ -50,5 +50,4 @@ def post(args: dict):
     pprint(r)
 
     # There's no easy way to tell if they all sent, so just pretend they did
-    # TODO No easy way until I add some number tracking, that is
     return helpers.make_response(200)
