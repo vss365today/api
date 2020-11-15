@@ -3,7 +3,7 @@ from webargs.flaskparser import use_args
 
 from src.blueprints import search
 from src.core import database
-from src.core.helpers import make_error_response
+from src.core.helpers import make_error_response, make_response
 
 
 def __build_search_response(prompts: list) -> dict:
@@ -48,7 +48,7 @@ def get(args: dict):
         return make_error_response(422, "Only one search parameter can be provided!")
 
     if "prompt" in args:
-        return search_by_prompt(args["prompt"])
+        return make_response(200, search_by_prompt(args["prompt"]))
     if "host" in args:
-        return search_by_host(args["host"])
+        return make_response(200, search_by_host(args["host"]))
     return make_error_response(422, "At least one search parameter must be provided!")
