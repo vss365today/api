@@ -30,9 +30,6 @@ def post(args: dict):
     if not current_app.config["ENABLE_EMAIL_SENDING"]:
         return helpers.make_response(200)
 
-    # Get the mailing list address
-    mg_list_addr = mailgun.mailing_list_addr_get()
-
     # Pull out the exact prompt we want to broadcast.
     # If there's more than one prompt for this day,
     # it'll use whichever was requested.
@@ -45,7 +42,10 @@ def post(args: dict):
     # when it comes to sending out a large amount of email messages
     # https://documentation.mailgun.com/en/latest/api-mailinglists.html#examples
     r = email.make_and_send(
-        mg_list_addr, helpers.format_datetime_pretty(prompt.date), "email", **prompt
+        mailgun.mailing_list_addr_get(),
+        helpers.format_datetime_pretty(prompt.date),
+        "email",
+        **prompt,
     )
     pprint(r)
 
