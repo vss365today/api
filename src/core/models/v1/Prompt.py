@@ -14,6 +14,7 @@ class Prompt(dict):
         self.media: Optional[str] = record["media"]
         self.writer_id: str = record["uid"]
         self.writer_handle: str = record["writer_handle"]
+        self.date_added: datetime = record["date_added"]
         self.previous_day: Optional[str] = None
         self.next_day: Optional[str] = None
         self.url: str = str(self)
