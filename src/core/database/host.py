@@ -37,11 +37,11 @@ def create(host_info: dict) -> bool:
 
 
 def create_date(host_info: dict) -> bool:
-
+    """Create a new hosting date."""
     sql = "INSERT INTO writer_dates (uid, date) VALUES (:uid, :date)"
     try:
         with connect_to_db() as db:
-            db.query(sql, id=host_info["id"], date=host_info["date"])
+            db.query(sql, uid=host_info["id"], date=host_info["date"])
             return True
     except DataError as exc:
         print(exc)

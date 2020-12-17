@@ -124,6 +124,26 @@ def date_get(args: dict):
     return helpers.make_error_response(404, "Unable to get Host details!")
 
 
+@authorize_route
+@host.route("/date/", methods=["POST"])
+@use_args(
+    {"id": fields.Str(required=True), "date": fields.DateTime(required=True)},
+    location="json",
+)
+def date_post(args: dict):
+    """Create a new hosting date for the given Host."""
+    # Rewrite the date into the proper format
+    args["date"] = helpers.format_datetime_ymd(args["date"])
+
+    # Create a hosting date
+    result = database.host.create_date(args)
+    if result:
+        return helpers.make_response(201)
+    return helpers.make_error_response(
+        503, f'Unable to create new hosting date for {args["date"]}!'
+    )
+
+
 @host.route("/date/", methods=["DELETE"])
 @use_args(
     {"id": fields.Str(required=True), "date": fields.DateTime(required=True)},
