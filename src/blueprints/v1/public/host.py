@@ -51,19 +51,9 @@ def get(args: dict):
 
 @authorize_route
 @host.route("/", methods=["POST"])
-@use_args(
-    {
-        "handle": fields.Str(required=True),
-        "date": fields.DateTime(missing=None, allow_none=True),
-    },
-    location="json",
-)
+@use_args({"handle": fields.Str(required=True)}, location="json")
 def post(args: dict):
     """Create a new Host."""
-    # Rewrite the date into the proper format if it's present
-    if args["date"] is not None:
-        args["date"] = helpers.format_datetime_ymd(args["date"])
-
     # Get the Twitter user ID for this Host
     host_id = database.host.lookup(args["handle"])
     if not host_id:

@@ -1,7 +1,7 @@
 from typing import List, Literal, Union
 
 from tweepy.error import TweepError
-from sqlalchemy.exc import DBAPIError, IntegrityError
+from sqlalchemy.exc import DataError, IntegrityError
 from sqlalchemy.sql import text
 
 from src.core.database.core import connect_to_db, create_transaction
@@ -11,6 +11,7 @@ from src.core.models.v1.Host import Host
 
 __all__ = [
     "create",
+    "create_date",
     "delete",
     "delete_date",
     "lookup",
@@ -25,30 +26,26 @@ __all__ = [
 
 def create(host_info: dict) -> bool:
     """Create a new Host."""
-    # Create the SQL needed to insert
-    sql_host = text("INSERT INTO writers (uid, handle) VALUES (:uid, :handle)")
-    sql_host_date = text("INSERT INTO writer_dates (uid, date) VALUES (:uid, :date)")
+    sql = "INSERT INTO writers (uid, handle) VALUES (:uid, :handle)"
+    try:
+        with connect_to_db() as db:
+            db.query(sql, uid=host_info["id"], handle=host_info["handle"])
+            return True
+    except DataError as exc:
+        print(exc)
+        return False
 
-    with connect_to_db() as db:
-        # Perform the insertion using a transaction
-        # since both parts are required for it to be successful
-        try:
-            # Reach into sqlalchemy to perform a transaction as Records
-            # utterly fails to properly support this
-            with create_transaction(db) as tx:
-                tx.execute(sql_host, uid=host_info["id"], handle=host_info["handle"])
 
-                # Only insert a date if one was given
-                if host_info["date"] is not None:
-                    tx.execute(
-                        sql_host_date, uid=host_info["id"], date=host_info["date"]
-                    )
-                return True
+def create_date(host_info: dict) -> bool:
 
-        # The transaction failed
-        except DBAPIError as exc:
-            print(exc)
-            return False
+    sql = "INSERT INTO writer_dates (uid, date) VALUES (:uid, :date)"
+    try:
+        with connect_to_db() as db:
+            db.query(sql, id=host_info["id"], date=host_info["date"])
+            return True
+    except DataError as exc:
+        print(exc)
+        return False
 
 
 def delete(uid: str) -> bool:
