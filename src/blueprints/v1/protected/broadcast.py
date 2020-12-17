@@ -17,7 +17,7 @@ from src.core.email import mailgun
 def post(args: dict):
     """Trigger an email broadcast for the given day's prompt."""
     # Put the date in the proper format
-    date = helpers.format_datetime_iso(args["date"])
+    date = helpers.format_datetime_ymd(args["date"])
 
     # A prompt for that date doesn't exist
     prompts = database.prompt.get_by_date(date, date_range=False)
