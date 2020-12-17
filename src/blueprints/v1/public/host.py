@@ -74,25 +74,17 @@ def post(args: dict):
 @authorize_route
 @host.route("/", methods=["PATCH"])
 @use_args(
-    {
-        "id": fields.Str(required=True),
-        "handle": fields.Str(missing=None, allow_none=True),
-        "date": fields.DateTime(missing=None, allow_none=True),
-    },
+    {"id": fields.Str(required=True), "handle": fields.Str(required=True)},
     location="json",
 )
 def patch(args: dict):
-    """Update a Host."""
-    # Rewrite the date into the proper format if it's present
-    if args["date"] is not None:
-        args["date"] = helpers.format_datetime_ymd(args["date"])
-
-    # Attempt to find the host, bc they must exist to be updated
+    """Update a Host's handle."""
+    # Attempt to find the host. They must exist to be updated
     existing_host = database.host.get(uid=args["id"], handle="")
     if not existing_host:
         return helpers.make_error_response(400, "Unable to update Host details!")
 
-    # Update the host with the new info
+    # Update the host
     database.host.update(args)
     return helpers.make_response(200)
 
