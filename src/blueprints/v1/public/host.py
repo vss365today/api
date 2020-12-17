@@ -132,6 +132,7 @@ def date_post(args: dict):
     )
 
 
+@authorize_route
 @host.route("/date/", methods=["DELETE"])
 @use_args(
     {"id": fields.Str(required=True), "date": fields.DateTime(required=True)},
