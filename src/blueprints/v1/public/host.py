@@ -140,4 +140,4 @@ def date_post(args: dict):
 def date_delete(args: dict):
     """Delete a Host's assigned date."""
     database.host.delete_date(args["id"], helpers.format_datetime_ymd(args["date"]))
-    return helpers.make_response(200)
+    return helpers.make_response(204)
