@@ -19,8 +19,8 @@ def get():
     """Get the filename for the newest word archive spreadsheet."""
     # Set up all date values we need
     today = datetime.now()
-    today_iso = helpers.format_datetime_iso(today)
-    yesterday_iso = helpers.format_datetime_iso(today - timedelta(days=1))
+    today_iso = helpers.format_datetime_ymd(today)
+    yesterday_iso = helpers.format_datetime_ymd(today - timedelta(days=1))
 
     # Build out all the paths we need
     save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
@@ -51,7 +51,7 @@ def post():
     oldest_date = helpers.format_datetime_pretty(archive_range["oldest"])
     newest_date = helpers.format_datetime_pretty(archive_range["newest"])
     today = datetime.now()
-    today_iso = helpers.format_datetime_iso(today)
+    today_iso = helpers.format_datetime_ymd(today)
     today_pretty = helpers.format_datetime_pretty(today)
 
     # Put together the save path and file name
@@ -69,9 +69,7 @@ def post():
         # Start by creating a page with basic file generation info
         worksheet = workbook.add_worksheet("Info")
         worksheet.write(
-            0,
-            0,
-            f"#vss365 word archive from {oldest_date} to {newest_date}",
+            0, 0, f"#vss365 word archive from {oldest_date} to {newest_date}",
         )
         worksheet.write(1, 0, "Sorted by word in alphabetical order")
         worksheet.write(2, 0, f"Generated on {today_pretty}")
