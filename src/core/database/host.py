@@ -38,7 +38,7 @@ def create(host_info: dict) -> bool:
 
 def create_date(host_info: dict) -> bool:
     """Create a new hosting date."""
-    sql = "INSERT INTO writer_dates (uid, date) VALUES (:uid, :date)"
+    sql = "INSERT INTO writer_dates (uid, date) VALUES (:uid, STR_TO_DATE(:date, '%Y-%m-%d'))"
     try:
         with connect_to_db() as db:
             db.query(sql, uid=host_info["id"], date=host_info["date"])

@@ -132,10 +132,6 @@ def date_get(args: dict):
 )
 def date_post(args: dict):
     """Create a new hosting date for the given Host."""
-    # Rewrite the date into the proper format
-    args["date"] = helpers.format_datetime_ymd(args["date"])
-
-    # Create a hosting date
     result = database.host.create_date(args)
     if result:
         return helpers.make_response(201)
