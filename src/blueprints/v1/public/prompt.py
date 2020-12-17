@@ -16,14 +16,14 @@ from src.core.models.v1.Prompt import Prompt
 
 def prompt_yesterday_exists(given_prompt: Prompt) -> Optional[datetime]:
     yesterday_date = given_prompt.date - timedelta(1)
-    if database.prompt.get_by_date(helpers.format_datetime_iso(yesterday_date)):
+    if database.prompt.get_by_date(helpers.format_datetime_ymd(yesterday_date)):
         return yesterday_date
     return None
 
 
 def prompt_tomorrow_exists(given_prompt: Prompt) -> Optional[datetime]:
     tomorrow_date = given_prompt.date + timedelta(1)
-    if database.prompt.get_by_date(helpers.format_datetime_iso(tomorrow_date)):
+    if database.prompt.get_by_date(helpers.format_datetime_ymd(tomorrow_date)):
         return tomorrow_date
     return None
 
@@ -48,7 +48,7 @@ def get(args: dict):
     # We want the prompt from a particular day
     else:
         # Format the date in the proper format before fetching
-        date = helpers.format_datetime_iso(args["date"])
+        date = helpers.format_datetime_ymd(args["date"])
 
         # A prompt for that date doesn't exist
         prompts = database.prompt.get_by_date(date, date_range=False)
@@ -81,7 +81,7 @@ def get(args: dict):
 def post(args: dict):
     """Create a new Prompt."""
     # Format the date in the proper format before writing
-    args["date"] = helpers.format_datetime_iso(args["date"])
+    args["date"] = helpers.format_datetime_ymd(args["date"])
 
     # If we've not recieved an explict flag that this a duplicate data
     # (which can occur because there happened to more >1 prompt for the day),
@@ -155,7 +155,7 @@ def put(query_args: dict, json_args: dict):
         args["media"] = media.saved_name(args["id"], args["media"])
 
     # Format the date in the proper format
-    args["date"] = helpers.format_datetime_iso(args["date"])
+    args["date"] = helpers.format_datetime_ymd(args["date"])
 
     # Finally, save all this to the database
     database.prompt.update(args)

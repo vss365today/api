@@ -62,7 +62,7 @@ def post(args: dict):
     """Create a new Host."""
     # Rewrite the date into the proper format if it's present
     if args["date"] is not None:
-        args["date"] = helpers.format_datetime_iso(args["date"])
+        args["date"] = helpers.format_datetime_ymd(args["date"])
 
     # Get the Twitter user ID for this Host
     host_id = database.host.lookup(args["handle"])
@@ -95,7 +95,7 @@ def patch(args: dict):
     """Update a Host."""
     # Rewrite the date into the proper format if it's present
     if args["date"] is not None:
-        args["date"] = helpers.format_datetime_iso(args["date"])
+        args["date"] = helpers.format_datetime_ymd(args["date"])
 
     # Attempt to find the host, bc they must exist to be updated
     existing_host = database.host.get(uid=args["id"], handle="")
@@ -128,7 +128,7 @@ def delete(args: dict):
 @use_args({"date": fields.DateTime(required=True)}, location="query")
 def date_get(args: dict):
     """Get the assigned Host for the specified date."""
-    current_host = database.host.get_by_date(helpers.format_datetime_iso(args["date"]))
+    current_host = database.host.get_by_date(helpers.format_datetime_ymd(args["date"]))
     if current_host:
         return helpers.make_response(200, jsonify(current_host))
     return helpers.make_error_response(404, "Unable to get Host details!")
@@ -141,5 +141,5 @@ def date_get(args: dict):
 )
 def date_delete(args: dict):
     """Delete a Host's assigned date."""
-    database.host.delete_date(args["id"], helpers.format_datetime_iso(args["date"]))
+    database.host.delete_date(args["id"], helpers.format_datetime_ymd(args["date"]))
     return helpers.make_response(200)
