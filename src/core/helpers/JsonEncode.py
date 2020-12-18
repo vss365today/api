@@ -11,5 +11,4 @@ class JsonEncode(JSONEncoder):
     def default(self, o):
         if isinstance(o, datetime):
             return o.isoformat()
-
         return super().default(o)
