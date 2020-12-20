@@ -1,5 +1,5 @@
-from typing import Dict, List, Optional
 from secrets import token_hex
+from typing import Dict, List, Literal, Optional
 
 from sqlalchemy.exc import DataError
 
@@ -59,11 +59,12 @@ def create(permissions: dict) -> Dict[str, str]:
         return {}
 
 
-def delete(token: str) -> bool:
+def delete(token: str) -> Literal[True]:
     """Delete an API key."""
     sql = "DELETE FROM api_keys WHERE token = :token"
     with connect_to_db() as db:
-        return bool(db.query(sql, token=token).one())
+        db.query(sql, token=token)
+        return True
 
 
 def exists(token: str) -> bool:
@@ -102,6 +103,7 @@ def update(permissions: dict) -> bool:
         has_broadcast = :has_broadcast,
         has_host = :has_host,
         has_prompt = :has_prompt,
+        has_settings = :has_settings,
         has_subscription = :has_subscription
     WHERE token = :token
     """

@@ -71,6 +71,7 @@ def post(args: dict):
         "has_broadcast": fields.Bool(),
         "has_host": fields.Bool(),
         "has_prompt": fields.Bool(),
+        "has_settings": fields.Bool(),
         "has_subscription": fields.Bool(),
     },
     location="json",
@@ -94,5 +95,6 @@ def put(args: dict):
 @use_args({"token": fields.Str()}, location="query")
 def delete(args: dict):
     """DELETE request for deleting an API key."""
-    database.api_key.delete(args["token"])
+    if database.api_key.exists(args["token"]):
+        database.api_key.delete(args["token"])
     return helpers.make_response(204)
