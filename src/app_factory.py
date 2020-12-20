@@ -1,17 +1,21 @@
-from importlib import import_module
 import json
+from importlib import import_module
 
 from flask import Flask
 from werkzeug.exceptions import HTTPException
 
 import src.configuration as config
 from src.blueprints import all_blueprints
+from src.core.helpers.JsonEncode import JsonEncode
 from src.extensions import init_extensions
 
 
 def create_app():
     """Create an instance of the app."""
     app = Flask(__name__)
+
+    # Override the default JSON encoder with a customized one
+    app.json_encoder = JsonEncode
 
     # Load the app configuration
     app.config.update(config.get_app_config("default"))
@@ -35,10 +39,10 @@ def create_app():
         Copied from
         https://flask.palletsprojects.com/en/1.1.x/errorhandling/#generic-exception-handlers
         """
-        # start with the correct headers and status code from the error
+        # Start with the correct headers and status code from the error
         response = e.get_response()
 
-        # replace the body with JSON
+        # Replace the body with JSON
         response.data = json.dumps(
             {"code": e.code, "name": e.name, "description": e.description}
         )
