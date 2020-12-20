@@ -17,7 +17,7 @@ def get():
     {
         "identifiers": fields.List(fields.String()),
         "additionals": fields.List(fields.String()),
-        "word_index": fields.Int(),
+        "word_index": fields.Integer(),
     },
     location="json",
 )

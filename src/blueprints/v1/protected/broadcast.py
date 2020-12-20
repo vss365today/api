@@ -11,7 +11,7 @@ from src.core.email import mailgun
 
 @broadcast.route("/", methods=["POST"])
 @use_args(
-    {"date": fields.DateTime(required=True), "which": fields.Int(missing=-1)},
+    {"date": fields.DateTime(required=True), "which": fields.Integer(missing=-1)},
     location="query",
 )
 def post(args: dict):
