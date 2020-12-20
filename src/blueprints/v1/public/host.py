@@ -11,9 +11,9 @@ from src.core.auth_helpers import authorize_route
 @host.route("/", methods=["GET"])
 @use_args(
     {
-        "id": fields.Str(missing=""),
-        "handle": fields.Str(missing=""),
-        "all": fields.Bool(),
+        "id": fields.String(missing=""),
+        "handle": fields.String(missing=""),
+        "all": fields.Boolean(),
     },
     location="query",
 )
@@ -51,7 +51,7 @@ def get(args: dict):
 
 @authorize_route
 @host.route("/", methods=["POST"])
-@use_args({"handle": fields.Str(required=True)}, location="json")
+@use_args({"handle": fields.String(required=True)}, location="json")
 def post(args: dict):
     """Create a new Host."""
     # Get the Twitter user ID for this Host
@@ -74,7 +74,7 @@ def post(args: dict):
 @authorize_route
 @host.route("/", methods=["PATCH"])
 @use_args(
-    {"id": fields.Str(required=True), "handle": fields.Str(required=True)},
+    {"id": fields.String(required=True), "handle": fields.String(required=True)},
     location="json",
 )
 def patch(args: dict):
@@ -91,7 +91,7 @@ def patch(args: dict):
 
 @authorize_route
 @host.route("/", methods=["DELETE"])
-@use_args({"id": fields.Str(required=True)}, location="query")
+@use_args({"id": fields.String(required=True)}, location="query")
 def delete(args: dict):
     """Delete a Host.
 
@@ -119,7 +119,7 @@ def date_get(args: dict):
 @authorize_route
 @host.route("/date/", methods=["POST"])
 @use_args(
-    {"id": fields.Str(required=True), "date": fields.DateTime(required=True)},
+    {"id": fields.String(required=True), "date": fields.DateTime(required=True)},
     location="json",
 )
 def date_post(args: dict):
@@ -135,7 +135,7 @@ def date_post(args: dict):
 @authorize_route
 @host.route("/date/", methods=["DELETE"])
 @use_args(
-    {"id": fields.Str(required=True), "date": fields.DateTime(required=True)},
+    {"id": fields.String(required=True), "date": fields.DateTime(required=True)},
     location="query",
 )
 def date_delete(args: dict):

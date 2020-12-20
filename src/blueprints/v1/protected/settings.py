@@ -15,8 +15,8 @@ def get():
 @settings.route("/", methods=["PUT"])
 @use_args(
     {
-        "identifiers": fields.List(fields.Str()),
-        "additionals": fields.List(fields.Str()),
+        "identifiers": fields.List(fields.String()),
+        "additionals": fields.List(fields.String()),
         "word_index": fields.Int(),
     },
     location="json",
@@ -34,7 +34,7 @@ def timer_get():
 
 
 @settings.route("/timings/", methods=["PUT"])
-@use_args({"timings": fields.List(fields.Str())}, location="json")
+@use_args({"timings": fields.List(fields.String())}, location="json")
 def timer_put(args: dict):
     """PUT request to update finder timing values."""
     database.settings.timings_update(args["timings"])

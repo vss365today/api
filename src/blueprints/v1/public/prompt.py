@@ -68,13 +68,13 @@ def get(args: dict):
 @prompt.route("/", methods=["POST"])
 @use_args(
     {
-        "id": fields.Str(required=True),
-        "uid": fields.Str(required=True),
+        "id": fields.String(required=True),
+        "uid": fields.String(required=True),
         "date": fields.DateTime(required=True),
-        "word": fields.Str(required=True),
-        "content": fields.Str(required=True),
-        "media": fields.Str(missing=None, allow_none=True),
-        "is_duplicate_date": fields.Bool(required=False, missing=False),
+        "word": fields.String(required=True),
+        "content": fields.String(required=True),
+        "media": fields.String(missing=None, allow_none=True),
+        "is_duplicate_date": fields.Boolean(required=False, missing=False),
     },
     location="json",
 )
@@ -113,14 +113,14 @@ def post(args: dict):
 
 @authorize_route
 @prompt.route("/", methods=["PUT"])
-@use_args({"id": fields.Str(required=True)}, location="query")
+@use_args({"id": fields.String(required=True)}, location="query")
 @use_args(
     {
         "date": fields.DateTime(required=True),
-        "word": fields.Str(required=True),
-        "content": fields.Str(required=True),
-        "media": fields.Str(missing=None, allow_none=True),
-        "media_replace": fields.Bool(required=False),
+        "word": fields.String(required=True),
+        "content": fields.String(required=True),
+        "media": fields.String(missing=None, allow_none=True),
+        "media_replace": fields.Boolean(required=False),
     },
     location="json",
 )
@@ -163,7 +163,7 @@ def put(query_args: dict, json_args: dict):
 
 
 @prompt.route("/", methods=["DELETE"])
-@use_args({"id": fields.Str(required=True)}, location="query")
+@use_args({"id": fields.String(required=True)}, location="query")
 def delete(args: dict):
     """Delete an existing Prompt."""
     # Going to mimic SQL's behavior and pretend

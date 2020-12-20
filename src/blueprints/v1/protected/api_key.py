@@ -8,7 +8,7 @@ from src.core import database, helpers
 
 @api_key.route("/", methods=["GET"])
 @use_args(
-    {"token": fields.Str(), "all": fields.Bool()}, location="query",
+    {"token": fields.String(), "all": fields.Boolean()}, location="query",
 )
 def get(args: dict):
     """GET request to fetch key permissions."""
@@ -39,14 +39,14 @@ def get(args: dict):
 @api_key.route("/", methods=["POST"])
 @use_args(
     {
-        "desc": fields.Str(),
-        "has_api_key": fields.Bool(),
-        "has_archive": fields.Bool(),
-        "has_broadcast": fields.Bool(),
-        "has_host": fields.Bool(),
-        "has_prompt": fields.Bool(),
-        "has_settings": fields.Bool(),
-        "has_subscription": fields.Bool(),
+        "desc": fields.String(),
+        "has_api_key": fields.Boolean(),
+        "has_archive": fields.Boolean(),
+        "has_broadcast": fields.Boolean(),
+        "has_host": fields.Boolean(),
+        "has_prompt": fields.Boolean(),
+        "has_settings": fields.Boolean(),
+        "has_subscription": fields.Boolean(),
     },
     location="json",
 )
@@ -64,15 +64,15 @@ def post(args: dict):
 @api_key.route("/", methods=["PUT"])
 @use_args(
     {
-        "token": fields.Str(),
-        "desc": fields.Str(),
-        "has_api_key": fields.Bool(),
-        "has_archive": fields.Bool(),
-        "has_broadcast": fields.Bool(),
-        "has_host": fields.Bool(),
-        "has_prompt": fields.Bool(),
-        "has_settings": fields.Bool(),
-        "has_subscription": fields.Bool(),
+        "token": fields.String(),
+        "desc": fields.String(),
+        "has_api_key": fields.Boolean(),
+        "has_archive": fields.Boolean(),
+        "has_broadcast": fields.Boolean(),
+        "has_host": fields.Boolean(),
+        "has_prompt": fields.Boolean(),
+        "has_settings": fields.Boolean(),
+        "has_subscription": fields.Boolean(),
     },
     location="json",
 )
@@ -92,7 +92,7 @@ def put(args: dict):
 
 
 @api_key.route("/", methods=["DELETE"])
-@use_args({"token": fields.Str()}, location="query")
+@use_args({"token": fields.String()}, location="query")
 def delete(args: dict):
     """DELETE request for deleting an API key."""
     if database.api_key.exists(args["token"]):

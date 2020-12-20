@@ -26,8 +26,8 @@ def browse_by_month(year: str, month: str) -> dict:
 @browse.route("/", methods=["GET"])
 @use_args(
     {
-        "year": fields.Str(validate=lambda x: len(x) == 4),
-        "month": fields.Str(
+        "year": fields.String(validate=lambda x: len(x) == 4),
+        "month": fields.String(
             validate=lambda x: re.search(r"^(?:0?\d)|(?:\d{2})$", x) is not None
         ),
     },
