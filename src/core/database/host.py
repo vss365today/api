@@ -91,8 +91,8 @@ def get(*, uid: str, handle: str) -> List[Host]:
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE
-        writer_dates.date <= CURRENT_TIMESTAMP()
-        AND (writers.uid = :uid OR UPPER(handle) = UPPER(:handle))
+        writer_dates.date <= CURRENT_TIMESTAMP() AND
+        (writers.uid = :uid OR UPPER(handle) = UPPER(:handle))
     ORDER BY date DESC
     """
     with connect_to_db() as db:
