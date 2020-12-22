@@ -70,7 +70,7 @@ def post(args: dict):
     args["id"] = host_id
     result = database.host.create(args)
     if result:
-        return helpers.make_response(201)
+        return helpers.make_response(201, args)
     return helpers.make_error_response(
         503, f'Unable to create new Host {args["handle"]}!'
     )
