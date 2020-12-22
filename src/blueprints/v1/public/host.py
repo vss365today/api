@@ -54,6 +54,11 @@ def get(args: dict):
 @use_args({"handle": fields.String(required=True)}, location="json")
 def post(args: dict):
     """Create a new Host."""
+    if database.host.exists(uid="", handle=args["handle"]):
+        return helpers.make_error_response(
+            422, f'Host {args["handle"]} already exists!'
+        )
+
     # Get the Twitter user ID for this Host
     host_id = database.host.lookup(args["handle"])
     if not host_id:

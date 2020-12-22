@@ -13,6 +13,7 @@ __all__ = [
     "create_date",
     "delete",
     "delete_date",
+    "exists",
     "lookup",
     "get",
     "get_all",
@@ -37,7 +38,11 @@ def create(host_info: dict) -> bool:
 
 def create_date(host_info: dict) -> bool:
     """Create a new hosting date."""
-    sql = "INSERT INTO writer_dates (uid, date) VALUES (:uid, STR_TO_DATE(:date, '%Y-%m-%d'))"
+    sql = """INSERT INTO writer_dates (
+        uid, date
+    ) VALUES (
+        :uid, STR_TO_DATE(:date, '%Y-%m-%d')
+    )"""
     try:
         with connect_to_db() as db:
             db.query(sql, uid=host_info["id"], date=host_info["date"])
@@ -70,6 +75,13 @@ def delete_date(uid: str, date: str) -> Literal[True]:
     with connect_to_db() as db:
         db.query(sql, uid=uid, date=date)
     return True
+
+
+def exists(*, uid: str, handle: str) -> bool:
+    """Find an existing Host."""
+    sql = "SELECT 1 FROM writers WHERE (uid = :uid OR handle = :handle)"
+    with connect_to_db() as db:
+        return bool(db.query(sql, uid=uid, handle=handle).first())
 
 
 def get(*, uid: str, handle: str) -> List[Host]:
