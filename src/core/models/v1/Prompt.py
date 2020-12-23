@@ -17,13 +17,10 @@ class Prompt(dict):
         self.date_added: datetime = record["date_added"]
         self.previous_day: Optional[str] = None
         self.next_day: Optional[str] = None
-        self.url: str = str(self)
+        self.url: str = self.make_url(self.writer_handle, self.id)
 
         # Make the class JSON serializable
         super().__init__(self.__dict__)
-
-    def __str__(self):
-        return self.make_url(self.writer_handle, self.id)
 
     @staticmethod
     def make_url(writer_handle: str, tweet_id: str) -> str:
