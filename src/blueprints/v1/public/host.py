@@ -85,7 +85,7 @@ def post(args: dict):
 def patch(args: dict):
     """Update a Host's handle."""
     # Attempt to find the host. They must exist to be updated
-    existing_host = database.host.get(uid=args["id"], handle="")
+    existing_host = database.host.exists(uid=args["id"], handle="")
     if not existing_host:
         return helpers.make_error_response(400, "Unable to update Host details!")
 
