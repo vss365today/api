@@ -2,11 +2,7 @@ import records
 from flask import current_app
 
 
-__all__ = [
-    "connect_to_db",
-    "create_transaction",
-    "flatten_tuple_list",
-]
+__all__ = ["connect_to_db", "create_transaction", "flatten_records"]
 
 
 def connect_to_db() -> records.Database:
@@ -26,6 +22,6 @@ def create_transaction(db):
     return db._engine.begin()  # skipcq: PYL-W0212
 
 
-def flatten_tuple_list(tup: tuple) -> list:
-    """Flatten a list of tuples into a tuple of actual data."""
+def flatten_records(tup: tuple) -> list:
+    """Flatten a nested list of records."""
     return [item[0] for item in tup]

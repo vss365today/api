@@ -1,4 +1,5 @@
-from typing import List, Literal, Union
+from datetime import datetime
+from typing import List, Literal, Optional, Union
 
 from tweepy.error import TweepError
 from sqlalchemy.exc import DataError, IntegrityError
@@ -14,26 +15,27 @@ __all__ = [
     "delete",
     "delete_date",
     "exists",
-    "lookup",
     "get",
     "get_all",
     "get_by_date",
     "get_by_year",
     "get_by_year_month",
+    "get_date",
+    "lookup",
     "update",
 ]
 
 
-def create(host_info: dict) -> bool:
+def create(host_info: dict) -> Optional[Host]:
     """Create a new Host."""
     sql = "INSERT INTO writers (uid, handle) VALUES (:uid, :handle)"
     try:
         with connect_to_db() as db:
-            db.query(sql, uid=host_info["id"], handle=host_info["handle"])
-        return True
+            db.query(sql, uid=host_info["uid"], handle=host_info["handle"])
+        return Host(host_info)
     except DataError as exc:
         print(exc)
-        return False
+        return None
 
 
 def create_date(host_info: dict) -> bool:
@@ -41,7 +43,7 @@ def create_date(host_info: dict) -> bool:
     sql = """INSERT INTO writer_dates (
         uid, date
     ) VALUES (
-        :uid, STR_TO_DATE(:date, '%Y-%m-%d')
+        :uid, STR_TO_DATE(:date, '%Y-%m-%d 00:00:00')
     )"""
     try:
         with connect_to_db() as db:
@@ -77,57 +79,51 @@ def delete_date(uid: str, date: str) -> Literal[True]:
     return True
 
 
-def exists(*, uid: str, handle: str) -> bool:
+def exists(*, uid: str = "", handle: str = "") -> bool:
     """Find an existing Host."""
-    sql = "SELECT 1 FROM writers WHERE (uid = :uid OR handle = :handle)"
+    sql = "SELECT 1 FROM writers WHERE uid = :uid OR handle = :handle"
     with connect_to_db() as db:
         return bool(db.query(sql, uid=uid, handle=handle).first())
 
 
-def get(*, uid: str, handle: str) -> List[Host]:
+def get(*, uid: str = "", handle: str = "") -> Host:
     """Get Host info by either their Twitter ID or handle."""
     sql = """
-    SELECT writers.uid, handle, writer_dates.date
+    SELECT writers.uid, handle
     FROM writers
-        JOIN writer_dates ON writer_dates.uid = writers.uid
-    WHERE
-        writer_dates.date <= CURRENT_TIMESTAMP() AND
-        (writers.uid = :uid OR UPPER(handle) = UPPER(:handle))
-    ORDER BY date DESC
+    WHERE writers.uid = :uid OR UPPER(handle) = UPPER(:handle)
     """
     with connect_to_db() as db:
-        return [Host(host) for host in db.query(sql, uid=uid, handle=handle)]
+        return Host(db.query(sql, uid=uid, handle=handle).one())
 
 
 def get_all() -> List[Host]:
     """Get a list of all Hosts."""
     sql = """
-    SELECT DISTINCT writers.uid, handle
+    SELECT writers.uid, handle
     FROM writers
-        JOIN writer_dates ON writer_dates.uid = writers.uid
-    WHERE writer_dates.date <= CURRENT_TIMESTAMP()
     ORDER BY handle
     """
     with connect_to_db() as db:
-        return db.query(sql).all(as_dict=True)
+        return [Host(host) for host in db.query(sql)]
 
 
-def get_by_date(date: str) -> List[Host]:
+def get_by_date(date: str) -> Host:
     """Get the Host for the given date."""
     sql = """
-    SELECT writers.uid, handle, writer_dates.date
+    SELECT writers.uid, handle
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE writer_dates.date = :date
     """
     with connect_to_db() as db:
-        return [Host(host) for host in db.query(sql, date=date)]
+        return Host(db.query(sql, date=date).one())
 
 
 def get_by_year(year: str) -> List[Host]:
     """Get a list of all Hosts for a given year."""
     sql = """
-    SELECT writers.uid, handle, writer_dates.date
+    SELECT writers.uid, handle
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE YEAR(writer_dates.date) = :year
@@ -142,7 +138,7 @@ def get_by_year(year: str) -> List[Host]:
 def get_by_year_month(year: str, month: str) -> List[Host]:
     """Get all the Hosts in a year-month combination."""
     sql = """
-    SELECT writers.uid, handle, writer_dates.date
+    SELECT writers.uid, handle
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE
@@ -151,6 +147,24 @@ def get_by_year_month(year: str, month: str) -> List[Host]:
     """
     with connect_to_db() as db:
         return [Host(host) for host in db.query(sql, year=year, month=month)]
+
+
+def get_date(handle: str) -> List[datetime]:
+    """Get the hosting periods for the given Host."""
+    sql = """
+    SELECT date
+    FROM writer_dates
+    WHERE uid = (
+        SELECT uid FROM writers
+        WHERE handle = :handle
+    )
+    ORDER BY date DESC
+    """
+    with connect_to_db() as db:
+        return [
+            datetime.combine(record["date"], datetime.min.time())
+            for record in db.query(sql, handle=handle)
+        ]
 
 
 def lookup(handle: str) -> Union[str, Literal[False]]:

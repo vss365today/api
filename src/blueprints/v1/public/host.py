@@ -54,7 +54,7 @@ def get(args: dict):
 @use_args({"handle": fields.String(required=True)}, location="json")
 def post(args: dict):
     """Create a new Host."""
-    if database.host.exists(uid="", handle=args["handle"]):
+    if database.host.exists(handle=args["handle"]):
         return helpers.make_error_response(
             422, f'Host {args["handle"]} already exists!'
         )
@@ -67,13 +67,13 @@ def post(args: dict):
         )
 
     # Create a host with all their details
-    args["id"] = host_id
+    args["uid"] = host_id
     result = database.host.create(args)
-    if result:
-        return helpers.make_response(201, args)
-    return helpers.make_error_response(
-        503, f'Unable to create new Host {args["handle"]}!'
-    )
+    if result is None:
+        return helpers.make_error_response(
+            503, f'Unable to create new Host {args["handle"]}!'
+        )
+    return helpers.make_response(201, result)
 
 
 @authorize_route
@@ -85,7 +85,7 @@ def post(args: dict):
 def patch(args: dict):
     """Update a Host's handle."""
     # Attempt to find the host. They must exist to be updated
-    existing_host = database.host.exists(uid=args["id"], handle="")
+    existing_host = database.host.exists(uid=args["id"])
     if not existing_host:
         return helpers.make_error_response(400, "Unable to update Host details!")
 
@@ -112,13 +112,41 @@ def delete(args: dict):
 
 
 @host.route("/date/", methods=["GET"])
-@use_args({"date": fields.DateTime(required=True)}, location="query")
+@use_args(
+    {"handle": fields.String(), "date": fields.DateTime()}, location="query",
+)
 def date_get(args: dict):
-    """Get the assigned Host for the specified date."""
-    current_host = database.host.get_by_date(helpers.format_datetime_ymd(args["date"]))
-    if current_host:
-        return helpers.make_response(200, jsonify(current_host))
-    return helpers.make_error_response(404, "Unable to get Host details!")
+    """Get hosting period info for a Host, by either date or Host handle."""
+    # Both parameters were provided. That's a nada
+    if len(args) > 1:
+        return helpers.make_error_response(422, "Only one parameter can be provided!")
+
+    # We want to get the starting hosting date for this Host
+    if "handle" in args:
+        # That Host doesn't exist
+        if not database.host.exists(handle=args["handle"]):
+            return helpers.make_error_response(
+                404, f"Unable to get hosting period for {args['handle']}!",
+            )
+
+        # Attempt to find the hosting period (or not)
+        hosting_periods = database.host.get_date(args["handle"])
+        if hosting_periods:
+            return helpers.make_response(200, jsonify(hosting_periods))
+        return helpers.make_error_response(
+            404, f"Unable to get hosting period for {args['handle']}!",
+        )
+
+    # Ww want to get the Host for this specific date
+    if "date" in args:
+        current_host = database.host.get_by_date(
+            helpers.format_datetime_ymd(args["date"])
+        )
+        if current_host:
+            return helpers.make_response(200, jsonify(current_host))
+        return helpers.make_error_response(
+            404, f"Unable to get Host for {helpers.format_datetime_ymd(args['date'])}!",
+        )
 
 
 @authorize_route
