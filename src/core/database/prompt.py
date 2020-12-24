@@ -2,7 +2,7 @@ from typing import Dict, List, Literal, Optional
 
 from sqlalchemy.exc import IntegrityError
 
-from src.core.database.core import connect_to_db, flatten_tuple_list
+from src.core.database.core import connect_to_db, flatten_records
 from src.core.models.v1.Prompt import Prompt
 
 __all__ = [
@@ -123,7 +123,7 @@ def get_years() -> List[str]:
     ORDER BY date ASC
     """
     with connect_to_db() as db:
-        return flatten_tuple_list(db.query(sql).all())
+        return flatten_records(db.query(sql).all())
 
 
 def search(word: str) -> List[Prompt]:
