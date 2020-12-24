@@ -77,14 +77,14 @@ def delete_date(uid: str, date: str) -> Literal[True]:
     return True
 
 
-def exists(*, uid: str, handle: str) -> bool:
+def exists(*, uid: str = "", handle: str = "") -> bool:
     """Find an existing Host."""
     sql = "SELECT 1 FROM writers WHERE (uid = :uid OR handle = :handle)"
     with connect_to_db() as db:
         return bool(db.query(sql, uid=uid, handle=handle).first())
 
 
-def get(*, uid: str, handle: str) -> List[Host]:
+def get(*, uid: str = "", handle: str = "") -> List[Host]:
     """Get Host info by either their Twitter ID or handle."""
     sql = """
     SELECT writers.uid, handle, writer_dates.date

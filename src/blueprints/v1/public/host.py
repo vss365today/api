@@ -54,7 +54,7 @@ def get(args: dict):
 @use_args({"handle": fields.String(required=True)}, location="json")
 def post(args: dict):
     """Create a new Host."""
-    if database.host.exists(uid="", handle=args["handle"]):
+    if database.host.exists(handle=args["handle"]):
         return helpers.make_error_response(
             422, f'Host {args["handle"]} already exists!'
         )
@@ -85,7 +85,7 @@ def post(args: dict):
 def patch(args: dict):
     """Update a Host's handle."""
     # Attempt to find the host. They must exist to be updated
-    existing_host = database.host.exists(uid=args["id"], handle="")
+    existing_host = database.host.exists(uid=args["id"])
     if not existing_host:
         return helpers.make_error_response(400, "Unable to update Host details!")
 
