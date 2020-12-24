@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Literal, Union
 
 from tweepy.error import TweepError
@@ -14,12 +15,13 @@ __all__ = [
     "delete",
     "delete_date",
     "exists",
-    "lookup",
     "get",
     "get_all",
     "get_by_date",
     "get_by_year",
     "get_by_year_month",
+    "get_date",
+    "lookup",
     "update",
 ]
 
@@ -151,6 +153,24 @@ def get_by_year_month(year: str, month: str) -> List[Host]:
     """
     with connect_to_db() as db:
         return [Host(host) for host in db.query(sql, year=year, month=month)]
+
+
+def get_date(handle: str) -> List[datetime]:
+    """Get the hosting periods for the given Host."""
+    sql = """
+    SELECT date
+    FROM writer_dates
+    WHERE uid = (
+        SELECT uid FROM writers
+        WHERE handle = :handle
+    )
+    ORDER BY date DESC
+    """
+    with connect_to_db() as db:
+        return [
+            datetime.combine(record["date"], datetime.min.time())
+            for record in db.query(sql, handle=handle)
+        ]
 
 
 def lookup(handle: str) -> Union[str, Literal[False]]:
