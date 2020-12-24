@@ -45,7 +45,7 @@ def get(args: dict):
     """Search for a Prompt by word or Host."""
     # Both parameters were provided, and that is not supported
     if len(args) > 1:
-        return make_error_response(422, "Only on parameter can be provided!")
+        return make_error_response(422, "Only one parameter can be provided!")
 
     if "prompt" in args:
         return make_response(200, search_by_prompt(args["prompt"]))
