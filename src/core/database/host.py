@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Literal, Union
+from typing import List, Literal, Optional, Union
 
 from tweepy.error import TweepError
 from sqlalchemy.exc import DataError, IntegrityError
@@ -26,16 +26,16 @@ __all__ = [
 ]
 
 
-def create(host_info: dict) -> bool:
+def create(host_info: dict) -> Optional[Host]:
     """Create a new Host."""
     sql = "INSERT INTO writers (uid, handle) VALUES (:uid, :handle)"
     try:
         with connect_to_db() as db:
-            db.query(sql, uid=host_info["id"], handle=host_info["handle"])
-        return True
+            db.query(sql, uid=host_info["uid"], handle=host_info["handle"])
+        return Host(host_info)
     except DataError as exc:
         print(exc)
-        return False
+        return None
 
 
 def create_date(host_info: dict) -> bool:

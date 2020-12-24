@@ -67,13 +67,13 @@ def post(args: dict):
         )
 
     # Create a host with all their details
-    args["id"] = host_id
+    args["uid"] = host_id
     result = database.host.create(args)
-    if result:
-        return helpers.make_response(201, args)
-    return helpers.make_error_response(
-        503, f'Unable to create new Host {args["handle"]}!'
-    )
+    if result is None:
+        return helpers.make_error_response(
+            503, f'Unable to create new Host {args["handle"]}!'
+        )
+    return helpers.make_response(201, result)
 
 
 @authorize_route
