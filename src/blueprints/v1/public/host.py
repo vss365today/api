@@ -145,8 +145,7 @@ def date_get(args: dict):
         if current_host:
             return helpers.make_response(200, jsonify(current_host))
         return helpers.make_error_response(
-            404,
-            f"Unable to get Host info for {helpers.format_datetime_ymd(args['date'])}!",
+            404, f"Unable to get Host for {helpers.format_datetime_ymd(args['date'])}!",
         )
 
 
