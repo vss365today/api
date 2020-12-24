@@ -104,14 +104,12 @@ def get(*, uid: str = "", handle: str = "") -> List[Host]:
 def get_all() -> List[Host]:
     """Get a list of all Hosts."""
     sql = """
-    SELECT DISTINCT writers.uid, handle
+    SELECT writers.uid, handle
     FROM writers
-        JOIN writer_dates ON writer_dates.uid = writers.uid
-    WHERE writer_dates.date <= CURRENT_TIMESTAMP()
     ORDER BY handle
     """
     with connect_to_db() as db:
-        return db.query(sql).all(as_dict=True)
+        return [Host(host) for host in db.query(sql)]
 
 
 def get_by_date(date: str) -> List[Host]:
