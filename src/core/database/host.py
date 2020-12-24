@@ -43,7 +43,7 @@ def create_date(host_info: dict) -> bool:
     sql = """INSERT INTO writer_dates (
         uid, date
     ) VALUES (
-        :uid, STR_TO_DATE(:date, '%Y-%m-%d')
+        :uid, STR_TO_DATE(:date, '%Y-%m-%d 00:00:00')
     )"""
     try:
         with connect_to_db() as db:
