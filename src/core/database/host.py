@@ -81,24 +81,20 @@ def delete_date(uid: str, date: str) -> Literal[True]:
 
 def exists(*, uid: str = "", handle: str = "") -> bool:
     """Find an existing Host."""
-    sql = "SELECT 1 FROM writers WHERE (uid = :uid OR handle = :handle)"
+    sql = "SELECT 1 FROM writers WHERE uid = :uid OR handle = :handle"
     with connect_to_db() as db:
         return bool(db.query(sql, uid=uid, handle=handle).first())
 
 
-def get(*, uid: str = "", handle: str = "") -> List[Host]:
+def get(*, uid: str = "", handle: str = "") -> Host:
     """Get Host info by either their Twitter ID or handle."""
     sql = """
-    SELECT writers.uid, handle, writer_dates.date
+    SELECT writers.uid, handle
     FROM writers
-        JOIN writer_dates ON writer_dates.uid = writers.uid
-    WHERE
-        writer_dates.date <= CURRENT_TIMESTAMP() AND
-        (writers.uid = :uid OR UPPER(handle) = UPPER(:handle))
-    ORDER BY date DESC
+    WHERE writers.uid = :uid OR UPPER(handle) = UPPER(:handle)
     """
     with connect_to_db() as db:
-        return [Host(host) for host in db.query(sql, uid=uid, handle=handle)]
+        return Host(db.query(sql, uid=uid, handle=handle).one())
 
 
 def get_all() -> List[Host]:
@@ -112,22 +108,22 @@ def get_all() -> List[Host]:
         return [Host(host) for host in db.query(sql)]
 
 
-def get_by_date(date: str) -> List[Host]:
+def get_by_date(date: str) -> Host:
     """Get the Host for the given date."""
     sql = """
-    SELECT writers.uid, handle, writer_dates.date
+    SELECT writers.uid, handle
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE writer_dates.date = :date
     """
     with connect_to_db() as db:
-        return [Host(host) for host in db.query(sql, date=date)]
+        return Host(db.query(sql, date=date).one())
 
 
 def get_by_year(year: str) -> List[Host]:
     """Get a list of all Hosts for a given year."""
     sql = """
-    SELECT writers.uid, handle, writer_dates.date
+    SELECT writers.uid, handle
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE YEAR(writer_dates.date) = :year
@@ -142,7 +138,7 @@ def get_by_year(year: str) -> List[Host]:
 def get_by_year_month(year: str, month: str) -> List[Host]:
     """Get all the Hosts in a year-month combination."""
     sql = """
-    SELECT writers.uid, handle, writer_dates.date
+    SELECT writers.uid, handle
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE
