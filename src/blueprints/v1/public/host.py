@@ -112,13 +112,42 @@ def delete(args: dict):
 
 
 @host.route("/date/", methods=["GET"])
-@use_args({"date": fields.DateTime(required=True)}, location="query")
+@use_args(
+    {"handle": fields.String(), "date": fields.DateTime()}, location="query",
+)
 def date_get(args: dict):
-    """Get the assigned Host for the specified date."""
-    current_host = database.host.get_by_date(helpers.format_datetime_ymd(args["date"]))
-    if current_host:
-        return helpers.make_response(200, jsonify(current_host))
-    return helpers.make_error_response(404, "Unable to get Host details!")
+    """Get hosting period info for a Host, by either date or Host handle."""
+    # Both parameters were provided. That's a nada
+    if len(args) > 1:
+        return helpers.make_error_response(422, "Only one parameter can be provided!")
+
+    # We want to get the starting hosting date for this Host
+    if "handle" in args:
+        # That Host doesn't exist
+        if not database.host.exists(handle=args["handle"]):
+            return helpers.make_error_response(
+                404, f"Unable to get hosting period for {args['handle']}!",
+            )
+
+        # Attempt to find the hosting period (or not)
+        hosting_periods = database.host.get_date(args["handle"])
+        if hosting_periods:
+            return helpers.make_response(200, jsonify(hosting_periods))
+        return helpers.make_error_response(
+            404, f"Unable to get hosting period for {args['handle']}!",
+        )
+
+    # Ww want to get the Host for this specific date
+    if "date" in args:
+        current_host = database.host.get_by_date(
+            helpers.format_datetime_ymd(args["date"])
+        )
+        if current_host:
+            return helpers.make_response(200, jsonify(current_host))
+        return helpers.make_error_response(
+            404,
+            f"Unable to get Host info for {helpers.format_datetime_ymd(args['date'])}!",
+        )
 
 
 @authorize_route
