@@ -137,7 +137,7 @@ def get_months(year: str) -> List[str]:
 def get_years() -> List[str]:
     """Get a list of years of recorded Prompts."""
     sql = """
-    SELECT DISTINCT YEAR(date)
+    SELECT DISTINCT CAST(YEAR(date) AS CHAR)
     FROM prompts
     WHERE YEAR(date) <= YEAR(CURRENT_TIMESTAMP())
     ORDER BY date ASC
