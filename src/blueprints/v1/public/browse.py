@@ -65,6 +65,16 @@ def get(args: dict):
 
 
 @browse.route("/years/", methods=["GET"])
-def get_years():
-    """Get the years of recorded prompts."""
+def years_get():
+    """Get the years of recorded Prompts."""
     return jsonify(database.prompt.get_years())
+
+
+@browse.route("/months/", methods=["GET"])
+@use_args(
+    {"year": fields.String(required=True, validate=lambda x: len(x) == 4)},
+    location="query",
+)
+def months_get(args: dict):
+    """Get the months of recorded Prompts for the given year."""
+    return jsonify(database.prompt.get_months(args["year"]))

@@ -12,6 +12,7 @@ __all__ = [
     "get_by_date",
     "get_by_host",
     "get_latest",
+    "get_months",
     "get_years",
     "search",
     "update",
@@ -114,11 +115,24 @@ def get_latest() -> List[Prompt]:
         return [Prompt(record) for record in db.query(sql, latest_date=latest_date)]
 
 
+def get_months(year: str) -> List[str]:
+    """Get a list of months of recorded Prompts for the given year."""
+    sql = """
+    SELECT DISTINCT DATE_FORMAT(date, '%m')
+    FROM prompts
+    WHERE YEAR(date) = :year AND
+        :year <= YEAR(CURRENT_TIMESTAMP())
+    ORDER BY MONTH(date) ASC
+    """
+    with connect_to_db() as db:
+        return flatten_records(db.query(sql, year=year).all())
+
+
 def get_years() -> List[str]:
-    """Get a list of years of recorded prompts."""
+    """Get a list of years of recorded Prompts."""
     sql = """
     SELECT DISTINCT YEAR(date)
-    FROM writer_dates
+    FROM prompts
     WHERE YEAR(date) <= YEAR(CURRENT_TIMESTAMP())
     ORDER BY date ASC
     """
