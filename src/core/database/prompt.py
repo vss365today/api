@@ -116,7 +116,13 @@ def get_latest() -> List[Prompt]:
 
 
 def get_months(year: str) -> List[str]:
-    """Get a list of months of recorded Prompts for the given year."""
+    """Make all Prompts dates for a given year into a unique set.
+
+    For some months in 2017, November 2020, and in 2021 and beyond,
+    there are multiple Hosts per month giving out the prompts.
+    While the individual dates are stored distinctly,
+    we need a unique month list in order to correctly display
+    the year browsing page."""
     sql = """
     SELECT DISTINCT DATE_FORMAT(date, '%m')
     FROM prompts
