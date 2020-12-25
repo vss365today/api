@@ -23,5 +23,6 @@ class Prompt(dict):
         super().__init__(self.__dict__)
 
     @staticmethod
-    def make_url(writer_handle: str, tweet_id: str) -> str:
-        return f"https://twitter.com/{writer_handle}/status/{tweet_id}"
+    def make_url(handle: str, tweet_id: str) -> str:
+        """Create a Twitter URL to the Prompt tweet."""
+        return f"https://twitter.com/{handle}/status/{tweet_id}"

@@ -122,7 +122,8 @@ def get_months(year: str) -> List[str]:
     there are multiple Hosts per month giving out the prompts.
     While the individual dates are stored distinctly,
     we need a unique month list in order to correctly display
-    the year browsing page."""
+    the year browsing page.
+    """
     sql = """
     SELECT DISTINCT DATE_FORMAT(date, '%m')
     FROM prompts

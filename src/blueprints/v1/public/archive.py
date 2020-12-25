@@ -69,7 +69,9 @@ def post():
         # Start by creating a page with basic file generation info
         worksheet = workbook.add_worksheet("Info")
         worksheet.write(
-            0, 0, f"#vss365 word archive from {oldest_date} to {newest_date}",
+            0,
+            0,
+            f"#vss365 word archive from {oldest_date} to {newest_date}",
         )
         worksheet.write(1, 0, "Sorted by word in alphabetical order")
         worksheet.write(2, 0, f"Generated on {today_pretty}")

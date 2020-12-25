@@ -11,5 +11,6 @@ class Host(dict):
         super().__init__(self.__dict__)
 
     @staticmethod
-    def make_url(writer_handle: str) -> str:
-        return f"https://twitter.com/{writer_handle}"
+    def make_url(handle: str) -> str:
+        """Create a Twitter URL to the Host's profile."""
+        return f"https://twitter.com/{handle}"

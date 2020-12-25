@@ -101,7 +101,8 @@ def delete(args: dict):
     """Delete a Host.
 
     This will only succeed if the Host does not have any associated
-    Prompts to prevent orphaned records or an incomplete record."""
+    Prompts to prevent orphaned records or an incomplete record.
+    """
     result = database.host.delete(args["id"])
     if result:
         return helpers.make_response(204)
@@ -113,7 +114,8 @@ def delete(args: dict):
 
 @host.route("/date/", methods=["GET"])
 @use_args(
-    {"handle": fields.String(), "date": fields.DateTime()}, location="query",
+    {"handle": fields.String(), "date": fields.DateTime()},
+    location="query",
 )
 def date_get(args: dict):
     """Get hosting period info for a Host, by either date or Host handle."""
@@ -126,7 +128,8 @@ def date_get(args: dict):
         # That Host doesn't exist
         if not database.host.exists(handle=args["handle"]):
             return helpers.make_error_response(
-                404, f"Unable to get hosting period for {args['handle']}!",
+                404,
+                f"Unable to get hosting period for {args['handle']}!",
             )
 
         # Attempt to find the hosting period (or not)
@@ -134,7 +137,8 @@ def date_get(args: dict):
         if hosting_periods:
             return helpers.make_response(200, jsonify(hosting_periods))
         return helpers.make_error_response(
-            404, f"Unable to get hosting period for {args['handle']}!",
+            404,
+            f"Unable to get hosting period for {args['handle']}!",
         )
 
     # Ww want to get the Host for this specific date
@@ -145,7 +149,8 @@ def date_get(args: dict):
         if current_host:
             return helpers.make_response(200, jsonify(current_host))
         return helpers.make_error_response(
-            404, f"Unable to get Host for {helpers.format_datetime_ymd(args['date'])}!",
+            404,
+            f"Unable to get Host for {helpers.format_datetime_ymd(args['date'])}!",
         )
 
 

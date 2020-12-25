@@ -75,7 +75,7 @@ def send(email: Dict[str, str]) -> bool:
 def make_and_send(
     email_addr: str, subject: str, template_name: str, **render_opts: str
 ) -> bool:
-    """Convenience function to construct and send a single email."""
+    """Helper function to construct and send a single email."""
     email_content = render(template_name, **render_opts)
     email_msg = construct(email_addr, subject, email_content)
     return send(email_msg)

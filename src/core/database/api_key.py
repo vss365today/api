@@ -10,14 +10,8 @@ from src.core.models.v1.ApiKey import ApiKey
 __all__ = ["can_access", "create", "delete", "exists", "get", "get_all", "update"]
 
 
-def __int_to_bool(records: dict) -> dict:
-    for k, v in records.items():
-        if isinstance(v, int):
-            records[k] = bool(v)
-    return records
-
-
 def __bool_to_int(records: dict) -> dict:
+    """Convert Boolean values to integer values."""
     for k, v in records.items():
         if isinstance(v, bool):
             records[k] = int(v)
