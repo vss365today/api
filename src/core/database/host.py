@@ -123,7 +123,7 @@ def get_by_date(date: str) -> Host:
 def get_by_year(year: str) -> List[Host]:
     """Get a list of all Hosts for a given year."""
     sql = """
-    SELECT writers.uid, handle
+    SELECT writers.uid, handle, writer_dates.date
     FROM writers
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE YEAR(writer_dates.date) = :year
