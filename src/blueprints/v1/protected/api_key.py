@@ -28,7 +28,7 @@ def get(args: dict):
     if "token" in args:
         record = database.api_key.get(args["token"])
         if record is not None:
-            return helpers.make_response(200, record)
+            return helpers.make_response(200, jsonify(record))
         return helpers.make_error_response(404, "Could not get key information!")
 
     # Some form of info must be requested

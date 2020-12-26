@@ -1,20 +1,19 @@
-from records import Record
+from dataclasses import dataclass, InitVar
+from datetime import datetime
 
 
-class ApiKey(dict):
-    def __init__(self, record: Record):
-        self.token: str = record["token"]
-        self.desc: str = record["desc"]
-        self.has_api_key: bool = bool(record["has_api_key"])
-        self.has_archive: bool = bool(record["has_archive"])
-        self.has_broadcast: bool = bool(record["has_broadcast"])
-        self.has_host: bool = bool(record["has_host"])
-        self.has_prompt: bool = bool(record["has_prompt"])
-        self.has_settings: bool = bool(record["has_settings"])
-        self.has_subscription: bool = bool(record["has_subscription"])
+@dataclass
+class ApiKey:
+    token: str
+    desc: str
+    date_created: datetime
+    has_api_key: bool
+    has_archive: bool
+    has_broadcast: bool
+    has_host: bool
+    has_prompt: bool
+    has_settings: bool
+    has_subscription: bool
 
-        # Make the class JSON serializable
-        super().__init__(self.__dict__)
-
-    def __str__(self):
-        return self.token
+    # Do not expose the internal ID
+    id: InitVar[int] = None

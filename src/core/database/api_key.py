@@ -73,14 +73,14 @@ def get(token: str) -> Optional[ApiKey]:
     sql = "SELECT * FROM api_keys WHERE token = :token LIMIT 1"
     with connect_to_db() as db:
         record = db.query(sql, token=token).one()
-        return ApiKey(record) if record else None
+        return ApiKey(**record) if record else None
 
 
 def get_all() -> List[ApiKey]:
     """Get all recorded API key's permissions."""
     sql = "SELECT * FROM api_keys"
     with connect_to_db() as db:
-        return [ApiKey(record) for record in db.query(sql)]
+        return [ApiKey(**record) for record in db.query(sql)]
 
 
 def update(permissions: dict) -> bool:
