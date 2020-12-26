@@ -73,7 +73,7 @@ def post(args: dict):
         return helpers.make_error_response(
             503, f'Unable to create new Host {args["handle"]}!'
         )
-    return helpers.make_response(201, result)
+    return helpers.make_response(201, jsonify(result))
 
 
 @authorize_route
@@ -91,7 +91,7 @@ def patch(args: dict):
 
     # Update the host
     database.host.update(args)
-    return helpers.make_response(200)
+    return helpers.make_response(204)
 
 
 @authorize_route

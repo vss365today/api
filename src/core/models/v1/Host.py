@@ -1,14 +1,14 @@
-from records import Record
+from dataclasses import dataclass, field
 
 
-class Host(dict):
-    def __init__(self, record: Record):
-        self.id: str = record["uid"]
-        self.handle: str = record["handle"]
-        self.url: str = self.make_url(record["handle"])
+@dataclass
+class Host:
+    uid: str
+    handle: str
+    url: str = field(default="")
 
-        # Make the class JSON serializable
-        super().__init__(self.__dict__)
+    def __post_init__(self):
+        self.url = self.make_url(self.handle)
 
     @staticmethod
     def make_url(handle: str) -> str:
