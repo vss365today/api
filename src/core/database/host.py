@@ -117,7 +117,7 @@ def get_by_date(date: str) -> Host:
     WHERE writer_dates.date = :date
     """
     with connect_to_db() as db:
-        return Host(db.query(sql, date=date).one())
+        return Host(**db.query(sql, date=date).one())
 
 
 def get_by_year(year: str) -> List[Host]:
