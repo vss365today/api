@@ -15,6 +15,7 @@ __all__ = [
     "delete",
     "delete_date",
     "exists",
+    "exists_date",
     "get",
     "get_all",
     "get_by_date",
@@ -84,6 +85,19 @@ def exists(*, uid: str = "", handle: str = "") -> bool:
     sql = "SELECT 1 FROM writers WHERE uid = :uid OR handle = :handle"
     with connect_to_db() as db:
         return bool(db.query(sql, uid=uid, handle=handle).first())
+
+
+def exists_date(uid: str, date: str) -> bool:
+    """Find an existing hosting date for the Host."""
+    sql = """
+    SELECT 1
+    FROM writer_dates
+    WHERE
+        uid = :uid AND
+        date = STR_TO_DATE(:date, '%Y-%m-%d')
+    """
+    with connect_to_db() as db:
+        return bool(db.query(sql, uid=uid, date=date).first())
 
 
 def get(*, uid: str = "", handle: str = "") -> Host:
