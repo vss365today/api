@@ -100,7 +100,7 @@ def exists_date(uid: str, date: str) -> bool:
         return bool(db.query(sql, uid=uid, date=date).first())
 
 
-def get(*, uid: str = "", handle: str = "") -> Host:
+def get(*, uid: str = "", handle: str = "") -> Optional[Host]:
     """Get Host info by either their Twitter ID or handle."""
     sql = """
     SELECT writers.uid, handle
@@ -108,7 +108,8 @@ def get(*, uid: str = "", handle: str = "") -> Host:
     WHERE writers.uid = :uid OR UPPER(handle) = UPPER(:handle)
     """
     with connect_to_db() as db:
-        return Host(db.query(sql, uid=uid, handle=handle).one())
+        r = db.query(sql, uid=uid, handle=handle).one()
+    return Host(r) if r is not None else None
 
 
 def get_all() -> List[Host]:
