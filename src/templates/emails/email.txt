@@ -8,7 +8,7 @@ Today's writing prompt is:
 Prompt by {{ writer_handle }}
 {{ url }}
 
-To get a definition, visit https://www.dictionary.com/browse/{{ word|lower }}
+To get a definition, visit https://www.merriam-webster.com/dictionary/{{ word|lower }}
 To view this email in your browser, visit https://vss365today.com/view/{{ date.strftime("%Y-%m-%d") }}
 To help support #vss365 today, visit https://vss365today.com/donate
 To unsubscribe, visit https://vss365today.com/unsubscribe
