@@ -33,7 +33,7 @@ def create(host_info: dict) -> Optional[Host]:
     try:
         with connect_to_db() as db:
             db.query(sql, uid=host_info["uid"], handle=host_info["handle"])
-        return Host(host_info)
+        return Host(**host_info)
     except DataError as exc:
         print(exc)
         return None
@@ -48,7 +48,7 @@ def create_date(host_info: dict) -> bool:
     )"""
     try:
         with connect_to_db() as db:
-            db.query(sql, uid=host_info["id"], date=host_info["date"])
+            db.query(sql, uid=host_info["uid"], date=host_info["date"])
         return True
     except DataError as exc:
         print(exc)
@@ -109,7 +109,7 @@ def get(*, uid: str = "", handle: str = "") -> Optional[Host]:
     """
     with connect_to_db() as db:
         r = db.query(sql, uid=uid, handle=handle).one()
-    return Host(r) if r is not None else None
+    return Host(**r) if r is not None else None
 
 
 def get_all() -> List[Host]:
@@ -120,7 +120,7 @@ def get_all() -> List[Host]:
     ORDER BY handle
     """
     with connect_to_db() as db:
-        return [Host(host) for host in db.query(sql)]
+        return [Host(**host) for host in db.query(sql)]
 
 
 def get_by_date(date: str) -> Host:
@@ -132,7 +132,7 @@ def get_by_date(date: str) -> Host:
     WHERE writer_dates.date = :date
     """
     with connect_to_db() as db:
-        return Host(db.query(sql, date=date).one())
+        return Host(**db.query(sql, date=date).one())
 
 
 def get_by_year(year: str) -> List[Host]:
@@ -147,7 +147,7 @@ def get_by_year(year: str) -> List[Host]:
     ORDER BY writer_dates.date ASC
     """
     with connect_to_db() as db:
-        return [Host(host) for host in db.query(sql, year=year)]
+        return [Host(**host) for host in db.query(sql, year=year)]
 
 
 def get_by_year_month(year: str, month: str) -> List[Host]:
@@ -161,7 +161,7 @@ def get_by_year_month(year: str, month: str) -> List[Host]:
         AND MONTH(writer_dates.date) = :month
     """
     with connect_to_db() as db:
-        return [Host(host) for host in db.query(sql, year=year, month=month)]
+        return [Host(**host) for host in db.query(sql, year=year, month=month)]
 
 
 def get_date(handle: str) -> List[datetime]:
@@ -199,7 +199,7 @@ def update(host_info: dict) -> bool:
     sql = "UPDATE writers SET handle = :handle WHERE uid = :uid"
     try:
         with connect_to_db() as db:
-            db.query(sql, uid=host_info["id"], handle=host_info["handle"])
+            db.query(sql, uid=host_info["uid"], handle=host_info["handle"])
         return True
     except DataError as exc:
         print(exc)
