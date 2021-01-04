@@ -15,6 +15,7 @@ __all__ = [
     "delete",
     "delete_date",
     "exists",
+    "exists_date",
     "get",
     "get_all",
     "get_by_date",
@@ -86,7 +87,20 @@ def exists(*, uid: str = "", handle: str = "") -> bool:
         return bool(db.query(sql, uid=uid, handle=handle).first())
 
 
-def get(*, uid: str = "", handle: str = "") -> Host:
+def exists_date(uid: str, date: str) -> bool:
+    """Find an existing hosting date for the Host."""
+    sql = """
+    SELECT 1
+    FROM writer_dates
+    WHERE
+        uid = :uid AND
+        date = STR_TO_DATE(:date, '%Y-%m-%d')
+    """
+    with connect_to_db() as db:
+        return bool(db.query(sql, uid=uid, date=date).first())
+
+
+def get(*, uid: str = "", handle: str = "") -> Optional[Host]:
     """Get Host info by either their Twitter ID or handle."""
     sql = """
     SELECT writers.uid, handle
@@ -94,7 +108,8 @@ def get(*, uid: str = "", handle: str = "") -> Host:
     WHERE writers.uid = :uid OR UPPER(handle) = UPPER(:handle)
     """
     with connect_to_db() as db:
-        return Host(**db.query(sql, uid=uid, handle=handle).one())
+        r = db.query(sql, uid=uid, handle=handle).one()
+    return Host(**r) if r is not None else None
 
 
 def get_all() -> List[Host]:

@@ -162,6 +162,13 @@ def date_get(args: dict):
 )
 def date_post(args: dict):
     """Create a new hosting date for the given Host."""
+    # That hosting date already exists and we can't duplicate it
+    if database.host.exists_date(args["id"], args["date"]):
+        return helpers.make_error_response(
+            422,
+            f'A hosting date of {args["date"]} for Host {args["id"]} already exists!',
+        )
+
     result = database.host.create_date(args)
     if result:
         return helpers.make_response(201)
