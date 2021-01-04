@@ -48,7 +48,7 @@ def create_date(host_info: dict) -> bool:
     )"""
     try:
         with connect_to_db() as db:
-            db.query(sql, uid=host_info["id"], date=host_info["date"])
+            db.query(sql, uid=host_info["uid"], date=host_info["date"])
         return True
     except DataError as exc:
         print(exc)
@@ -199,7 +199,7 @@ def update(host_info: dict) -> bool:
     sql = "UPDATE writers SET handle = :handle WHERE uid = :uid"
     try:
         with connect_to_db() as db:
-            db.query(sql, uid=host_info["id"], handle=host_info["handle"])
+            db.query(sql, uid=host_info["uid"], handle=host_info["handle"])
         return True
     except DataError as exc:
         print(exc)

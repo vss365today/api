@@ -11,7 +11,7 @@ from src.core.auth_helpers import authorize_route
 @host.route("/", methods=["GET"])
 @use_args(
     {
-        "id": fields.String(missing=""),
+        "uid": fields.String(missing=""),
         "handle": fields.String(missing=""),
         "all": fields.Boolean(),
     },
@@ -24,19 +24,19 @@ def get(args: dict):
         return helpers.make_response(200, jsonify(database.host.get_all()))
 
     # We need something to search by
-    if not args["id"] and not args["handle"]:
+    if not args["uid"] and not args["handle"]:
         return helpers.make_error_response(
             422, "Either a Host id or handle must be provided!"
         )
 
     # Both a host ID and handle cannot be provided
-    if args["id"] and args["handle"]:
+    if args["uid"] and args["handle"]:
         return helpers.make_error_response(
             422, "Providing a Host id and handle is not allowed!"
         )
 
     # Get the host information
-    found_host = database.host.get(uid=args["id"], handle=args["handle"])
+    found_host = database.host.get(uid=args["uid"], handle=args["handle"])
     if found_host:
         return helpers.make_response(200, jsonify(found_host))
 
@@ -79,13 +79,13 @@ def post(args: dict):
 @authorize_route
 @host.route("/", methods=["PATCH"])
 @use_args(
-    {"id": fields.String(required=True), "handle": fields.String(required=True)},
+    {"uid": fields.String(required=True), "handle": fields.String(required=True)},
     location="json",
 )
 def patch(args: dict):
     """Update a Host's handle."""
     # Attempt to find the host. They must exist to be updated
-    existing_host = database.host.exists(uid=args["id"])
+    existing_host = database.host.exists(uid=args["uid"])
     if not existing_host:
         return helpers.make_error_response(400, "Unable to update Host details!")
 
@@ -96,19 +96,19 @@ def patch(args: dict):
 
 @authorize_route
 @host.route("/", methods=["DELETE"])
-@use_args({"id": fields.String(required=True)}, location="query")
+@use_args({"uid": fields.String(required=True)}, location="query")
 def delete(args: dict):
     """Delete a Host.
 
     This will only succeed if the Host does not have any associated
     Prompts to prevent orphaned records or an incomplete record.
     """
-    result = database.host.delete(args["id"])
+    result = database.host.delete(args["uid"])
     if result:
         return helpers.make_response(204)
     return helpers.make_error_response(
         403,
-        f"Unable to delete Host {args['id']}! They have Prompts associated with them.",
+        f"Unable to delete Host {args['uid']}! They have Prompts associated with them.",
     )
 
 
@@ -157,16 +157,16 @@ def date_get(args: dict):
 @authorize_route
 @host.route("/date/", methods=["POST"])
 @use_args(
-    {"id": fields.String(required=True), "date": fields.DateTime(required=True)},
+    {"uid": fields.String(required=True), "date": fields.DateTime(required=True)},
     location="json",
 )
 def date_post(args: dict):
     """Create a new hosting date for the given Host."""
     # That hosting date already exists and we can't duplicate it
-    if database.host.exists_date(args["id"], args["date"]):
+    if database.host.exists_date(args["uid"], args["date"]):
         return helpers.make_error_response(
             422,
-            f'A hosting date of {args["date"]} for Host {args["id"]} already exists!',
+            f'A hosting date of {args["date"]} for Host {args["uid"]} already exists!',
         )
 
     result = database.host.create_date(args)
@@ -180,10 +180,10 @@ def date_post(args: dict):
 @authorize_route
 @host.route("/date/", methods=["DELETE"])
 @use_args(
-    {"id": fields.String(required=True), "date": fields.DateTime(required=True)},
+    {"uid": fields.String(required=True), "date": fields.DateTime(required=True)},
     location="query",
 )
 def date_delete(args: dict):
     """Delete a Host's assigned date."""
-    database.host.delete_date(args["id"], helpers.format_datetime_ymd(args["date"]))
+    database.host.delete_date(args["uid"], helpers.format_datetime_ymd(args["date"]))
     return helpers.make_response(204)
