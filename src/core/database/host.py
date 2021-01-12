@@ -123,7 +123,7 @@ def get_all() -> List[Host]:
         return [Host(**host) for host in db.query(sql)]
 
 
-def get_by_date(date: str) -> Host:
+def get_by_date(date: str) -> Optional[Host]:
     """Get the Host for the given date."""
     sql = """
     SELECT writers.uid, handle
@@ -132,7 +132,8 @@ def get_by_date(date: str) -> Host:
     WHERE writer_dates.date = :date
     """
     with connect_to_db() as db:
-        return Host(**db.query(sql, date=date).one())
+        r = db.query(sql, date=date).one()
+    return Host(**r) if r is not None else None
 
 
 def get_by_year(year: str) -> List[Host]:
