@@ -3,7 +3,7 @@ USE vss365today;
 
 -- Create the tables
 CREATE TABLE IF NOT EXISTS users (
-  id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE,
+  _id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE,
   username VARCHAR(20) NOT NULL UNIQUE,
   password VARCHAR(128) NOT NULL,
   date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -58,7 +58,7 @@ COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS api_keys (
-  id TINYINT(3) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE,
+  _id TINYINT(3) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE,
   token VARCHAR(64) NOT NULL UNIQUE COLLATE 'utf8mb4_unicode_ci',
   date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   desc VARCHAR(256) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS api_keys (
   has_host TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   has_prompt TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   has_settings TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
-  has_subscription TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
+  has_subscription TINYINT(1) UNSIGNED NOT NULL DEFAULT '0'
 )
 COMMENT='API keys for accessing protected API endpoints. By default, keys can only access public, unprotected endpoints and actions. Authorization can be granted on a granular level for complete control over key permissions.'
 COLLATE='utf8mb4_unicode_ci'
@@ -86,7 +86,7 @@ CREATE TABLE audit_api_keys (
   has_settings TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   has_subscription TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   CONSTRAINT `audit_api_keys_key_id-api_keys_id`
-    FOREIGN KEY (key_id) REFERENCES api_keys (id)
+    FOREIGN KEY (key_id) REFERENCES api_keys (_id)
     ON UPDATE NO ACTION
     ON DELETE CASCADE
 )
@@ -100,6 +100,6 @@ AFTER UPDATE
 ON api_keys FOR EACH ROW
 BEGIN
      INSERT INTO audit_api_keys(key_id, has_api_key, has_archive, has_broadcast, has_host, has_prompt, has_settings, has_subscription)
-     VALUES(old.id, old.has_api_key, old.has_archive, old.has_broadcast, old.has_host, old.has_prompt, old.has_settings, old.has_subscription);
+     VALUES(old._id, old.has_api_key, old.has_archive, old.has_broadcast, old.has_host, old.has_prompt, old.has_settings, old.has_subscription);
 END$$
 DELIMITER ;

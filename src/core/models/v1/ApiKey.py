@@ -16,4 +16,4 @@ class ApiKey:
     has_subscription: bool
 
     # Do not expose the internal ID
-    id: InitVar[int] = None
+    _id: InitVar[int] = None
