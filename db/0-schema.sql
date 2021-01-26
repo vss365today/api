@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS api_keys (
   _id TINYINT(3) UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE,
   token VARCHAR(64) NOT NULL UNIQUE COLLATE 'utf8mb4_unicode_ci',
   date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  desc VARCHAR(256) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
+  `desc` VARCHAR(256) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
   has_api_key TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   has_archive TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   has_broadcast TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS api_keys (
   has_settings TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   has_subscription TINYINT(1) UNSIGNED NOT NULL DEFAULT '0'
 )
-COMMENT='API keys for accessing protected API endpoints. By default, keys can only access public, unprotected endpoints and actions. Authorization can be granted on a granular level for complete control over key permissions.'
+COMMENT='API keys for accessing protected API endpoints. By default, keys can only access public, unprotected endpoints and actions. Authorization can be granted on a granular level for complete control over key permissions.',
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
 
@@ -93,13 +93,3 @@ CREATE TABLE audit_api_keys (
 COMMENT='Audit table to track permission changes to API keys.'
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
-
-DELIMITER $$
-CREATE TRIGGER api_key_permission_changes
-AFTER UPDATE
-ON api_keys FOR EACH ROW
-BEGIN
-     INSERT INTO audit_api_keys(key_id, has_api_key, has_archive, has_broadcast, has_host, has_prompt, has_settings, has_subscription)
-     VALUES(old._id, old.has_api_key, old.has_archive, old.has_broadcast, old.has_host, old.has_prompt, old.has_settings, old.has_subscription);
-END$$
-DELIMITER ;
