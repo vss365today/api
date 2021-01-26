@@ -18,6 +18,14 @@ def __bool_to_int(records: dict) -> dict:
     return records
 
 
+def __int_to_bool(records: dict) -> dict:
+    """Convert integer values to Boolean values."""
+    for k, v in records.items():
+        if isinstance(v, int):
+            records[k] = bool(v)
+    return records
+
+
 def can_access(route: str, token: str) -> bool:
     """Determine if the given API key has permission to access a route."""
     sql = f"SELECT has_{route} FROM api_keys WHERE token = :token"
@@ -72,15 +80,15 @@ def get(token: str) -> Optional[ApiKey]:
     """Get an API key's permissions."""
     sql = "SELECT * FROM api_keys WHERE token = :token LIMIT 1"
     with connect_to_db() as db:
-        record = db.query(sql, token=token).one()
-        return ApiKey(**record) if record else None
+        record = db.query(sql, token=token).one(as_dict=True)
+        return ApiKey(**__int_to_bool(record)) if record else None
 
 
 def get_all() -> List[ApiKey]:
     """Get all recorded API key's permissions."""
     sql = "SELECT * FROM api_keys"
     with connect_to_db() as db:
-        return [ApiKey(**record) for record in db.query(sql)]
+        return [ApiKey(**__int_to_bool(record.as_dict())) for record in db.query(sql)]
 
 
 def update(permissions: dict) -> bool:
