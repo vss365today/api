@@ -11,7 +11,7 @@
 
 ## Install
 
-1. Install Python 3.8+ and [Poetry](https://poetry.eustace.io/) 1.0.0+
+1. Install Python 3.9+ and [Poetry](https://poetry.eustace.io/) 1.0.0+
 1. Set missing configuration keys in appropriate `configuration/*.json` files
 1. `poetry install`
 1. `poetry run flask run`
@@ -24,6 +24,6 @@
 
 ## License
 
-2019-2020 Caleb Ely
+2019-2021 Caleb Ely
 
 [MIT](LICENSE)

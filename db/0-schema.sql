@@ -1,4 +1,4 @@
--- CREATE DATABASE IF NOT EXISTS `vss365today` /*!40100 COLLATE 'utf8mb4_unicode_ci' */;
+CREATE DATABASE IF NOT EXISTS `vss365today` /*!40100 COLLATE 'utf8mb4_unicode_ci' */;
 USE vss365today;
 
 -- Create the tables
