@@ -5,6 +5,7 @@ __all__ = [
     "mailing_list_addr_get",
     "subscription_email_create",
     "subscription_email_delete",
+    "validate_email_address",
 ]
 
 
@@ -33,3 +34,15 @@ def subscription_email_delete(addr: str) -> requests.Response:
         f"https://api.mailgun.net/v3/lists/{mg_list_addr}/members/{addr}",
         auth=("api", current_app.config["MG_API_KEY"]),
     )
+
+
+def validate_email_address(addr: str) -> bool:
+    """Validate an email address using the Mailgun Email Validation API."""
+    r = requests.get(
+        "https://api.mailgun.net/v4/address/validate",
+        auth=("api", current_app.config["MG_API_KEY"]),
+        params={"address": addr},
+    ).json()
+
+    # The address can be added if it's marked as deliverable
+    return r["result"] == "deliverable"
