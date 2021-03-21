@@ -23,12 +23,18 @@ def post(args: dict):
         if not mailgun.validate_email_address(args["email"]):
             return error
 
-    # Add the address to the local database and Mailgun mailing list
+    # Add the address to the local database
     db_result = database.subscription.email_create(args["email"])
+
+    # It didn't added to the db
+    if not db_result:
+        return error
+
+    # Add the address to the Mailgun mailing list
     mg_result = mailgun.subscription_email_create(args["email"])
 
     # The address was successfully recorded
-    if db_result and (mg_result.status_code == codes.ok):
+    if mg_result.status_code == codes.ok:
         return helpers.make_response(201)
 
     # ...Welllllll... actually it didn't...
