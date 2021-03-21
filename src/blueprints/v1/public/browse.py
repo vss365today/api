@@ -64,13 +64,13 @@ def get(args: dict):
     return make_error_response(404, f"No prompts available for year {args['year']}!")
 
 
-@browse.route("/years/", methods=["GET"])
+@browse.route("/years", methods=["GET"])
 def years_get():
     """Get the years of recorded Prompts."""
     return jsonify(database.prompt.get_years())
 
 
-@browse.route("/months/", methods=["GET"])
+@browse.route("/months", methods=["GET"])
 @use_args(
     {"year": fields.String(required=True, validate=lambda x: len(x) == 4)},
     location="query",

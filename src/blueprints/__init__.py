@@ -25,7 +25,7 @@ def _factory(
 
     # Actually create the blueprint
     blueprint = Blueprint(
-        partial_module_string, import_path, url_prefix=f"/{api_version}{url_prefix}"
+        partial_module_string, import_path, url_prefix=f"/{api_version}/{url_prefix}"
     )
 
     # Protect the endpoint with an authorization routine
@@ -35,15 +35,15 @@ def _factory(
     return blueprint
 
 
-api_key = _factory("api_key", "/api-key", "v1", authorize_blueprint)
-archive = _factory("archive", "/archive", "v1")
-broadcast = _factory("broadcast", "/broadcast", "v1", authorize_blueprint)
-browse = _factory("browse", "/browse", "v1")
-host = _factory("host", "/host", "v1")
-prompt = _factory("prompt", "/prompt", "v1")
-search = _factory("search", "/search", "v1")
-subscription = _factory("subscription", "/subscription", "v1")
-settings = _factory("settings", "/settings", "v1", authorize_blueprint)
+api_key = _factory("api_key", "api-key", "v1", authorize_blueprint)
+archive = _factory("archive", "archive", "v1")
+broadcast = _factory("broadcast", "broadcast", "v1", authorize_blueprint)
+browse = _factory("browse", "browse", "v1")
+host = _factory("host", "host", "v1")
+prompt = _factory("prompt", "prompt", "v1")
+search = _factory("search", "search", "v1")
+subscription = _factory("subscription", "subscription", "v1")
+settings = _factory("settings", "settings", "v1", authorize_blueprint)
 
 all_blueprints = (
     api_key,

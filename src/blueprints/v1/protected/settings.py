@@ -27,7 +27,7 @@ def put(args: dict):
     return helpers.make_response(201)
 
 
-@settings.route("/hosting/", methods=["GET"])
+@settings.route("/hosting", methods=["GET"])
 @use_args(
     {
         "date": fields.DateTime(),
@@ -56,13 +56,13 @@ def hosting_get(args: dict):
     return helpers.make_error_response(422, "A single parameter must be provided!")
 
 
-@settings.route("/timings/", methods=["GET"])
+@settings.route("/timings", methods=["GET"])
 def timer_get():
     """GET request to fetch finder timing values."""
     return helpers.make_response(200, jsonify(database.settings.timings_get()))
 
 
-@settings.route("/timings/", methods=["PUT"])
+@settings.route("/timings", methods=["PUT"])
 @use_args({"timings": fields.List(fields.String())}, location="json")
 def timer_put(args: dict):
     """PUT request to update finder timing values."""

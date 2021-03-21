@@ -112,7 +112,7 @@ def delete(args: dict):
     )
 
 
-@host.route("/date/", methods=["GET"])
+@host.route("/date", methods=["GET"])
 @use_args(
     {"handle": fields.String(), "date": fields.DateTime()},
     location="query",
@@ -155,7 +155,7 @@ def date_get(args: dict):
 
 
 @authorize_route
-@host.route("/date/", methods=["POST"])
+@host.route("/date", methods=["POST"])
 @use_args(
     {"uid": fields.String(required=True), "date": fields.DateTime(required=True)},
     location="json",
@@ -178,7 +178,7 @@ def date_post(args: dict):
 
 
 @authorize_route
-@host.route("/date/", methods=["DELETE"])
+@host.route("/date", methods=["DELETE"])
 @use_args(
     {"uid": fields.String(required=True), "date": fields.DateTime(required=True)},
     location="query",
