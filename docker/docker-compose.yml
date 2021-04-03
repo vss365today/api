@@ -11,7 +11,7 @@ services:
       - 127.0.0.1:5000:5000
     environment:
       - FLASK_ENV=production
-      - DOCKER_SECRETS_PATH=/app/secrets
+      - SYS_VARS_PATH=/app/secrets
       - DOWNLOADS_PATH=/app/downloads
     entrypoint:
       - sh
