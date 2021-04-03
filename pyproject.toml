@@ -16,7 +16,7 @@ Flask-Cors = "^3.0.9"
 requests = "^2.25.1"
 XlsxWriter = "^1.3.7"
 tweepy = "^3.9.0"
-SQLAlchemy = "1.3.24"
+SQLAlchemy = "1.4.5"
 sys-vars = "^4.0.0"
 
 [tool.poetry.dev-dependencies]
