@@ -7,7 +7,9 @@
     "TWITTER_KEY",
     "TWITTER_SECRET",
     "TWITTER_APP_KEY",
-    "TWITTER_APP_SECRET"
+    "TWITTER_APP_SECRET",
+    "MG_DOMAIN",
+    "MG_API_KEY"
   ],
   "appConfig": {
     "APP_NAME": "#vss365 today",
@@ -17,6 +19,7 @@
     "IMAGES_DIR": "/app/images",
     "IMAGES_DIR_TEMP": "/app/images/temp",
     "DOWNLOADS_DIR": "/app/downloads",
-    "ENABLE_EMAIL_SENDING": false
+    "ENABLE_EMAIL_SENDING": false,
+    "MG_MAILING_LIST_ADDR": "vss365today-dev"
   }
 }

@@ -1,10 +1,6 @@
 {
-  "secrets": [
-    "MG_API_KEY",
-    "MG_DOMAIN"
-  ],
+  "secrets": [],
   "appConfig": {
-    "ENABLE_EMAIL_SENDING": true,
-    "MG_MAILING_LIST_ADDR": "vss365today-dev"
+    "ENABLE_EMAIL_SENDING": true
   }
 }
