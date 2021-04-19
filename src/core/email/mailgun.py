@@ -38,6 +38,10 @@ def subscription_email_delete(addr: str) -> requests.Response:
 
 def validate_email_address(addr: str) -> bool:
     """Validate an email address using the Mailgun Email Validation API."""
+    # Assume the address is valid if we can't send out emails
+    if not current_app.config["ENABLE_EMAIL_SENDING"]:
+        return True
+
     r = requests.get(
         "https://api.mailgun.net/v4/address/validate",
         auth=("api", current_app.config["MG_API_KEY"]),
