@@ -70,7 +70,7 @@ python-versions = "*"
 
 [[package]]
 name = "flake8"
-version = "3.9.0"
+version = "3.9.1"
 description = "the modular source code checker: pep8 pyflakes and co"
 category = "dev"
 optional = false
@@ -458,7 +458,7 @@ brotli = ["brotlipy (>=0.6.0)"]
 
 [[package]]
 name = "webargs"
-version = "7.0.1"
+version = "8.0.0"
 description = "Declarative parsing and validation of HTTP request objects, with built-in support for popular web frameworks, including Flask, Django, Bottle, Tornado, Pyramid, Falcon, and aiohttp."
 category = "main"
 optional = false
@@ -468,10 +468,10 @@ python-versions = ">=3.6"
 marshmallow = ">=3.0.0"
 
 [package.extras]
-dev = ["pytest", "webtest (==2.0.35)", "webtest-aiohttp (==2.0.0)", "pytest-aiohttp (>=0.3.0)", "Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)", "mypy (==0.790)", "flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.4,<3.0)", "tox"]
-docs = ["Sphinx (==3.3.1)", "sphinx-issues (==1.2.0)", "sphinx-typlog-theme (==0.8.0)", "Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)"]
+dev = ["pytest", "webtest (==2.0.35)", "webtest-aiohttp (==2.0.0)", "pytest-aiohttp (>=0.3.0)", "Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)", "mypy (==0.812)", "flake8 (==3.9.0)", "flake8-bugbear (==21.4.3)", "pre-commit (>=2.4,<3.0)", "tox"]
+docs = ["Sphinx (==3.5.3)", "sphinx-issues (==1.2.0)", "sphinx-typlog-theme (==0.8.0)", "Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)"]
 frameworks = ["Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)"]
-lint = ["mypy (==0.790)", "flake8 (==3.8.4)", "flake8-bugbear (==20.11.1)", "pre-commit (>=2.4,<3.0)"]
+lint = ["mypy (==0.812)", "flake8 (==3.9.0)", "flake8-bugbear (==21.4.3)", "pre-commit (>=2.4,<3.0)"]
 tests = ["pytest", "webtest (==2.0.35)", "webtest-aiohttp (==2.0.0)", "pytest-aiohttp (>=0.3.0)", "Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)"]
 
 [[package]]
@@ -488,7 +488,7 @@ watchdog = ["watchdog"]
 
 [[package]]
 name = "xlsxwriter"
-version = "1.3.8"
+version = "1.3.9"
 description = "A Python module for creating Excel XLSX files."
 category = "main"
 optional = false
@@ -497,7 +497,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "d8e37084023d708857c4baa52e70bf396ffb93e8800682cc37788513bda19431"
+content-hash = "48e4db641cd5ea8a00a1a685b26d6d4817e5766848fc5f310b80b08d597792b9"
 
 [metadata.files]
 appdirs = [
@@ -526,8 +526,8 @@ et-xmlfile = [
     {file = "et_xmlfile-1.0.1.tar.gz", hash = "sha256:614d9722d572f6246302c4491846d2c393c199cfa4edc9af593437691683335b"},
 ]
 flake8 = [
-    {file = "flake8-3.9.0-py2.py3-none-any.whl", hash = "sha256:12d05ab02614b6aee8df7c36b97d1a3b2372761222b19b58621355e82acddcff"},
-    {file = "flake8-3.9.0.tar.gz", hash = "sha256:78873e372b12b093da7b5e5ed302e8ad9e988b38b063b61ad937f26ca58fc5f0"},
+    {file = "flake8-3.9.1-py2.py3-none-any.whl", hash = "sha256:3b9f848952dddccf635be78098ca75010f073bfe14d2c6bda867154bea728d2a"},
+    {file = "flake8-3.9.1.tar.gz", hash = "sha256:1aa8990be1e689d96c745c5682b687ea49f2e05a443aff1f8251092b0014e378"},
 ]
 flask = [
     {file = "Flask-1.1.2-py2.py3-none-any.whl", hash = "sha256:8a4fdd8936eba2512e9c85df320a37e694c93945b33ef33c89946a340a238557"},
@@ -828,14 +828,14 @@ urllib3 = [
     {file = "urllib3-1.26.4.tar.gz", hash = "sha256:e7b021f7241115872f92f43c6508082facffbd1c048e3c6e2bb9c2a157e28937"},
 ]
 webargs = [
-    {file = "webargs-7.0.1-py2.py3-none-any.whl", hash = "sha256:ce8c565789ece1584be7edba41617319eb75de59b2987958bee3f3fdb3669e60"},
-    {file = "webargs-7.0.1.tar.gz", hash = "sha256:2f3d883ce9f348fa884889440fcc1b207e7c67b04be5e90be00a5be73e2cd91d"},
+    {file = "webargs-8.0.0-py2.py3-none-any.whl", hash = "sha256:7b06eebf23d05ebec1aa97e9c373deadaa8194866fae79c56e0453804db7a756"},
+    {file = "webargs-8.0.0.tar.gz", hash = "sha256:565666bafd08dd375fae995a9d4187604741efc27b8ec7c5b5bcb0ae90b2c677"},
 ]
 werkzeug = [
     {file = "Werkzeug-1.0.1-py2.py3-none-any.whl", hash = "sha256:2de2a5db0baeae7b2d2664949077c2ac63fbd16d98da0ff71837f7d1dea3fd43"},
     {file = "Werkzeug-1.0.1.tar.gz", hash = "sha256:6c80b1e5ad3665290ea39320b91e1be1e0d5f60652b964a3070216de83d2e47c"},
 ]
 xlsxwriter = [
-    {file = "XlsxWriter-1.3.8-py2.py3-none-any.whl", hash = "sha256:30ebc19d0f201fafa34a6c622050ed2a268ac8dee24037a61605caa801dc8af5"},
-    {file = "XlsxWriter-1.3.8.tar.gz", hash = "sha256:2b7e22b1268c2ed85d73e5629097c9a63357f2429667ada9863cd05ff8ee33aa"},
+    {file = "XlsxWriter-1.3.9-py2.py3-none-any.whl", hash = "sha256:e74dca4f2e946a117a541ca3153c06466190a88bb67fcdbd1cba2c1ea7f1fd76"},
+    {file = "XlsxWriter-1.3.9.tar.gz", hash = "sha256:eca2e737d0b8df3cd72520fadcda9f48c3581282639965125a86ea8cd04620cf"},
 ]
