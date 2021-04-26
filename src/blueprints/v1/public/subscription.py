@@ -16,9 +16,13 @@ def post(args: dict):
     # Define the error response
     error = helpers.make_error_response(503, "Unable to add email to mailing list!")
 
+    # If email sending is not enabled, always pretend it was added
+    if not current_app.config["ENABLE_EMAIL_SENDING"]:
+        return helpers.make_response(201)
+
     # Because this endpoint costs money with each hit, block it off
-    # if we're not planning on sending out any emails
-    if current_app.config["ENABLE_EMAIL_SENDING"]:
+    # unless we are running in production
+    if current_app.config["ENV"] == "production":
         # Validate the address to decide if we should record it
         if not mailgun.validate_email_address(args["email"]):
             return error
@@ -46,6 +50,8 @@ def post(args: dict):
 @use_args({"email": fields.Email(required=True)}, location="query")
 def delete(args: dict):
     """Remove an email from the mailing list."""
-    mailgun.subscription_email_delete(args["email"])
-    database.subscription.email_delete(args["email"])
+    # Only attempt to remove an address if email sending is enabled
+    if current_app.config["ENABLE_EMAIL_SENDING"]:
+        mailgun.subscription_email_delete(args["email"])
+        database.subscription.email_delete(args["email"])
     return helpers.make_response(204)
