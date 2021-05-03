@@ -27,6 +27,6 @@ all email-related operations will pretend that they suceeded.
 
 ## License
 
-2019-2021 Caleb Ely
+2019-2021 Caleb
 
 [MIT](LICENSE)
