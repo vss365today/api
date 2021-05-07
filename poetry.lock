@@ -487,7 +487,7 @@ watchdog = ["watchdog"]
 
 [[package]]
 name = "xlsxwriter"
-version = "1.4.0"
+version = "1.4.2"
 description = "A Python module for creating Excel XLSX files."
 category = "main"
 optional = false
@@ -496,7 +496,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "bef870e831e2238c805fa501205fcd1118fe8951490e508570c772cf53c52c6b"
+content-hash = "abbd2db605f36798c4859773e79a9d341d7798110e05fe1c054941865d7b3b0c"
 
 [metadata.files]
 appdirs = [
@@ -837,6 +837,6 @@ werkzeug = [
     {file = "Werkzeug-1.0.1.tar.gz", hash = "sha256:6c80b1e5ad3665290ea39320b91e1be1e0d5f60652b964a3070216de83d2e47c"},
 ]
 xlsxwriter = [
-    {file = "XlsxWriter-1.4.0-py2.py3-none-any.whl", hash = "sha256:1a6dd98892e8010d3e089d1cb61385baa8f76fa547598df2c221cc37238c72d3"},
-    {file = "XlsxWriter-1.4.0.tar.gz", hash = "sha256:82be5a58c09bdc2ff8afc25acc815c465275239ddfc56d6e7b2a7e6c5d2e213b"},
+    {file = "XlsxWriter-1.4.2-py2.py3-none-any.whl", hash = "sha256:f13429208da54a133148c4dc16b693a8b1bcb0f992f2a9069f4b05ae8fd9ca38"},
+    {file = "XlsxWriter-1.4.2.tar.gz", hash = "sha256:6e7d90a0b603a7223041902a3537fc2b1a650d3f123c1cb5ad24d92b148b4f8e"},
 ]
