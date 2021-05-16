@@ -15,8 +15,8 @@ class Prompt(dict):
         self.writer_id: str = record["uid"]
         self.writer_handle: str = record["writer_handle"]
         self.date_added: datetime = record["date_added"]
-        self.previous_day: Optional[str] = None
-        self.next_day: Optional[str] = None
+        self.previous: Optional[str] = None
+        self.next: Optional[str] = None
         self.url: str = self.make_url(self.writer_handle, self.id)
 
         # Make the class JSON serializable

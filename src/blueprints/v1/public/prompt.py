@@ -59,8 +59,8 @@ def get(args: dict):
 
     # Find out if we have a prompt for tomorrow or yesterday
     for day_prompt in prompts:
-        day_prompt["previous_day"] = prompt_yesterday_exists(day_prompt)
-        day_prompt["next_day"] = prompt_tomorrow_exists(day_prompt)
+        day_prompt["previous"] = prompt_yesterday_exists(day_prompt)
+        day_prompt["next"] = prompt_tomorrow_exists(day_prompt)
     return jsonify(prompts)
 
 
