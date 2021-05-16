@@ -16,7 +16,7 @@ FILE_NAME_EXT = ".xlsx"
 
 @archive.route("/", methods=["GET"])
 def get():
-    """Get the filename for the newest word archive spreadsheet."""
+    """Get the filename for the newest Prompt archive spreadsheet."""
     # Set up all date values we need
     today = datetime.now()
     today_iso = helpers.format_datetime_ymd(today)
@@ -44,7 +44,7 @@ def get():
 @authorize_route
 @archive.route("/", methods=["POST"])
 def post():
-    """Generate a new word archive spreadsheet."""
+    """Generate a new Prompt archive spreadsheet."""
     # Set up all date values we need
     archive_years = database.prompt.get_years()
     archive_range = database.archive.prompt_date_range()
@@ -71,9 +71,9 @@ def post():
         worksheet.write(
             0,
             0,
-            f"#vss365 word archive from {oldest_date} to {newest_date}",
+            f"#vss365 prompt archive from {oldest_date} to {newest_date}",
         )
-        worksheet.write(1, 0, "Sorted by word in alphabetical order")
+        worksheet.write(1, 0, "Sorted by prompt in alphabetical order")
         worksheet.write(2, 0, f"Generated on {today_pretty}")
         worksheet.write_url(3, 0, "https://vss365today.com")
 
@@ -90,11 +90,11 @@ def post():
 
             # Write the headings
             worksheet.write(0, 0, "Date", bolded_text)
-            worksheet.write(0, 1, "Word", bolded_text)
+            worksheet.write(0, 1, "Prompt", bolded_text)
             worksheet.write(0, 2, "Host", bolded_text)
             worksheet.write(0, 3, "URL", bolded_text)
 
-            # Get the word archive for the current year
+            # Get the prompt archive for the current year
             for row, prompt in enumerate(database.archive.get(year)):
                 # Rows are zero-indexed, meaning we need to increment
                 # so we don't clobber the headings
@@ -107,3 +107,20 @@ def post():
                 url = Prompt.make_url(prompt.writer_handle, prompt.tweet_id)
                 worksheet.write_url(row, 3, url)
     return helpers.make_response(201)
+
+
+@authorize_route
+@archive.route("/", methods=["PUT"])
+def put():
+    """Regenerate the newest Prompt archive spreadsheet."""
+    # Don't do anything if an archive can't be found
+    latest_archive = get()
+    if isinstance(latest_archive, tuple):
+        return latest_archive
+
+    # Delete the old archive
+    save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
+    (save_dir / latest_archive["file"]).unlink(missing_ok=True)
+
+    # Generate a new archive file
+    return post()

@@ -140,7 +140,6 @@ def get_years() -> List[str]:
     sql = """
     SELECT DISTINCT CAST(YEAR(date) AS CHAR)
     FROM prompts
-    WHERE YEAR(date) <= YEAR(CURRENT_TIMESTAMP())
     ORDER BY date ASC
     """
     with connect_to_db() as db:
