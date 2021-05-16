@@ -120,7 +120,7 @@ def post(args: dict):
         "word": fields.String(required=True),
         "content": fields.String(required=True),
         "media": fields.String(missing=None, allow_none=True),
-        "media_replace": fields.Boolean(required=False),
+        "media_replace": fields.Boolean(required=False, missing=False),
     },
     location="json",
 )
