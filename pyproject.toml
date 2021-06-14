@@ -21,7 +21,7 @@ sys-vars = "^4.0.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^3.9.2"
-mypy = "^0.812"
+mypy = "^0.902"
 black = "^21.6b0"
 
 [build-system]
