@@ -20,10 +20,9 @@ Note: when running in development mode, all email sending will be disabled and
 all email-related operations will pretend that they suceeded.
 
 
-## Build/Deploy
+## Build
 
-1. `docker build -f "docker/Dockerfile" -t vss365today-api:latest .`
-1. `docker-compose -f "docker/docker-compose.yml" up -d`
+1. `docker build -t vss365today-api:latest .`
 
 ## License
 
