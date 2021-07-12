@@ -5,7 +5,7 @@ from tweepy.error import TweepError
 from sqlalchemy.exc import DataError, IntegrityError
 
 from src.core.database.core import connect_to_db
-from src.core.helpers import connect_to_twitter
+from src.core.helpers import twitter_v1_api
 from src.core.models.v1.Host import Host
 
 
@@ -186,7 +186,7 @@ def get_date(handle: str) -> List[datetime]:
 def lookup(handle: str) -> Union[str, Literal[False]]:
     """Get the Host's Twitter user ID."""
     try:
-        api = connect_to_twitter()
+        api = twitter_v1_api()
         host = api.get_user(handle)
         return host.id_str
 

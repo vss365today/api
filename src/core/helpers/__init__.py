@@ -6,7 +6,7 @@ import tweepy
 
 
 __all__ = [
-    "connect_to_twitter",
+    "twitter_v1_api",
     "format_datetime_pretty",
     "format_datetime_ymd",
     "make_response",
@@ -14,13 +14,10 @@ __all__ = [
 ]
 
 
-def connect_to_twitter() -> tweepy.API:
-    """Connect to the Twitter API."""
-    auth = tweepy.OAuthHandler(
+def twitter_v1_api() -> tweepy.API:
+    """Connect to the Twitter API v1."""
+    auth = tweepy.AppAuthHandler(
         current_app.config["TWITTER_APP_KEY"], current_app.config["TWITTER_APP_SECRET"]
-    )
-    auth.set_access_token(
-        current_app.config["TWITTER_KEY"], current_app.config["TWITTER_SECRET"]
     )
     return tweepy.API(auth)
 

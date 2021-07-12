@@ -7,7 +7,7 @@
 * Flask secret key (`SECRET_KEY_API`)
 * MySQL/MariaDB instance + login keys
 * Mailgun API key, authorized domain, and mailing list address
-* Twitter API and app keys
+* Twitter API v1 consumer key and consumer secret key
 
 ## Install
 
