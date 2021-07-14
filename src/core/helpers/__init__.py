@@ -17,7 +17,8 @@ __all__ = [
 def twitter_v1_api() -> tweepy.API:
     """Connect to Twitter API v1 using OAuth 2."""
     auth = tweepy.AppAuthHandler(
-        current_app.config["TWITTER_APP_KEY"], current_app.config["TWITTER_APP_SECRET"]
+        current_app.config["TWITTER_CONSUMER_KEY"],
+        current_app.config["TWITTER_CONSUMER_SECRET"],
     )
     return tweepy.API(auth)
 
