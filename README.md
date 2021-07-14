@@ -6,8 +6,8 @@
 
 * Flask secret key (`SECRET_KEY_API`)
 * MariaDB instance + login keys (`DB_USERNAME`, `DB_PASSWORD`, `DB_HOST`, `DB_DBNAME`)
-* Mailgun API key (`MG_API_KEY`), authorized domain (`MG_DOMAIN`), and mailing list address (`MG_MAILING_LIST_ADDR`)
-* Twitter API v1 consumer key (`TWITTER_APP_KEY`) and consumer secret (`TWITTER_APP_SECRET`)
+* Mailgun API key authorized domain and mailing list address (`MG_API_KEY`, `MG_DOMAIN`, `MG_MAILING_LIST_ADDR`)
+* Twitter API v1 consumer key and consumer secret (`TWITTER_APP_KEY`, `TWITTER_APP_SECRET`)
 
 ## Install
 
