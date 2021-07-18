@@ -63,7 +63,7 @@ def post(args: dict):
     host_id = database.host.lookup(args["handle"])
     if not host_id:
         return helpers.make_error_response(
-            503, f'Unable to find Twitter account {args["handle"]}!'
+            503, f'Unable to find Twitter username {args["handle"]}!'
         )
 
     # Create a host with all their details
