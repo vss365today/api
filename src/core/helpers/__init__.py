@@ -26,11 +26,7 @@ def twitter_v1_api() -> tweepy.API:
 
 def twitter_v2_api() -> tweepy.Client:
     """Connect to Twitter API v2 using a Bearer token."""
-    return tweepy.Client(
-        bearer_token=current_app.config["TWITTER_BEARER"],
-        consumer_key=current_app.config["TWITTER_CONSUMER_KEY"],
-        consumer_secret=current_app.config["TWITTER_CONSUMER_SECRET"],
-    )
+    return tweepy.Client(bearer_token=current_app.config["TWITTER_BEARER"])
 
 
 def format_datetime_pretty(date_obj: datetime) -> str:
