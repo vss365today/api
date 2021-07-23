@@ -6,22 +6,12 @@ import tweepy
 
 
 __all__ = [
-    "twitter_v1_api",
     "twitter_v2_api",
     "format_datetime_pretty",
     "format_datetime_ymd",
     "make_response",
     "make_error_response",
 ]
-
-
-def twitter_v1_api() -> tweepy.API:
-    """Connect to Twitter API v1 using OAuth 2."""
-    auth = tweepy.AppAuthHandler(
-        current_app.config["TWITTER_CONSUMER_KEY"],
-        current_app.config["TWITTER_CONSUMER_SECRET"],
-    )
-    return tweepy.API(auth)
 
 
 def twitter_v2_api() -> tweepy.Client:
