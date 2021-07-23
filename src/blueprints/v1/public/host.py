@@ -8,7 +8,7 @@ from src.core import database, helpers
 from src.core.auth_helpers import authorize_route
 
 
-@host.route("/", methods=["GET"])
+@host.get("/")
 @use_args(
     {
         "uid": fields.String(missing=""),
@@ -50,7 +50,7 @@ def get(args: dict):
 
 
 @authorize_route
-@host.route("/", methods=["POST"])
+@host.post("/")
 @use_args({"handle": fields.String(required=True)}, location="json")
 def post(args: dict):
     """Create a new Host."""
@@ -63,7 +63,7 @@ def post(args: dict):
     host_id = database.host.lookup(args["handle"])
     if not host_id:
         return helpers.make_error_response(
-            503, f'Unable to find Twitter account {args["handle"]}!'
+            503, f'Unable to find Twitter username {args["handle"]}!'
         )
 
     # Create a host with all their details
@@ -77,7 +77,7 @@ def post(args: dict):
 
 
 @authorize_route
-@host.route("/", methods=["PATCH"])
+@host.patch("/")
 @use_args(
     {"uid": fields.String(required=True), "handle": fields.String(required=True)},
     location="json",
@@ -95,7 +95,7 @@ def patch(args: dict):
 
 
 @authorize_route
-@host.route("/", methods=["DELETE"])
+@host.delete("/")
 @use_args({"uid": fields.String(required=True)}, location="query")
 def delete(args: dict):
     """Delete a Host.
@@ -112,7 +112,7 @@ def delete(args: dict):
     )
 
 
-@host.route("/date", methods=["GET"])
+@host.get("/date")
 @use_args(
     {"handle": fields.String(), "date": fields.DateTime()},
     location="query",
@@ -155,7 +155,7 @@ def date_get(args: dict):
 
 
 @authorize_route
-@host.route("/date", methods=["POST"])
+@host.post("/date")
 @use_args(
     {"uid": fields.String(required=True), "date": fields.DateTime(required=True)},
     location="json",
@@ -178,7 +178,7 @@ def date_post(args: dict):
 
 
 @authorize_route
-@host.route("/date", methods=["DELETE"])
+@host.delete("/date")
 @use_args(
     {"uid": fields.String(required=True), "date": fields.DateTime(required=True)},
     location="query",

@@ -7,16 +7,22 @@ def get_package(package_info: dict) -> str:
     """Construct the package name and exact version to install."""
     package_tag = f"{package_info['name']}=={package_info['version']}"
 
-    # If the package is from a local file, use the file path
+    # The package is a local file
     source = package_info.setdefault("source", {})
     if source.get("type") == "file":
         # Trim off the app root path
         package_tag = package_info["source"]["url"]
         package_tag = package_tag[package_tag.find("/") + 1 :]  # skipcq: FLK-E203
 
-    # If the package is from a URL use the URL
+    # The package is from a URL
     elif source.get("type") == "url":
         package_tag = package_info["source"]["url"]
+
+    # The package is from a git repo revision
+    elif source.get("type") == "git":
+        git_hash = package_info["source"]["resolved_reference"]
+        git_repo_archive = package_info["source"]["url"].replace(".git", "/archive")
+        package_tag = f"{git_repo_archive}/{git_hash}.zip"
 
     return package_tag
 
