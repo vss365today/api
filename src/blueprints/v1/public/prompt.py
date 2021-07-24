@@ -37,7 +37,7 @@ def __is_valid_url(url: str) -> bool:
         return False
 
 
-@prompt.route("/", methods=["GET"])
+@prompt.get("/")
 @use_args({"date": fields.DateTime()}, location="query")
 def get(args: dict):
     """Get a Prompt, either the latest or from a specific date."""
@@ -65,7 +65,7 @@ def get(args: dict):
 
 
 @authorize_route
-@prompt.route("/", methods=["POST"])
+@prompt.post("/")
 @use_args(
     {
         "id": fields.String(required=True),
@@ -112,7 +112,7 @@ def post(args: dict):
 
 
 @authorize_route
-@prompt.route("/", methods=["PUT"])
+@prompt.put("/")
 @use_args({"id": fields.String(required=True)}, location="query")
 @use_args(
     {
@@ -162,7 +162,7 @@ def put(query_args: dict, json_args: dict):
     return helpers.make_response(204)
 
 
-@prompt.route("/", methods=["DELETE"])
+@prompt.delete("/")
 @use_args({"id": fields.String(required=True)}, location="query")
 def delete(args: dict):
     """Delete an existing Prompt."""
