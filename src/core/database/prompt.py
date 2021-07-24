@@ -1,4 +1,4 @@
-from typing import Dict, List, Literal, Optional
+from typing import Literal, Optional
 
 from sqlalchemy.exc import IntegrityError
 
@@ -27,7 +27,7 @@ def delete(pid: str) -> Literal[True]:
     return True
 
 
-def create(prompt: Dict[str, Optional[str]]) -> bool:
+def create(prompt: dict[str, Optional[str]]) -> bool:
     """Create a new prompt."""
     sql = """
     INSERT INTO prompts (
@@ -58,7 +58,7 @@ def exists(*, pid: str, date: str) -> bool:
         return bool(db.query(sql, tweet_id=pid, date=date).first())
 
 
-def get_by_date(date: str, *, date_range: bool = False) -> List[Prompt]:
+def get_by_date(date: str, *, date_range: bool = False) -> list[Prompt]:
     """Get prompts by a single date or in a date range."""
     # Base query info
     sql = """
@@ -83,7 +83,7 @@ def get_by_date(date: str, *, date_range: bool = False) -> List[Prompt]:
         return [Prompt(record) for record in db.query(sql, date=date)]
 
 
-def get_by_host(handle: str) -> List[Prompt]:
+def get_by_host(handle: str) -> list[Prompt]:
     """Get a prompt tweet by the Host who prompted it."""
     sql = """
     SELECT prompts.*, writers.handle AS writer_handle
@@ -96,7 +96,7 @@ def get_by_host(handle: str) -> List[Prompt]:
         return [Prompt(record) for record in db.query(sql, handle=handle)]
 
 
-def get_latest() -> List[Prompt]:
+def get_latest() -> list[Prompt]:
     """Get the newest prompt."""
     # Get the latest date in the database
     latest_date_sql = "SELECT date FROM prompts ORDER BY date DESC LIMIT 1"
@@ -115,7 +115,7 @@ def get_latest() -> List[Prompt]:
         return [Prompt(record) for record in db.query(sql, latest_date=latest_date)]
 
 
-def get_months(year: str) -> List[str]:
+def get_months(year: str) -> list[str]:
     """Make all Prompts dates for a given year into a unique set.
 
     For some months in 2017, November 2020, and in 2021 and beyond,
@@ -135,7 +135,7 @@ def get_months(year: str) -> List[str]:
         return flatten_records(db.query(sql, year=year).all())
 
 
-def get_years() -> List[str]:
+def get_years() -> list[str]:
     """Get a list of years of recorded Prompts."""
     sql = """
     SELECT DISTINCT CAST(YEAR(date) AS CHAR)
@@ -146,7 +146,7 @@ def get_years() -> List[str]:
         return flatten_records(db.query(sql).all())
 
 
-def search(word: str) -> List[Prompt]:
+def search(word: str) -> list[Prompt]:
     """Search for prompts by partial or full word."""
     sql = """
     SELECT prompts.*, writers.handle AS writer_handle
@@ -160,7 +160,7 @@ def search(word: str) -> List[Prompt]:
         return [Prompt(record) for record in db.query(sql, word=word)]
 
 
-def update(prompt: Dict[str, Optional[str]]) -> None:
+def update(prompt: dict[str, Optional[str]]) -> None:
     """Update an existing prompt."""
     sql = """
     UPDATE prompts
