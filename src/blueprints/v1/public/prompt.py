@@ -47,6 +47,14 @@ def get(args: dict):
 
     # We want the prompt from a particular day
     else:
+        # Handle the special one year anniversary image prompts
+        if (
+            args["date"].year == 2017
+            and args["date"].month == 9
+            and args["date"].day == 5
+        ):
+            return database.prompt.get_one_year()
+
         # Format the date in the proper format before fetching
         date = helpers.format_datetime_ymd(args["date"])
 

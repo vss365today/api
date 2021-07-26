@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Literal, Optional
 
 from sqlalchemy.exc import IntegrityError
@@ -13,6 +14,7 @@ __all__ = [
     "get_by_host",
     "get_latest",
     "get_months",
+    "get_one_year",
     "get_years",
     "search",
     "update",
@@ -133,6 +135,112 @@ def get_months(year: str) -> list[str]:
     """
     with connect_to_db() as db:
         return flatten_records(db.query(sql, year=year).all())
+
+
+def get_one_year() -> dict:
+    """Get the images for the special one year anniversary Prompts."""
+    return {
+        "previous": datetime(2017, 9, 4, 0, 0, 0),
+        "next": datetime(2017, 9, 6, 0, 0, 0),
+        "prompts": [
+            {
+                "file": "one-year-01.jpg",
+                "url": "https://twitter.com/FlashDogs/status/904845903151984641",
+            },
+            {
+                "file": "one-year-02.jpg",
+                "url": "https://twitter.com/FlashDogs/status/904859017440137216",
+            },
+            {
+                "file": "one-year-03.jpg",
+                "url": "https://twitter.com/FlashDogs/status/904875614691348480",
+            },
+            {
+                "file": "one-year-04.jpg",
+                "url": "https://twitter.com/FlashDogs/status/904887621050097666",
+            },
+            {
+                "file": "one-year-05.jpg",
+                "url": "https://twitter.com/FlashDogs/status/904902281392508928",
+            },
+            {
+                "file": "one-year-06.jpg",
+                "url": "https://twitter.com/FlashDogs/status/904921977550491649",
+            },
+            {
+                "file": "one-year-07.jpg",
+                "url": "https://twitter.com/FlashDogs/status/904936216252047360",
+            },
+            {
+                "file": "one-year-08.jpg",
+                "url": "https://twitter.com/FlashDogs/status/904947975574753288",
+            },
+            {
+                "file": "one-year-09.jpg",
+                "url": "https://twitter.com/FlashDogs/status/904962425874731008",
+            },
+            {
+                "file": "one-year-10.jpg",
+                "url": "https://twitter.com/FlashDogs/status/904977597230178305",
+            },
+            {
+                "file": "one-year-11.jpg",
+                "url": "https://twitter.com/FlashDogs/status/904998249538433024",
+            },
+            {
+                "file": "one-year-12.jpg",
+                "url": "https://twitter.com/FlashDogs/status/905008561775943680",
+            },
+            {
+                "file": "one-year-13.jpg",
+                "url": "https://twitter.com/FlashDogs/status/905025269320343553",
+            },
+            {
+                "file": "one-year-14.jpg",
+                "url": "https://twitter.com/FlashDogs/status/905038056041873408",
+            },
+            {
+                "file": "one-year-15.jpg",
+                "url": "https://twitter.com/FlashDogs/status/905053527717892096",
+            },
+            {
+                "file": "one-year-16.jpg",
+                "url": "https://twitter.com/FlashDogs/status/905068825330241536",
+            },
+            {
+                "file": "one-year-17.jpg",
+                "url": "https://twitter.com/FlashDogs/status/905083147490086912",
+            },
+            {
+                "file": "one-year-18.jpg",
+                "url": "https://twitter.com/FlashDogs/status/905099149263167488",
+            },
+            {
+                "file": "one-year-19.jpg",
+                "url": "https://twitter.com/FlashDogs/status/905118874881929216",
+            },
+            {
+                "file": "one-year-20.jpg",
+                "url": "https://twitter.com/FlashDogs/status/905129473498107906",
+            },
+            {
+                "file": "one-year-21.jpg",
+                "url": "https://twitter.com/FlashDogs/status/905155776611799041",
+            },
+            {
+                "file": "one-year-22.jpg",
+                "url": "https://twitter.com/FlashDogs/status/905159105899372545",
+            },
+            {
+                "file": "one-year-23.jpg",
+                "url": "https://twitter.com/FlashDogs/status/905173946655531008",
+            },
+            {
+                "file": "one-year-24.jpg",
+                "url": "https://twitter.com/FlashDogs/status/905188903900106752",
+            },
+        ],
+    }
 
 
 def get_years() -> list[str]:
