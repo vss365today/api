@@ -1,7 +1,7 @@
 from pathlib import Path, PurePath
 import secrets
 from typing import Dict
-from urllib import parse
+from urllib3.util import parse_url
 
 from flask import current_app
 import requests
@@ -49,7 +49,7 @@ def move(details: dict) -> bool:
 def original_name(url: str) -> str:
     """Extract the media file name from its URL."""
     # Extract the media filename from the URL
-    name = parse.urlsplit(url).path.split("/")[2]
+    name = parse_url(url).path.split("/")[2]
 
     # If there's a colon in the filename,
     # it means there's an image size tag.

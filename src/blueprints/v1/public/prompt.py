@@ -30,9 +30,19 @@ def prompt_tomorrow_exists(given_prompt: Prompt) -> Optional[datetime]:
 
 def __is_valid_url(url: str) -> bool:
     """Attempt to determine if a URL is valid."""
+    # Make sure it's an actual web URL
+    if not url.lower().startswith("http"):
+        return False
+
     try:
-        parse_url(url)
+        result = parse_url(url)
+
+        # We're missing parts of the URL
+        if not result.scheme or not result.host:
+            return False
         return True
+
+    # This is a SUPER malformed thing
     except LocationParseError:
         return False
 
