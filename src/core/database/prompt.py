@@ -142,101 +142,102 @@ def get_one_year() -> dict:
     return {
         "previous": datetime(2017, 9, 4, 0, 0, 0),
         "next": datetime(2017, 9, 6, 0, 0, 0),
+        "writer_handle": "FlashDogs",
         "prompts": [
             {
-                "file": "one-year-01.jpg",
+                "media": "one-year-01.jpg",
                 "url": "https://twitter.com/FlashDogs/status/904845903151984641",
             },
             {
-                "file": "one-year-02.jpg",
+                "media": "one-year-02.jpg",
                 "url": "https://twitter.com/FlashDogs/status/904859017440137216",
             },
             {
-                "file": "one-year-03.jpg",
+                "media": "one-year-03.jpg",
                 "url": "https://twitter.com/FlashDogs/status/904875614691348480",
             },
             {
-                "file": "one-year-04.jpg",
+                "media": "one-year-04.jpg",
                 "url": "https://twitter.com/FlashDogs/status/904887621050097666",
             },
             {
-                "file": "one-year-05.jpg",
+                "media": "one-year-05.jpg",
                 "url": "https://twitter.com/FlashDogs/status/904902281392508928",
             },
             {
-                "file": "one-year-06.jpg",
+                "media": "one-year-06.jpg",
                 "url": "https://twitter.com/FlashDogs/status/904921977550491649",
             },
             {
-                "file": "one-year-07.jpg",
+                "media": "one-year-07.jpg",
                 "url": "https://twitter.com/FlashDogs/status/904936216252047360",
             },
             {
-                "file": "one-year-08.jpg",
+                "media": "one-year-08.jpg",
                 "url": "https://twitter.com/FlashDogs/status/904947975574753288",
             },
             {
-                "file": "one-year-09.jpg",
+                "media": "one-year-09.jpg",
                 "url": "https://twitter.com/FlashDogs/status/904962425874731008",
             },
             {
-                "file": "one-year-10.jpg",
+                "media": "one-year-10.jpg",
                 "url": "https://twitter.com/FlashDogs/status/904977597230178305",
             },
             {
-                "file": "one-year-11.jpg",
+                "media": "one-year-11.jpg",
                 "url": "https://twitter.com/FlashDogs/status/904998249538433024",
             },
             {
-                "file": "one-year-12.jpg",
+                "media": "one-year-12.jpg",
                 "url": "https://twitter.com/FlashDogs/status/905008561775943680",
             },
             {
-                "file": "one-year-13.jpg",
+                "media": "one-year-13.jpg",
                 "url": "https://twitter.com/FlashDogs/status/905025269320343553",
             },
             {
-                "file": "one-year-14.jpg",
+                "media": "one-year-14.jpg",
                 "url": "https://twitter.com/FlashDogs/status/905038056041873408",
             },
             {
-                "file": "one-year-15.jpg",
+                "media": "one-year-15.jpg",
                 "url": "https://twitter.com/FlashDogs/status/905053527717892096",
             },
             {
-                "file": "one-year-16.jpg",
+                "media": "one-year-16.jpg",
                 "url": "https://twitter.com/FlashDogs/status/905068825330241536",
             },
             {
-                "file": "one-year-17.jpg",
+                "media": "one-year-17.jpg",
                 "url": "https://twitter.com/FlashDogs/status/905083147490086912",
             },
             {
-                "file": "one-year-18.jpg",
+                "media": "one-year-18.jpg",
                 "url": "https://twitter.com/FlashDogs/status/905099149263167488",
             },
             {
-                "file": "one-year-19.jpg",
+                "media": "one-year-19.jpg",
                 "url": "https://twitter.com/FlashDogs/status/905118874881929216",
             },
             {
-                "file": "one-year-20.jpg",
+                "media": "one-year-20.jpg",
                 "url": "https://twitter.com/FlashDogs/status/905129473498107906",
             },
             {
-                "file": "one-year-21.jpg",
+                "media": "one-year-21.jpg",
                 "url": "https://twitter.com/FlashDogs/status/905155776611799041",
             },
             {
-                "file": "one-year-22.jpg",
+                "media": "one-year-22.jpg",
                 "url": "https://twitter.com/FlashDogs/status/905159105899372545",
             },
             {
-                "file": "one-year-23.jpg",
+                "media": "one-year-23.jpg",
                 "url": "https://twitter.com/FlashDogs/status/905173946655531008",
             },
             {
-                "file": "one-year-24.jpg",
+                "media": "one-year-24.jpg",
                 "url": "https://twitter.com/FlashDogs/status/905188903900106752",
             },
         ],
