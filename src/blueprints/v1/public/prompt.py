@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Optional
+from typing import Literal, Optional, Union
 
 from flask import jsonify
 from urllib3.exceptions import LocationParseError
@@ -11,20 +11,27 @@ from src.blueprints import prompt
 from src.core import database, helpers
 from src.core.auth_helpers import authorize_route
 from src.core.helpers import media
-from src.core.models.v1.Prompt import Prompt
 
 
-def prompt_yesterday_exists(given_prompt: Prompt) -> Optional[datetime]:
-    yesterday_date = given_prompt.date - timedelta(1)
-    if database.prompt.get_by_date(helpers.format_datetime_ymd(yesterday_date)):
-        return yesterday_date
-    return None
+def prompt_exists(
+    today: datetime, direction: Union[Literal["previous"], Literal["next"]]
+) -> Optional[datetime]:
+    """Determine if there's a Prompt for the surrounding date."""
+    # Get the proper surrounding date
+    if direction == "previous":
+        diff = today - timedelta(1)
+    elif direction == "next":
+        diff = today + timedelta(1)
+    else:
+        return None
 
+    # Special one year anniversary case
+    if diff.year == 2017 and diff.month == 9 and diff.day == 5:
+        return diff
 
-def prompt_tomorrow_exists(given_prompt: Prompt) -> Optional[datetime]:
-    tomorrow_date = given_prompt.date + timedelta(1)
-    if database.prompt.get_by_date(helpers.format_datetime_ymd(tomorrow_date)):
-        return tomorrow_date
+    # Check the database for a Prompt
+    if database.prompt.get_by_date(helpers.format_datetime_ymd(diff)):
+        return diff
     return None
 
 
@@ -75,10 +82,10 @@ def get(args: dict):
                 404, f"No prompt exists for date {date}!"
             )
 
-    # Find out if we have a prompt for tomorrow or yesterday
+    # Find out if we have a Prompt for the surrounding days
     for day_prompt in prompts:
-        day_prompt["previous"] = prompt_yesterday_exists(day_prompt)
-        day_prompt["next"] = prompt_tomorrow_exists(day_prompt)
+        day_prompt["previous"] = prompt_exists(day_prompt.date, "previous")
+        day_prompt["next"] = prompt_exists(day_prompt.date, "next")
     return jsonify(prompts)
 
 
