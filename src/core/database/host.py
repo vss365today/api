@@ -1,7 +1,6 @@
 from datetime import datetime
 from typing import List, Literal, Optional, Union
 
-from tweepy.errors import NotFound
 from sqlalchemy.exc import DataError, IntegrityError
 
 from src.core.database.core import connect_to_db
@@ -185,19 +184,13 @@ def get_date(handle: str) -> List[datetime]:
 
 def lookup(username: str) -> Union[str, Literal[False]]:
     """Get the Host's Twitter user ID."""
-    try:
-        api = twitter_v2_api()
-        host = api.get_user(username=username)
-
-        # TODO Tweepy v4.0.0a1 is not throwing a NotFound exception,
-        # so check the errors property and remove this when it works correctly
-        if host.errors:
-            return False
-        return str(host.data.id)
+    api = twitter_v2_api()
+    host = api.get_user(username=username)
 
     # That username couldn't be found
-    except NotFound:
+    if host.errors:
         return False
+    return str(host.data.id)
 
 
 def update(host_info: dict) -> bool:
