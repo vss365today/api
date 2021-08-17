@@ -67,4 +67,11 @@ def put():
     (save_dir / latest_archive["file"]).unlink(missing_ok=True)
 
     # Generate a new archive file
-    return post()
+    database.archive.make(
+        {
+            "base_name": BASE_FILE_NAME,
+            "ext": FILE_NAME_EXT,
+            "downloads_dir": current_app.config["DOWNLOADS_DIR"],
+        }
+    )
+    return helpers.make_response(201)
