@@ -43,6 +43,11 @@ def get():
 @archive.route("/", methods=["POST"])
 def post():
     """Generate a new Prompt archive spreadsheet."""
+    # Don't do anything if an archive has already been made
+    latest_archive = get()
+    if isinstance(latest_archive, dict):
+        return helpers.make_response(304)
+
     database.archive.make(
         {
             "base_name": BASE_FILE_NAME,

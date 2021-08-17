@@ -1,5 +1,6 @@
 {
   "appConfig": {
-    "DEBUG": true
+    "DEBUG": true,
+    "DOWNLOADS_DIR": "../static/downloads"
   }
 }
