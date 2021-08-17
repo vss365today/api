@@ -8,7 +8,7 @@ from src.core import database, helpers
 from src.core.auth_helpers import authorize_route
 
 # Set some constants for a consistent filename
-BASE_FILE_NAME = "vss365today-word-archive-"
+BASE_FILE_NAME = "vss365today-prompt-archive-"
 FILE_NAME_EXT = ".xlsx"
 
 
