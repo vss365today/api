@@ -1,6 +1,6 @@
-from datetime import datetime
+from datetime import date, datetime
 from flask import current_app
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, Union
 
 import tweepy
 
@@ -19,12 +19,12 @@ def twitter_v2_api() -> tweepy.Client:
     return tweepy.Client(bearer_token=current_app.config["TWITTER_BEARER"])
 
 
-def format_datetime_pretty(date_obj: datetime) -> str:
+def format_datetime_pretty(date_obj: Union[date, datetime]) -> str:
     """Pretty format a date as MM DD, YYYY."""
     return date_obj.strftime("%B %d, %Y")
 
 
-def format_datetime_ymd(date_obj: datetime) -> str:
+def format_datetime_ymd(date_obj: Union[date, datetime]) -> str:
     """Format a date as YYYY-MM-DD."""
     return date_obj.strftime("%Y-%m-%d")
 
