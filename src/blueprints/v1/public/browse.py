@@ -1,3 +1,4 @@
+from datetime import datetime
 import re
 from flask import jsonify
 
@@ -19,7 +20,18 @@ def browse_by_month(year: str, month: str) -> dict:
     year = year.strip()
     month = month.strip()
     hosts = database.host.get_by_year_month(year, month)
-    prompts = database.prompt.get_by_date(f"{year}-{month}", date_range=True)
+    prompts: list = database.prompt.get_by_date(f"{year}-{month}", date_range=True)
+
+    if year == "2017" and month == "09":
+        prompts.insert(
+            4,
+            {
+                "date": datetime(2017, 9, 5, 0, 0, 0),
+                "word": "One Year",
+                "writer_handle": "FlashDogs",
+            },
+        )
+
     return {"hosts": hosts, "prompts": prompts, "total": len(prompts)}
 
 
