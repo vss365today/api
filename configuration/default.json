@@ -12,7 +12,7 @@
     "APP_NAME": "#vss365 today",
     "FLASK_APP": "wsgi.py",
     "DB_DBNAME": "vss365today",
-    "DB_HOST": "vss365today-db",
+    "DB_HOST": "database",
     "IMAGES_DIR": "/app/images",
     "IMAGES_DIR_TEMP": "/app/images/temp",
     "DOWNLOADS_DIR": "/app/downloads",
