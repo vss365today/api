@@ -60,8 +60,17 @@ WHERE YEAR(`date`) = :year"""
         return db.query(sql, year=year).one()
 
 
-def make(info: dict) -> Literal[True]:
+def make(info: dict) -> bool:
     """Generate a new Prompt archive spreadsheet."""
+    # Check that we have permission to write to the save directory
+    save_dir = Path(info["downloads_dir"]).resolve()
+    try:
+        temp_file = save_dir / "perm.temp"
+        temp_file.write_text("")
+        temp_file.unlink()
+    except PermissionError:
+        return False
+
     # Set up all date values we need
     archive_years = database.prompt.get_years()
     archive_range = prompt_date_range()
@@ -71,9 +80,8 @@ def make(info: dict) -> Literal[True]:
     today_iso = helpers.format_datetime_ymd(today)
     today_pretty = helpers.format_datetime_pretty(today)
 
-    # Put together the save path and file name
+    # Put together the archive's file name
     file_name = f"{info['base_name']}{today_iso}{info['ext']}"
-    save_dir = Path(info["downloads_dir"]).resolve()
     full_save_path = save_dir / file_name
 
     # Create a new spreadsheet file
