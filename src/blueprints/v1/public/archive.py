@@ -7,10 +7,6 @@ from src.blueprints import archive
 from src.core import database, helpers
 from src.core.auth_helpers import authorize_route
 
-# Set some constants for a consistent filename
-BASE_FILE_NAME = "vss365today-prompt-archive-"
-FILE_NAME_EXT = ".xlsx"
-
 
 @archive.route("/", methods=["GET"])
 def get():
@@ -36,13 +32,12 @@ def get():
 @archive.route("/", methods=["POST"])
 def post():
     """Generate a new Prompt archive spreadsheet."""
-    # Don't do anything if an archive has already been made
-    latest_archive = get()
-    if isinstance(latest_archive, dict):
+    # Don't do anything if today's archive has already been generated
+    now = datetime.now()
+    if database.archive.get_file_for_date(now):
         return helpers.make_response(304)
 
-    result = database.archive.make()
-    if result:
+    if database.archive.make():
         return helpers.make_response(201)
     return helpers.make_error_response(422, "Unable to create new archive file!")
 
@@ -61,7 +56,6 @@ def put():
     (save_dir / latest_archive["file"]).unlink(missing_ok=True)
 
     # Generate a new archive file
-    result = database.archive.make()
-    if result:
+    if database.archive.make():
         return helpers.make_response(201)
     return helpers.make_error_response(422, "Unable to regenerate archive file!")
