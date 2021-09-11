@@ -1,4 +1,5 @@
 from datetime import date, datetime
+from typing import Optional
 from pathlib import Path
 
 from flask import current_app
@@ -11,7 +12,7 @@ from src.core import database
 from src.core.models.v1.Prompt import Prompt
 
 
-__all__ = ["get", "get_column_widths", "make", "prompt_date_range"]
+__all__ = ["get", "get_column_widths", "get_file_for_date", "make", "prompt_date_range"]
 
 
 # Set some constants for a consistent filename
@@ -63,6 +64,19 @@ JOIN writers ON writers.uid = prompts.uid
 WHERE YEAR(`date`) = :year"""
     with connect_to_db() as db:
         return db.query(sql, year=year).one()
+
+
+def get_file_for_date(full_date: datetime) -> Optional[Path]:
+    """Determine if an archive file for a date exists."""
+    date_iso = helpers.format_datetime_ymd(full_date)
+    save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
+    file_name = f"{FILE_NAME_BASE}{date_iso}{FILE_NAME_EXT}"
+    full_path = save_dir / file_name
+
+    # If the file exists, return a Path to it
+    if full_path.exists():
+        return full_path
+    return None
 
 
 def make() -> bool:

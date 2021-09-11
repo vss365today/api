@@ -15,25 +15,18 @@ FILE_NAME_EXT = ".xlsx"
 @archive.route("/", methods=["GET"])
 def get():
     """Get the filename for the newest Prompt archive spreadsheet."""
-    # Set up all date values we need
-    today = datetime.now()
-    today_iso = helpers.format_datetime_ymd(today)
-    yesterday_iso = helpers.format_datetime_ymd(today - timedelta(days=1))
-
-    # Build out all the paths we need
-    save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
-    today_file_name = f"{BASE_FILE_NAME}{today_iso}{FILE_NAME_EXT}"
-    yesterday_file_name = f"{BASE_FILE_NAME}{yesterday_iso}{FILE_NAME_EXT}"
-    today_full_path = save_dir / today_file_name
-    yesterday_full_path = save_dir / yesterday_file_name
+    # Attempt to get today's and yesterday's files
+    now = datetime.now()
+    today = database.archive.get_file_for_date(now)
+    yesterday = database.archive.get_file_for_date(now - timedelta(days=1))
 
     # If a file with today's date exists, return it
     # Otherwise, attempt to return yesterday's file
     # If neither exist, error so the consumer knows to wait
-    if today_full_path.exists():
-        return {"file": today_file_name}
-    if yesterday_full_path.exists():
-        return {"file": yesterday_file_name}
+    if today is not None:
+        return {"file": today}
+    if yesterday is not None:
+        return {"file": yesterday}
     return helpers.make_error_response(
         404, "Word archive currently unavailable for download!"
     )
