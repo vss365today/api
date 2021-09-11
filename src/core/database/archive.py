@@ -66,7 +66,7 @@ WHERE YEAR(`date`) = :year"""
         return db.query(sql, year=year).one()
 
 
-def get_file_for_date(full_date: datetime) -> Optional[Path]:
+def get_file_for_date(full_date: datetime) -> Optional[str]:
     """Determine if an archive file for a date exists."""
     date_iso = helpers.format_datetime_ymd(full_date)
     save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
@@ -75,7 +75,7 @@ def get_file_for_date(full_date: datetime) -> Optional[Path]:
 
     # If the file exists, return a Path to it
     if full_path.exists():
-        return full_path
+        return file_name
     return None
 
 
