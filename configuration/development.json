@@ -1,6 +1,7 @@
 {
   "appConfig": {
     "DEBUG": true,
-    "DOWNLOADS_DIR": "../static/downloads"
+    "DOWNLOADS_DIR": "../static/downloads",
+    "DB_HOST": "vss365today-db"
   }
 }

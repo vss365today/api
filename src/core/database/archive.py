@@ -1,7 +1,7 @@
 from datetime import date, datetime
-from typing import Dict, List, Literal
 from pathlib import Path
 
+from flask import current_app
 from records import Record
 import xlsxwriter
 
@@ -14,7 +14,12 @@ from src.core.models.v1.Prompt import Prompt
 __all__ = ["get", "get_column_widths", "make", "prompt_date_range"]
 
 
-def prompt_date_range() -> Dict[str, date]:
+# Set some constants for a consistent filename
+FILE_NAME_BASE = "vss365today-prompt-archive-"
+FILE_NAME_EXT = ".xlsx"
+
+
+def prompt_date_range() -> dict[str, date]:
     """Get the first and last recorded Prompt dates."""
     dates = {}
 
@@ -30,7 +35,7 @@ def prompt_date_range() -> Dict[str, date]:
     return dates
 
 
-def get(year: int) -> List[Record]:
+def get(year: int) -> list[Record]:
     """Get the full word archive for the given year."""
     sql = """
 SELECT
@@ -60,10 +65,10 @@ WHERE YEAR(`date`) = :year"""
         return db.query(sql, year=year).one()
 
 
-def make(info: dict) -> bool:
+def make() -> bool:
     """Generate a new Prompt archive spreadsheet."""
     # Check that we have permission to write to the save directory
-    save_dir = Path(info["downloads_dir"]).resolve()
+    save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
     try:
         temp_file = save_dir / "perm.temp"
         temp_file.write_text("")
@@ -81,7 +86,7 @@ def make(info: dict) -> bool:
     today_pretty = helpers.format_datetime_pretty(today)
 
     # Put together the archive's file name
-    file_name = f"{info['base_name']}{today_iso}{info['ext']}"
+    file_name = f"{FILE_NAME_BASE}{today_iso}{FILE_NAME_EXT}"
     full_save_path = save_dir / file_name
 
     # Create a new spreadsheet file

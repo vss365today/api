@@ -48,13 +48,7 @@ def post():
     if isinstance(latest_archive, dict):
         return helpers.make_response(304)
 
-    result = database.archive.make(
-        {
-            "base_name": BASE_FILE_NAME,
-            "ext": FILE_NAME_EXT,
-            "downloads_dir": current_app.config["DOWNLOADS_DIR"],
-        }
-    )
+    result = database.archive.make()
     if result:
         return helpers.make_response(201)
     return helpers.make_error_response(422, "Unable to create new archive file!")
@@ -74,13 +68,7 @@ def put():
     (save_dir / latest_archive["file"]).unlink(missing_ok=True)
 
     # Generate a new archive file
-    result = database.archive.make(
-        {
-            "base_name": BASE_FILE_NAME,
-            "ext": FILE_NAME_EXT,
-            "downloads_dir": current_app.config["DOWNLOADS_DIR"],
-        }
-    )
+    result = database.archive.make()
     if result:
         return helpers.make_response(201)
     return helpers.make_error_response(422, "Unable to regenerate archive file!")
