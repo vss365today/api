@@ -33,10 +33,10 @@ def create(prompt: dict[str, Optional[str]]) -> bool:
     """Create a new prompt."""
     sql = """
     INSERT INTO prompts (
-        tweet_id, date, uid, content, word, media
+        tweet_id, date, uid, content, word, media, media_alt_text
     )
     VALUES (
-        :id, :date, :uid, :content, :word, :media
+        :id, :date, :uid, :content, :word, :media, :media_alt_text
     )
     """
     try:
@@ -277,7 +277,8 @@ def update(prompt: dict[str, Optional[str]]) -> None:
         date = :date,
         content = :content,
         word = :word,
-        media =  :media
+        media = :media,
+        media_alt_text = :media_alt_text
     WHERE tweet_id = :id
     """
     with connect_to_db() as db:

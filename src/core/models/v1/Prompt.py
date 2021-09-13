@@ -12,6 +12,7 @@ class Prompt(dict):
         self.content: str = record["content"]
         self.word: str = record["word"]
         self.media: Optional[str] = record["media"]
+        self.media_alt_text: Optional[str] = record["media_alt_text"]
         self.writer_id: str = record["uid"]
         self.writer_handle: str = record["writer_handle"]
         self.date_added: datetime = record["date_added"]
