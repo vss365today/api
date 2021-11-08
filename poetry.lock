@@ -448,7 +448,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "tweepy"
-version = "4.2.0"
+version = "4.3.0"
 description = "Twitter library for Python"
 category = "main"
 optional = false
@@ -525,7 +525,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "0fc0c50193e13f22b451165742f6332c37cb59661ac549c920f18c22b81eb92a"
+content-hash = "d629ead0784deab47a6d0dda9ac3545260fe159cc82b4f9dd6c475dee527045a"
 
 [metadata.files]
 black = [
@@ -845,8 +845,8 @@ tomli = [
     {file = "tomli-1.2.1.tar.gz", hash = "sha256:a5b75cb6f3968abb47af1b40c1819dc519ea82bcc065776a866e8d74c5ca9442"},
 ]
 tweepy = [
-    {file = "tweepy-4.2.0-py2.py3-none-any.whl", hash = "sha256:f832dc74cdb0601660cf47d774a73ecdbbf077f2647cec56b9ea8ad79f86be9f"},
-    {file = "tweepy-4.2.0.tar.gz", hash = "sha256:f09a5b4826a4118a4ac6193677fae5ef1358ff099687896d2ff9b2823eec036c"},
+    {file = "tweepy-4.3.0-py2.py3-none-any.whl", hash = "sha256:b0ac20cf6c864929f7ee4726099a445ff16c6161ff8fa72075b104b9dbfff3ff"},
+    {file = "tweepy-4.3.0.tar.gz", hash = "sha256:6c604ff31b18a93ffc9a23f0f017a292f6339eb0727169e093f98cd23fe85980"},
 ]
 typing-extensions = [
     {file = "typing_extensions-3.10.0.2-py2-none-any.whl", hash = "sha256:d8226d10bc02a29bcc81df19a26e56a9647f8b0a6d4a83924139f4a8b01f17b7"},
