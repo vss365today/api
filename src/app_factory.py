@@ -7,6 +7,8 @@ from werkzeug.exceptions import HTTPException
 
 import src.configuration as config
 from src.blueprints import all_blueprints
+from src.core.database import models
+from src.core.database.core import get_db_conn_uri
 from src.core.helpers.JsonEncode import JsonEncode
 
 
@@ -28,6 +30,20 @@ def create_app():
     # Load any extensions
     CORS().init_app(app)
 
+    # Create a database connection
+    with app.app_context():
+        app.config["SQLALCHEMY_DATABASE_URI"] = get_db_conn_uri()
+        app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+        models.db.init_app(app)
+
+        # Create the database tables if needed
+        if not models.db.engine.table_names():
+            models.db.create_all()
+
+            # Sometimes, the triggers don't get created
+            # This sees to make them be consistently created
+            for trigger in models.ALL_TRIGGERS:
+                models.db.session.execute(trigger)
 
     # Register the resources
     for bp in all_blueprints:

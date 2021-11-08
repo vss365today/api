@@ -8,7 +8,16 @@ from sqlalchemy.orm import relationship
 db = SQLAlchemy()
 
 
-__all__ = ["ApiKey", "AuditApiKey", "Email", "Prompt", "User", "Writer", "WriterDate"]
+__all__ = [
+    "ALL_TRIGGERS",
+    "ApiKey",
+    "AuditApiKey",
+    "Email",
+    "Prompt",
+    "User",
+    "Writer",
+    "WriterDate",
+]
 
 
 class ApiKey(db.Model):
@@ -140,3 +149,5 @@ trigger_api_key_permission_changes = DDL(
     END;"""
 )
 event.listen(ApiKey, "after_update", trigger_api_key_permission_changes)
+
+ALL_TRIGGERS = (trigger_api_key_permission_changes,)
