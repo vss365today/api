@@ -34,16 +34,16 @@ def create_app():
     with app.app_context():
         app.config["SQLALCHEMY_DATABASE_URI"] = get_db_conn_uri()
         app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-        models.db.init_app(app)
+        # models.db.init_app(app)
 
         # Create the database tables if needed
-        if not models.db.engine.table_names():
-            models.db.create_all()
+        # if not models.db.engine.table_names():
+        #     models.db.create_all()
 
-            # Sometimes, the triggers don't get created
-            # This sees to make them be consistently created
-            for trigger in models.ALL_TRIGGERS:
-                models.db.session.execute(trigger)
+        # Sometimes, the triggers don't get created
+        # This sees to make them be consistently created
+        # for trigger in models.ALL_TRIGGERS:
+        #     models.db.session.execute(trigger)
 
     # Register the resources
     for bp in all_blueprints:
