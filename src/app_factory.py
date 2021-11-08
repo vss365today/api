@@ -2,12 +2,12 @@ import json
 from importlib import import_module
 
 from flask import Flask
+from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
 import src.configuration as config
 from src.blueprints import all_blueprints
 from src.core.helpers.JsonEncode import JsonEncode
-from src.extensions import init_extensions
 
 
 def create_app():
@@ -25,8 +25,9 @@ def create_app():
     app.config["SECRET_KEY"] = app.config["SECRET_KEY_API"]
     del app.config["SECRET_KEY_API"]
 
-    # Load the extensions
-    init_extensions(app)
+    # Load any extensions
+    CORS().init_app(app)
+
 
     # Register the resources
     for bp in all_blueprints:
