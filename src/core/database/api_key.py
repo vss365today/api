@@ -4,8 +4,7 @@ from typing import Dict, List, Literal, Optional
 from sqlalchemy.exc import DataError
 
 from src.core.database.core import connect_to_db
-from src.core.database.models import ApiKey, db
-from src.core.models.v1.ApiKey import ApiKey as ApiKeyDC
+from src.core.models.v1.ApiKey import ApiKey
 
 
 __all__ = ["can_access", "create", "delete", "exists", "get", "get_all", "update"]
@@ -64,30 +63,32 @@ def create(permissions: dict) -> Dict[str, str]:
 
 def delete(token: str) -> Literal[True]:
     """Delete an API key."""
-    if exists(token):
-        db.session.delete(ApiKey.query.filter_by(token=token).one())
-        db.session.commit()
-    return True
+    sql = "DELETE FROM api_keys WHERE token = :token"
+    with connect_to_db() as db:
+        db.query(sql, token=token)
+        return True
 
 
 def exists(token: str) -> bool:
     """Determine if an API key exists."""
-    return ApiKey.query.filter_by(token=token).one_or_none() is not None
+    sql = "SELECT 1 FROM api_keys WHERE token = :token"
+    with connect_to_db() as db:
+        return bool(db.query(sql, token=token).one())
 
 
-def get(token: str) -> Optional[ApiKeyDC]:
+def get(token: str) -> Optional[ApiKey]:
     """Get an API key's permissions."""
     sql = "SELECT * FROM api_keys WHERE token = :token LIMIT 1"
     with connect_to_db() as db:
         record = db.query(sql, token=token).one(as_dict=True)
-        return ApiKeyDC(**__int_to_bool(record)) if record else None
+        return ApiKey(**__int_to_bool(record)) if record else None
 
 
-def get_all() -> List[ApiKeyDC]:
+def get_all() -> List[ApiKey]:
     """Get all recorded API key's permissions."""
     sql = "SELECT * FROM api_keys"
     with connect_to_db() as db:
-        return [ApiKeyDC(**__int_to_bool(record.as_dict())) for record in db.query(sql)]
+        return [ApiKey(**__int_to_bool(record.as_dict())) for record in db.query(sql)]
 
 
 def update(permissions: dict) -> bool:
