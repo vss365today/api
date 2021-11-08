@@ -7,7 +7,7 @@ __all__ = ["connect_to_db", "flatten_records"]
 
 def connect_to_db() -> records.Database:
     """Create a connection to the database."""
-    conn_str = "mysql+pymysql://{}:{}@{}/{}".format(
+    conn_str = "mysql://{}:{}@{}/{}".format(
         current_app.config["DB_USERNAME"],
         current_app.config["DB_PASSWORD"],
         current_app.config["DB_HOST"],
