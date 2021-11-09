@@ -20,6 +20,7 @@ sys-vars = "^4.0.3"
 urllib3 = "^1.26.7"
 mysqlclient = "^2.0.3"
 Flask-SQLAlchemy = "^2.5.1"
+flask-smorest = "^0.35.0"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.0"

@@ -1,4 +1,24 @@
 [[package]]
+name = "apispec"
+version = "5.1.1"
+description = "A pluggable API specification generator. Currently supports the OpenAPI Specification (f.k.a. the Swagger specification)."
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+marshmallow = {version = ">=3.13.0", optional = true, markers = "extra == \"marshmallow\""}
+
+[package.extras]
+dev = ["PyYAML (>=3.10)", "prance[osv] (>=0.11)", "marshmallow (>=3.13.0)", "pytest", "mock", "flake8 (==3.9.2)", "flake8-bugbear (==21.9.1)", "pre-commit (>=2.4,<3.0)", "tox"]
+docs = ["marshmallow (>=3.13.0)", "pyyaml (==5.4.1)", "sphinx (==4.2.0)", "sphinx-issues (==1.2.0)", "sphinx-rtd-theme (==1.0.0)"]
+lint = ["flake8 (==3.9.2)", "flake8-bugbear (==21.9.1)", "pre-commit (>=2.4,<3.0)"]
+marshmallow = ["marshmallow (>=3.13.0)"]
+tests = ["PyYAML (>=3.10)", "prance[osv] (>=0.11)", "marshmallow (>=3.13.0)", "pytest", "mock"]
+validation = ["prance[osv] (>=0.11)"]
+yaml = ["PyYAML (>=3.10)"]
+
+[[package]]
 name = "black"
 version = "21.10b0"
 description = "The uncompromising code formatter."
@@ -121,6 +141,26 @@ python-versions = "*"
 [package.dependencies]
 Flask = ">=0.9"
 Six = "*"
+
+[[package]]
+name = "flask-smorest"
+version = "0.35.0"
+description = "Flask/Marshmallow-based REST API framework"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+apispec = {version = ">=5.1.0,<6", extras = ["marshmallow"]}
+flask = ">=2.0,<3"
+marshmallow = ">=3.13.0,<4"
+webargs = ">=8.0.0,<9"
+werkzeug = ">=2.0,<3"
+
+[package.extras]
+dev = ["pytest (==6.2.5)", "pytest-cov (==3.0.0)", "coverage (==6.0.0)", "werkzeug (==2.0.2)", "flask (==2.0.2)", "marshmallow (==3.13.0)", "webargs (==8.0.1)", "apispec (==5.1.1)", "flake8 (==3.9.2)", "flake8-bugbear (==21.9.2)", "pre-commit (==2.15.0)"]
+lint = ["flake8 (==3.9.2)", "flake8-bugbear (==21.9.2)", "pre-commit (==2.15.0)"]
+tests = ["pytest (==6.2.5)", "pytest-cov (==3.0.0)", "coverage (==6.0.0)", "werkzeug (==2.0.2)", "flask (==2.0.2)", "marshmallow (==3.13.0)", "webargs (==8.0.1)", "apispec (==5.1.1)"]
 
 [[package]]
 name = "flask-sqlalchemy"
@@ -545,9 +585,13 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "4f837b5bc38274b28fbfb68824a560f6d8bfb51899ca2be7654a1e55e8d9f9fe"
+content-hash = "7cec0d83acbad3dc3df1df73084fa66d9bc7e4b7dee2ea771cf45b144d88ad55"
 
 [metadata.files]
+apispec = [
+    {file = "apispec-5.1.1-py3-none-any.whl", hash = "sha256:5bc5404b19259aeeb307ce9956e2c1a97722c6a130ef414671dfc21acd622afc"},
+    {file = "apispec-5.1.1.tar.gz", hash = "sha256:d167890e37f14f3f26b588ff2598af35faa5c27612264ea1125509c8ff860834"},
+]
 black = [
     {file = "black-21.10b0-py3-none-any.whl", hash = "sha256:6eb7448da9143ee65b856a5f3676b7dda98ad9abe0f87fce8c59291f15e82a5b"},
     {file = "black-21.10b0.tar.gz", hash = "sha256:a9952229092e325fe5f3dae56d81f639b23f7131eb840781947e4b2886030f33"},
@@ -586,6 +630,10 @@ flask = [
 flask-cors = [
     {file = "Flask-Cors-3.0.10.tar.gz", hash = "sha256:b60839393f3b84a0f3746f6cdca56c1ad7426aa738b70d6c61375857823181de"},
     {file = "Flask_Cors-3.0.10-py2.py3-none-any.whl", hash = "sha256:74efc975af1194fc7891ff5cd85b0f7478be4f7f59fe158102e91abb72bb4438"},
+]
+flask-smorest = [
+    {file = "flask-smorest-0.35.0.tar.gz", hash = "sha256:b08b20fb15e505f4f032a82dd0d5471e431d1b8da9ae16e4a0099bb70d753c47"},
+    {file = "flask_smorest-0.35.0-py3-none-any.whl", hash = "sha256:d97e114b972a0afae6a6c7883069c753c425ae1d8bb4c548028536465b1d1e19"},
 ]
 flask-sqlalchemy = [
     {file = "Flask-SQLAlchemy-2.5.1.tar.gz", hash = "sha256:2bda44b43e7cacb15d4e05ff3cc1f8bc97936cc464623424102bfc2c35e95912"},
