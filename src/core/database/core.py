@@ -1,6 +1,8 @@
 import records
 from flask import current_app
 
+from src.configuration import get_secret
+
 
 __all__ = ["connect_to_db", "flatten_records", "get_db_conn_uri"]
 
@@ -8,8 +10,8 @@ __all__ = ["connect_to_db", "flatten_records", "get_db_conn_uri"]
 def get_db_conn_uri() -> str:
     """Create a database connection URI."""
     return "mysql://{}:{}@{}/{}".format(
-        current_app.config["DB_USERNAME"],
-        current_app.config["DB_PASSWORD"],
+        get_secret("DB_USERNAME"),
+        get_secret("DB_PASSWORD"),
         current_app.config["DB_HOST"],
         current_app.config["DB_DBNAME"],
     )

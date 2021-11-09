@@ -1,11 +1,12 @@
 import json
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 import sys_vars
+from flask import current_app
 
 
-__all__ = ["get_app_config"]
+__all__ = ["get_app_config", "get_secrets_list", "get_secret"]
 
 
 def get_app_config(config_file: str) -> dict:
@@ -19,13 +20,26 @@ def get_app_config(config_file: str) -> dict:
 
     # Immediately add the app-specific values to the final values
     # because there is no need to fetch these from an outside source
-    app_config: Dict[str, Any] = {}
+    app_config: dict[str, Any] = {}
     app_config.update(file_content["appConfig"])
-
-    # Now fetch the system variable stored in a outside source
-    # if they are defined at all
-    system_vars = file_content.get("env", []) + file_content.get("secrets", [])
-    for var in system_vars:
-        app_config[var] = sys_vars.get(var)
-
     return app_config
+
+
+def get_secrets_list(env: str) -> dict[str, set]:
+    """Create a list of available app secrets, without their values."""
+    path = (Path() / "configuration").resolve()
+    default_file = json.loads((path / "default.json").read_text())
+    env_file = json.loads((path / f"{env}.json").read_text())
+
+    config_keys: set[str] = set()
+    config_keys.update(default_file["secrets"], env_file["secrets"])
+    return {"AVAILABLE_SECRETS": config_keys}
+
+
+def get_secret(key: str) -> str:
+    """Get an app secret value, confirming it is available for use."""
+    if key not in current_app.config["AVAILABLE_SECRETS"]:
+        raise sys_vars.SysVarNotFoundError(
+            f'Secret "{key}" is not available in this app'
+        )
+    return sys_vars.get(key)

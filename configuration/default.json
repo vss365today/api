@@ -1,5 +1,4 @@
 {
-  "env": [],
   "secrets": [
     "SECRET_KEY_API",
     "DB_USERNAME",

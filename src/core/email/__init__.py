@@ -4,6 +4,7 @@ from typing import Dict, List
 from flask import current_app, render_template
 import requests
 
+from src.configuration import get_secret
 from src.core.models.v1.EmailTemplate import EmailTemplate
 
 
@@ -22,8 +23,7 @@ def batch_construct(
 
     return {
         "from": (
-            f'{current_app.config["APP_NAME"]} '
-            f'<noreply@{current_app.config["MG_DOMAIN"]}>'
+            f'{current_app.config["APP_NAME"]} <noreply@{get_secret("MG_DOMAIN")}>'
         ),
         "to": mailing_list,
         "subject": subject,
@@ -37,8 +37,7 @@ def construct(email_addr: str, subject: str, content: EmailTemplate) -> dict:
     """Construct a Mailgun email dictionary."""
     return {
         "from": (
-            f'{current_app.config["APP_NAME"]} '
-            f'<noreply@{current_app.config["MG_DOMAIN"]}>'
+            f'{current_app.config["APP_NAME"]} <noreply@{get_secret("MG_DOMAIN")}>'
         ),
         "to": email_addr,
         "subject": subject,
@@ -64,8 +63,8 @@ def send(email: Dict[str, str]) -> bool:
 
     # Attempt to send out the email
     r = requests.post(
-        f'https://api.mailgun.net/v3/{current_app.config["MG_DOMAIN"]}/messages',
-        auth=("api", current_app.config["MG_API_KEY"]),
+        f'https://api.mailgun.net/v3/{get_secret("MG_DOMAIN")}/messages',
+        auth=("api", get_secret("MG_API_KEY")),
         data=email,
     )
     r.raise_for_status()

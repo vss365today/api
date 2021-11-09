@@ -1,15 +1,16 @@
 import json
 from importlib import import_module
 
+import sys_vars
 from flask import Flask
 from flask_cors import CORS
-
 from flask_smorest import Api
 from werkzeug.exceptions import HTTPException
 
 import src.configuration as config
 from src.blueprints import all_blueprints
-from src.core.database import models
+
+# from src.core.database import models
 from src.core.database.core import get_db_conn_uri
 from src.core.helpers.JsonEncode import JsonEncode
 
@@ -24,14 +25,14 @@ def create_app():
     # Load the app configuration
     app.config.update(config.get_app_config("default"))
     app.config.update(config.get_app_config(app.config["ENV"]))
+    app.config.update(config.get_secrets_list(app.config["ENV"]))
 
     # Put the app secret key into the expected key
-    app.config["SECRET_KEY"] = app.config["SECRET_KEY_API"]
-    del app.config["SECRET_KEY_API"]
+    app.config["SECRET_KEY"] = sys_vars.get("SECRET_KEY_API")
 
     # Load any extensions
     CORS().init_app(app)
-    api = Api(app)
+    # api = Api(app)
 
     # Create a database connection
     with app.app_context():

@@ -1,8 +1,9 @@
 from datetime import date, datetime
-from flask import current_app
 from typing import Any, Dict, Tuple, Union
 
 import tweepy
+
+from src.configuration import get_secret
 
 
 __all__ = [
@@ -16,7 +17,7 @@ __all__ = [
 
 def twitter_v2_api() -> tweepy.Client:
     """Connect to Twitter API v2 using a Bearer token."""
-    return tweepy.Client(bearer_token=current_app.config["TWITTER_BEARER"])
+    return tweepy.Client(bearer_token=get_secret("TWITTER_BEARER"))
 
 
 def format_datetime_pretty(date_obj: Union[date, datetime]) -> str:

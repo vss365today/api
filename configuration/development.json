@@ -1,4 +1,5 @@
 {
+  "secrets": [],
   "appConfig": {
     "DEBUG": true,
     "DOWNLOADS_DIR": "../static/downloads",
