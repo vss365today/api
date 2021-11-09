@@ -3,6 +3,8 @@ from importlib import import_module
 
 from flask import Flask
 from flask_cors import CORS
+
+# from flask_smorest import Api
 from werkzeug.exceptions import HTTPException
 
 import src.configuration as config
@@ -44,6 +46,9 @@ def create_app():
         # This sees to make them be consistently created
         # for trigger in models.ALL_TRIGGERS:
         #     models.db.session.execute(trigger)
+
+    # Init API use handling
+    # api = Api(app)
 
     # Register the resources
     for bp in all_blueprints:
