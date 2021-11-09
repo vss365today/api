@@ -4,6 +4,10 @@
     "DOWNLOADS_DIR": "../static/downloads",
     "IMAGES_DIR": "../static/images",
     "IMAGES_DIR_TEMP": "../static/images/temp",
-    "DB_HOST": "vss365today-db"
+    "DB_HOST": "vss365today-db",
+
+    "OPENAPI_URL_PREFIX": "/",
+    "OPENAPI_REDOC_PATH": "/v2/docs",
+    "OPENAPI_REDOC_URL": "https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"
   }
 }
