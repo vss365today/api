@@ -1,7 +1,10 @@
 {
   "secrets": [
     "MG_API_KEY",
-    "MG_DOMAIN"
+    "MG_DOMAIN",
+    "IMAGES_DIR",
+    "IMAGES_DIR_TEMP",
+    "DOWNLOADS_DIR"
   ],
   "appConfig": {
     "ENABLE_EMAIL_SENDING": true,

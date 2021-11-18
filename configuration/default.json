@@ -12,9 +12,6 @@
     "FLASK_APP": "wsgi.py",
     "DB_DBNAME": "vss365today",
     "DB_HOST": "database",
-    "IMAGES_DIR": "/app/images",
-    "IMAGES_DIR_TEMP": "/app/images/temp",
-    "DOWNLOADS_DIR": "/app/downloads",
     "ENABLE_EMAIL_SENDING": false,
     "MG_MAILING_LIST_ADDR": "vss365today-dev",
 

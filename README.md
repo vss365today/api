@@ -8,6 +8,8 @@
 - MariaDB instance + login keys (`DB_USERNAME`, `DB_PASSWORD`, `DB_HOST`, `DB_DBNAME`)
 - Mailgun API key authorized domain and mailing list address (`MG_API_KEY`, `MG_DOMAIN`, `MG_MAILING_LIST_ADDR`)
 - Twitter API v2 bearer token (`TWITTER_BEARER`)
+- Archive download directory (`DOWNLOADS_DIR`)
+- Prompt static images directory + temporary directory (`IMAGES_DIR`, `IMAGES_DIR_TEMP`)
 
 ## Install
 
