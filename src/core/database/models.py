@@ -15,8 +15,8 @@ __all__ = [
     "Email",
     "Prompt",
     "User",
-    "Writer",
-    "WriterDate",
+    "Host",
+    "HostingDate",
 ]
 
 
@@ -60,7 +60,7 @@ class User(db.Model):
     last_signin = Column(DateTime)
 
 
-class Writer(db.Model):
+class Host(db.Model):
     __tablename__ = "writers"
 
     uid = Column(String(30, "utf8mb4_unicode_ci"), primary_key=True, unique=True)
@@ -107,10 +107,10 @@ class Prompt(db.Model):
         server_default=text("current_timestamp() ON UPDATE current_timestamp()"),
     )
 
-    writer = relationship("Writer")
+    host = relationship("Host")
 
 
-class WriterDate(db.Model):
+class HostingDate(db.Model):
     __tablename__ = "writer_dates"
 
     uid = Column(
@@ -120,7 +120,7 @@ class WriterDate(db.Model):
     )
     date = Column(Date, primary_key=True, nullable=False)
 
-    writer = relationship("Writer")
+    host = relationship("Host")
 
 
 trigger_api_key_permission_changes = DDL(
