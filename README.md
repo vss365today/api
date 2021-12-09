@@ -13,7 +13,7 @@
 
 ## Install
 
-1. Install Python 3.9+ and [Poetry](https://poetry.eustace.io/) 1.1.0+
+1. Install [Python](https://www.python.org) 3.10+ and [Poetry](https://poetry.eustace.io/) 1.1.0+
 1. Set missing configuration keys in appropriate `configuration/*.json` files
 1. Run `poetry install`
 1. Launch the app using the provided VS Code launch configuration

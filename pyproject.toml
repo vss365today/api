@@ -6,7 +6,7 @@ authors = ["Caleb <le717@users.noreply.github.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 webargs = "^8.0.1"
 flask = "^2.0.2"
 gunicorn = "20.1.0"
