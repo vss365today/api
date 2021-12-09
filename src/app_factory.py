@@ -8,7 +8,7 @@ from flask_smorest import Api
 from werkzeug.exceptions import HTTPException
 
 import src.configuration as config
-from src.blueprints import all_blueprints
+from src.blueprints import all_blueprints, v2_blueprints
 
 # from src.core.database import models
 from src.core.database.core import get_db_conn_uri
@@ -44,6 +44,16 @@ def create_app():
         # if not models.db.engine.table_names():
         #     models.db.create_all()
 
+        # Only import alembic if the database was created
+        # from alembic import command
+
+        # from alembic.config import Config
+
+        # Tell Alembic this is a new database and we don't need
+        # to update it to a newer schema
+        # alembic_cfg = Config("alembic.ini")
+        # command.upgrade(alembic_cfg, "head")
+
         # Sometimes, the triggers don't get created
         # This sees to make them be consistently created
         # for trigger in models.ALL_TRIGGERS:
@@ -53,6 +63,11 @@ def create_app():
     for bp in all_blueprints:
         import_module(bp.import_name)
         app.register_blueprint(bp)
+
+    # Register the v2 endpoints
+    # for bp in v2_blueprints:
+    #     import_module(bp.import_name)
+    #     api.register_blueprint(bp)
 
     @app.errorhandler(HTTPException)
     def handle_http_exception(e):

@@ -1,6 +1,7 @@
 # coding: utf-8
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import DDL, Column, Date, DateTime, ForeignKey, String, event, text
+from sqlalchemy.types import Boolean
 from sqlalchemy.dialects.mysql import INTEGER, TINYINT
 from sqlalchemy.orm import relationship
 
@@ -32,13 +33,13 @@ class ApiKey(db.Model):
         DateTime, nullable=False, server_default=text("current_timestamp()")
     )
     desc = Column(String(256, "utf8mb4_unicode_ci"))
-    has_api_key = Column(TINYINT(1), nullable=False, server_default=text("0"))
-    has_archive = Column(TINYINT(1), nullable=False, server_default=text("0"))
-    has_broadcast = Column(TINYINT(1), nullable=False, server_default=text("0"))
-    has_host = Column(TINYINT(1), nullable=False, server_default=text("0"))
-    has_prompt = Column(TINYINT(1), nullable=False, server_default=text("0"))
-    has_settings = Column(TINYINT(1), nullable=False, server_default=text("0"))
-    has_subscription = Column(TINYINT(1), nullable=False, server_default=text("0"))
+    has_api_key = Column(Boolean, nullable=False, default=False)
+    has_archive = Column(Boolean, nullable=False, default=False)
+    has_broadcast = Column(Boolean, nullable=False, default=False)
+    has_host = Column(Boolean, nullable=False, default=False)
+    has_prompt = Column(Boolean, nullable=False, default=False)
+    has_settings = Column(Boolean, nullable=False, default=False)
+    has_subscription = Column(Boolean, nullable=False, default=False)
 
 
 class Email(db.Model):
@@ -78,13 +79,13 @@ class AuditApiKey(db.Model):
     date_updated = Column(
         DateTime, nullable=False, server_default=text("current_timestamp()")
     )
-    has_api_key = Column(TINYINT(1), nullable=False, server_default=text("0"))
-    has_archive = Column(TINYINT(1), nullable=False, server_default=text("0"))
-    has_broadcast = Column(TINYINT(1), nullable=False, server_default=text("0"))
-    has_host = Column(TINYINT(1), nullable=False, server_default=text("0"))
-    has_prompt = Column(TINYINT(1), nullable=False, server_default=text("0"))
-    has_settings = Column(TINYINT(1), nullable=False, server_default=text("0"))
-    has_subscription = Column(TINYINT(1), nullable=False, server_default=text("0"))
+    has_api_key = Column(Boolean, nullable=False, default=False)
+    has_archive = Column(Boolean, nullable=False, default=False)
+    has_broadcast = Column(Boolean, nullable=False, default=False)
+    has_host = Column(Boolean, nullable=False, default=False)
+    has_prompt = Column(Boolean, nullable=False, default=False)
+    has_settings = Column(Boolean, nullable=False, default=False)
+    has_subscription = Column(Boolean, nullable=False, default=False)
 
     key = relationship("ApiKey")
 
