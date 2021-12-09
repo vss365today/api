@@ -12,7 +12,7 @@ db = SQLAlchemy()
 __all__ = [
     "ALL_TRIGGERS",
     "ApiKey",
-    "AuditApiKey",
+    "ApiKeyAudit",
     "Email",
     "Prompt",
     "User",
@@ -28,7 +28,7 @@ class ApiKey(db.Model):
     }
 
     _id = Column(TINYINT(3), primary_key=True)
-    token = Column(String(64, "utf8mb4_unicode_ci"), nullable=False, unique=True)
+    key = Column("token", String(64, "utf8mb4_unicode_ci"), nullable=False, unique=True)
     date_created = Column(
         DateTime, nullable=False, server_default=text("current_timestamp()")
     )
@@ -68,7 +68,7 @@ class Host(db.Model):
     handle = Column(String(20, "utf8mb4_unicode_ci"), nullable=False)
 
 
-class AuditApiKey(db.Model):
+class ApiKeyAudit(db.Model):
     __tablename__ = "audit_api_keys"
     __table_args__ = {"comment": "Audit table to track permission changes to API keys."}
 
