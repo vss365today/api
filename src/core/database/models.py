@@ -1,4 +1,5 @@
 # coding: utf-8
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import DDL, Column, Date, DateTime, ForeignKey, String, event, text
 from sqlalchemy.types import Boolean
@@ -18,6 +19,7 @@ __all__ = [
     "User",
     "Host",
     "HostingDate",
+    "db",
 ]
 
 
@@ -29,9 +31,7 @@ class ApiKey(db.Model):
 
     _id = Column(TINYINT(3), primary_key=True)
     key = Column("token", String(64, "utf8mb4_unicode_ci"), nullable=False, unique=True)
-    date_created = Column(
-        DateTime, nullable=False, server_default=text("current_timestamp()")
-    )
+    date_created = Column(DateTime, nullable=False, default=datetime.now)
     desc = Column(String(256, "utf8mb4_unicode_ci"))
     has_api_key = Column(Boolean, nullable=False, default=False)
     has_archive = Column(Boolean, nullable=False, default=False)
@@ -40,6 +40,17 @@ class ApiKey(db.Model):
     has_prompt = Column(Boolean, nullable=False, default=False)
     has_settings = Column(Boolean, nullable=False, default=False)
     has_subscription = Column(Boolean, nullable=False, default=False)
+
+    @classmethod
+    def delete(cls, key: str) -> None:
+        db.session.delete(cls.query.filter_by(key=key).first())
+        db.session.commit()
+        return None
+
+    @classmethod
+    def exists(cls, key: str) -> bool:
+        """Determine if an API key exists."""
+        return cls.query.filter_by(key=key).first() is not None
 
 
 class Email(db.Model):

@@ -2,7 +2,7 @@ from flask.views import MethodView
 from flask_smorest import abort
 
 from src.blueprints import keys
-from src.core.database.models import ApiKey, ApiKeyAudit
+from src.core.database.v2 import keys as db
 from src.core.models.v2 import Generic
 from src.core.models.v2 import Keys as models
 
@@ -13,7 +13,7 @@ class Keys(MethodView):
     @keys.alt_response(403, schema=Generic.HttpError)
     def get(self):
         """List all keys."""
-        return "get all"
+        return db.get_all()
 
     @keys.arguments(models.SingleKey)
     @keys.response(201, models.KeyToken)
@@ -26,25 +26,29 @@ class Keys(MethodView):
 
 @keys.route("/<string:key>")
 class KeyByCode(MethodView):
-    @keys.arguments(models.KeyToken)
+    @keys.arguments(models.KeyToken, as_kwargs=True)
     @keys.response(200, models.SingleKey)
     @keys.alt_response(403, schema=Generic.HttpError)
-    @keys.alt_response(404, Generic.HttpError)
-    def get(self):
+    @keys.alt_response(404, schema=Generic.HttpError)
+    def get(self, **kwargs: str):
         """Get single key."""
-        return "get single key"
+        if (key := db.get(kwargs["key"])) is not None:
+            return key
+        abort(404)
 
-    @keys.arguments(models.KeyToken)
+    @keys.arguments(models.KeyToken, as_kwargs=True)
     @keys.response(204, Generic.Empty)
     @keys.alt_response(403, schema=Generic.HttpError)
-    @keys.alt_response(422, Generic.HttpError)
-    def patch(self):
+    @keys.alt_response(422, schema=Generic.HttpError)
+    def patch(self, **kwargs: str):
         """Update single key."""
         return "update single key"
 
+    @keys.arguments(models.KeyToken, as_kwargs=True)
     @keys.response(204, Generic.Empty)
     @keys.alt_response(403, schema=Generic.HttpError)
-    @keys.alt_response(404, Generic.HttpError)
-    def delete(self):
+    @keys.alt_response(404, schema=Generic.HttpError)
+    def delete(self, **kwargs: str):
         """Delete single key."""
-        return "delete single key"
+        if not db.delete(kwargs["key"]):
+            abort(404)
