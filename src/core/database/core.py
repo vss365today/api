@@ -9,7 +9,7 @@ __all__ = ["connect_to_db", "flatten_records", "get_db_conn_uri"]
 
 def get_db_conn_uri() -> str:
     """Create a database connection URI."""
-    return "mysql://{}:{}@{}/{}".format(
+    return "mysql+pymysql://{}:{}@{}/{}".format(
         get_secret("DB_USERNAME"),
         get_secret("DB_PASSWORD"),
         current_app.config["DB_HOST"],
