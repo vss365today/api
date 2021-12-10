@@ -2,10 +2,10 @@ from datetime import date, datetime
 from typing import Optional
 from pathlib import Path
 
-from flask import current_app
 from records import Record
 import xlsxwriter
 
+from src.configuration import get_secret
 from src.core import helpers
 from src.core.database.core import connect_to_db
 from src.core import database
@@ -69,7 +69,7 @@ WHERE YEAR(`date`) = :year"""
 def get_file_for_date(full_date: datetime) -> Optional[str]:
     """Determine if an archive file for a date exists."""
     date_iso = helpers.format_datetime_ymd(full_date)
-    save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
+    save_dir = Path(get_secret("DOWNLOADS_DIR")).resolve()
     file_name = f"{FILE_NAME_BASE}{date_iso}{FILE_NAME_EXT}"
     full_path = save_dir / file_name
 
@@ -82,7 +82,7 @@ def get_file_for_date(full_date: datetime) -> Optional[str]:
 def make() -> bool:
     """Generate a new Prompt archive spreadsheet."""
     # Check that we have permission to write to the save directory
-    save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
+    save_dir = Path(get_secret("DOWNLOADS_DIR")).resolve()
     try:
         temp_file = save_dir / "perm.temp"
         temp_file.write_text("")

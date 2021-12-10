@@ -1,23 +1,24 @@
 from pathlib import Path, PurePath
 import secrets
-from typing import Dict
 from urllib3.util import parse_url
 
-from flask import current_app
 import requests
+
+from src.configuration import get_secret
+
 
 __all__ = ["delete", "download", "move", "saved_name"]
 
 
 def delete(prompt_id: str) -> bool:
     """Delete a media file."""
-    f_name = sorted(Path(current_app.config["IMAGES_DIR"]).glob(f"{prompt_id}*"))
+    f_name = sorted(Path(get_secret("IMAGES_DIR")).glob(f"{prompt_id}*"))
     if len(f_name) == 1:
         f_name[0].unlink()
     return True
 
 
-def download(prompt_id: str, url: str) -> Dict[str, str]:
+def download(prompt_id: str, url: str) -> dict[str, str]:
     """Download a Tweet's media."""
     # Generate a random file name for the download
     original_f_name = original_name(url)
@@ -27,7 +28,7 @@ def download(prompt_id: str, url: str) -> Dict[str, str]:
 
     # Download the media to a temp directory
     r = requests.get(url)
-    dl_path = Path(current_app.config["IMAGES_DIR_TEMP"]).resolve() / temp_f_name
+    dl_path = Path(get_secret("IMAGES_DIR_TEMP")).resolve() / temp_f_name
     dl_path.write_bytes(r.content)
 
     # Return the original and temp file name
@@ -40,8 +41,8 @@ def download(prompt_id: str, url: str) -> Dict[str, str]:
 
 def move(details: dict) -> bool:
     """Move a media file from the temporary directory to final location."""
-    current_path = Path(current_app.config["IMAGES_DIR_TEMP"]) / details["temp"]
-    final_path = Path(current_app.config["IMAGES_DIR"]) / details["final"]
+    current_path = Path(get_secret("IMAGES_DIR_TEMP")) / details["temp"]
+    final_path = Path(get_secret("IMAGES_DIR")) / details["final"]
     current_path.replace(final_path)
     return final_path.is_file()
 

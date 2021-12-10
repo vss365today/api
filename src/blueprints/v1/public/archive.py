@@ -1,9 +1,8 @@
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from flask import current_app
-
 from src.blueprints import archive
+from src.configuration import get_secret
 from src.core import database, helpers
 from src.core.auth_helpers import authorize_route
 
@@ -52,7 +51,7 @@ def put():
         return latest_archive
 
     # Delete the old archive
-    save_dir = Path(current_app.config["DOWNLOADS_DIR"]).resolve()
+    save_dir = Path(get_secret("DOWNLOADS_DIR")).resolve()
     (save_dir / latest_archive["file"]).unlink(missing_ok=True)
 
     # Generate a new archive file

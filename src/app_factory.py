@@ -4,7 +4,8 @@ from importlib import import_module
 import sys_vars
 from flask import Flask
 from flask_cors import CORS
-from flask_smorest import Api
+
+# from flask_smorest import Api
 from werkzeug.exceptions import HTTPException
 
 import src.configuration as config
