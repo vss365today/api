@@ -6,7 +6,7 @@ import sys_vars
 from flask import current_app
 
 
-__all__ = ["get_app_config", "get_secrets_list", "get_secret"]
+__all__ = ["get_app_config", "get_secrets_list", "get_config", "get_secret"]
 
 
 def get_app_config(config_file: str) -> dict:
@@ -34,6 +34,15 @@ def get_secrets_list(env: str) -> dict[str, set]:
     config_keys: set[str] = set()
     config_keys.update(default_file["secrets"], env_file["secrets"])
     return {"AVAILABLE_SECRETS": config_keys}
+
+
+def get_config(key: str) -> Any:
+    """Get an app config value, confirming it is available for use."""
+    if key not in current_app.config:
+        raise sys_vars.SysVarNotFoundError(
+            f'Config "{key}" is not available in this app'
+        )
+    return current_app.config[key]
 
 
 def get_secret(key: str) -> str:

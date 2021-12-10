@@ -17,7 +17,7 @@ def mailing_list_addr_get() -> str:
     # Construct the mailing list address. It is written this way
     # because the development and production lists are different
     # and we need to use the proper one depending on the env
-    return f'{get_secret("MG_MAILING_LIST_ADDR")}@{get_secret("MG_DOMAIN")}'
+    return f'{current_app.config["MG_MAILING_LIST_ADDR"]}@{get_secret("MG_DOMAIN")}'
 
 
 def subscription_email_create(addr: str) -> requests.Response:
