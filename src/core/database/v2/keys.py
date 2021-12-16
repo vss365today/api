@@ -54,26 +54,10 @@ def get_all() -> list[ApiKey]:
     return ApiKey.query.order_by(ApiKey._id).all()
 
 
-# def update(permissions: dict) -> bool:
-#     """Update an API key's permissions."""
-
-#     # Update the key
-#     sql = """UPDATE api_keys
-#     SET
-#         `desc` = :desc,
-#         has_api_key = :has_api_key,
-#         has_archive = :has_archive,
-#         has_broadcast = :has_broadcast,
-#         has_host = :has_host,
-#         has_prompt = :has_prompt,
-#         has_settings = :has_settings,
-#         has_subscription = :has_subscription
-#     WHERE token = :token
-#     """
-#     try:
-#         with connect_to_db() as db:
-#             db.query(sql, **permissions)
-#             return True
-#     except DataError as exc:
-#         print(f"API key update exception: {exc}")
-#         return False
+def update(data: dict) -> None:
+    """Update a single key."""
+    token = data.pop("token")
+    key = ApiKey.query.filter_by(token=token)
+    key.update(data)
+    db.session.commit()
+    return None

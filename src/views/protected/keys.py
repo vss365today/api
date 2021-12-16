@@ -38,13 +38,13 @@ class KeyByCode(MethodView):
             return key
         abort(404)
 
-    @keys.arguments(models.KeyToken, as_kwargs=True)
+    @keys.arguments(models.KeyFull, as_kwargs=True)
     @keys.response(204, Generic.Empty)
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(422, schema=Generic.HttpError)
-    def patch(self, **kwargs: str):
+    def patch(self, **kwargs: str | bool):
         """Update a single key."""
-        return "update single key"
+        db.update(kwargs)
 
     @keys.arguments(models.KeyToken, as_kwargs=True)
     @keys.response(204, Generic.Empty)
