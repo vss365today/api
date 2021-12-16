@@ -15,13 +15,15 @@ class Keys(MethodView):
         """List all keys."""
         return db.get_all()
 
-    @keys.arguments(models.SingleKey)
+    @keys.arguments(models.SingleKey, as_kwargs=True)
     @keys.response(201, models.KeyToken)
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(422, schema=Generic.HttpError)
-    def post(self):
+    def post(self, **kwargs: str | bool):
         """Create a new key."""
-        return "new key"
+        if token := db.create(kwargs):
+            return token
+        abort(422)
 
 
 @keys.route("/<string:token>")
@@ -31,7 +33,7 @@ class KeyByCode(MethodView):
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(404, schema=Generic.HttpError)
     def get(self, **kwargs: str):
-        """Get single key."""
+        """Get a single key."""
         if (key := db.get(kwargs["token"])) is not None:
             return key
         abort(404)
@@ -41,7 +43,7 @@ class KeyByCode(MethodView):
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(422, schema=Generic.HttpError)
     def patch(self, **kwargs: str):
-        """Update single key."""
+        """Update a single key."""
         return "update single key"
 
     @keys.arguments(models.KeyToken, as_kwargs=True)

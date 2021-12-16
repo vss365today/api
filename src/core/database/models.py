@@ -1,5 +1,6 @@
 # coding: utf-8
 from datetime import datetime
+
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import DDL, Column, Date, DateTime, ForeignKey, String, event, text
 from sqlalchemy.types import Boolean
@@ -33,7 +34,7 @@ class ApiKey(db.Model):
     token = Column(String(64, "utf8mb4_unicode_ci"), nullable=False, unique=True)
     date_created = Column(DateTime, nullable=False, default=datetime.now)
     desc = Column(String(256, "utf8mb4_unicode_ci"))
-    has_api_key = Column(Boolean, nullable=False, default=False)
+    has_keys = Column("has_api_key", Boolean, nullable=False, default=False)
     has_archive = Column(Boolean, nullable=False, default=False)
     has_broadcast = Column(Boolean, nullable=False, default=False)
     has_host = Column(Boolean, nullable=False, default=False)

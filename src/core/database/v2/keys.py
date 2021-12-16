@@ -45,16 +45,13 @@ def delete(token: str) -> bool:
 
 
 def get(token: str) -> ApiKey | None:
-    """Get an API key's permissions."""
-    # That key doesn't exist
-    if not ApiKey.exists(token):
-        return None
+    """Get a single key."""
     return ApiKey.query.filter_by(token=token).first()
 
 
 def get_all() -> list[ApiKey]:
     """Get all recorded API key's permissions."""
-    return ApiKey.query.order_by(ApiKey.date_created).all()
+    return ApiKey.query.order_by(ApiKey._id).all()
 
 
 # def update(permissions: dict) -> bool:
