@@ -24,7 +24,7 @@ class Keys(MethodView):
         return "new key"
 
 
-@keys.route("/<string:key>")
+@keys.route("/<string:token>")
 class KeyByCode(MethodView):
     @keys.arguments(models.KeyToken, as_kwargs=True)
     @keys.response(200, models.SingleKey)
@@ -32,7 +32,7 @@ class KeyByCode(MethodView):
     @keys.alt_response(404, schema=Generic.HttpError)
     def get(self, **kwargs: str):
         """Get single key."""
-        if (key := db.get(kwargs["key"])) is not None:
+        if (key := db.get(kwargs["token"])) is not None:
             return key
         abort(404)
 
@@ -50,5 +50,5 @@ class KeyByCode(MethodView):
     @keys.alt_response(404, schema=Generic.HttpError)
     def delete(self, **kwargs: str):
         """Delete single key."""
-        if not db.delete(kwargs["key"]):
+        if not db.delete(kwargs["token"]):
             abort(404)

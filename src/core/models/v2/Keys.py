@@ -17,7 +17,7 @@ class SingleKey(Schema):
 
 
 class KeyToken(Schema):
-    key = fields.UUID()
+    token = fields.UUID()
 
 
 class KeyFull(KeyToken, SingleKey):

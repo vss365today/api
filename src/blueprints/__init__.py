@@ -3,7 +3,7 @@ from typing import Callable, Optional
 from flask import Blueprint
 from flask_smorest import Blueprint as APIBlueprint
 
-from src.core.auth_helpers import authorize_blueprint
+from src.core.auth_helpers import authorize_blueprint, authorize_blueprint_v2
 
 
 def _api_factory(
@@ -86,5 +86,5 @@ all_blueprints = (
 )
 
 # v2 endpoints
-keys = _api_factory("keys", "keys", authorize_blueprint)
+keys = _api_factory("keys", "keys", authorize_blueprint_v2)
 v2_blueprints = (keys,)

@@ -30,7 +30,7 @@ class ApiKey(db.Model):
     }
 
     _id = Column(TINYINT(3), primary_key=True)
-    key = Column("token", String(64, "utf8mb4_unicode_ci"), nullable=False, unique=True)
+    token = Column(String(64, "utf8mb4_unicode_ci"), nullable=False, unique=True)
     date_created = Column(DateTime, nullable=False, default=datetime.now)
     desc = Column(String(256, "utf8mb4_unicode_ci"))
     has_api_key = Column(Boolean, nullable=False, default=False)
@@ -42,15 +42,15 @@ class ApiKey(db.Model):
     has_subscription = Column(Boolean, nullable=False, default=False)
 
     @classmethod
-    def delete(cls, key: str) -> None:
-        db.session.delete(cls.query.filter_by(key=key).first())
+    def delete(cls, token: str) -> None:
+        db.session.delete(cls.query.filter_by(token=token).first())
         db.session.commit()
         return None
 
     @classmethod
-    def exists(cls, key: str) -> bool:
+    def exists(cls, token: str) -> bool:
         """Determine if an API key exists."""
-        return cls.query.filter_by(key=key).first() is not None
+        return cls.query.filter_by(token=token).first() is not None
 
 
 class Email(db.Model):
