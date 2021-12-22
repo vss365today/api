@@ -15,6 +15,7 @@ def _api_factory(
     partial_module_string: str,
     url_prefix: str,
     auth_function: Callable | None = None,
+    description: str = "",
 ) -> APIBlueprint:
     """Register a flask_smorest blueprint."""
     # Build out the module import path
@@ -29,7 +30,10 @@ def _api_factory(
 
     # Actually create the blueprint
     blueprint = APIBlueprint(
-        partial_module_string, import_path, url_prefix=f"/v2/{url_prefix}"
+        partial_module_string,
+        import_path,
+        url_prefix=f"/v2/{url_prefix}",
+        description=description,
     )
 
     # Protect the endpoint with an authorization routine
@@ -99,5 +103,7 @@ all_blueprints = (
 )
 
 # v2 endpoints
-keys = _api_factory("keys", "keys", authorize_blueprint_v2)
+keys = _api_factory(
+    "keys", "keys", authorize_blueprint_v2, description="Manage API key permissions."
+)
 v2_blueprints = (keys,)
