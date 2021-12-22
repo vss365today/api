@@ -50,6 +50,7 @@ class ApiKey(db.Model):
 
     @classmethod
     def delete(cls, token: str) -> None:
+        """Delete an API key."""
         db.session.delete(cls.query.filter_by(token=token).first())
         db.session.commit()
         return None
