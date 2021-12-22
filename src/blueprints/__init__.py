@@ -1,15 +1,20 @@
-from typing import Callable, Optional
+from functools import partial
+from typing import Callable
 
 from flask import Blueprint
 from flask_smorest import Blueprint as APIBlueprint
 
-from src.core.auth_helpers import authorize_blueprint, authorize_blueprint_v2
+from src.core.auth_helpers import (
+    authorize_blueprint,
+    authorize_blueprint_v2,
+    make_deprecation_warning,
+)
 
 
 def _api_factory(
     partial_module_string: str,
     url_prefix: str,
-    auth_function: Optional[Callable] = None,
+    auth_function: Callable | None = None,
 ) -> APIBlueprint:
     """Register a flask_smorest blueprint."""
     # Build out the module import path
@@ -37,7 +42,8 @@ def _api_factory(
 def _factory(
     partial_module_string: str,
     url_prefix: str,
-    auth_function: Optional[Callable] = None,
+    auth_function: Callable | None = None,
+    new_endpoint: str | None = None,
 ) -> Blueprint:
     """Generate a blueprint registration."""
     # Build out the module import path
@@ -60,11 +66,18 @@ def _factory(
     # if one was given
     if auth_function is not None:
         blueprint.before_request(auth_function)
+
+    # This endpoint has been deprecated, attach a HTTP header
+    # stating this and transition info
+    if new_endpoint is not None:
+        x = partial(make_deprecation_warning, new_endpoint)
+        blueprint.after_request(x)  # type: ignore
+
     return blueprint
 
 
 # v1 endpoints
-api_key = _factory("api_key", "api-key", authorize_blueprint)
+api_key = _factory("api_key", "api-key", authorize_blueprint, new_endpoint="keys")
 archive = _factory("archive", "archive")
 broadcast = _factory("broadcast", "broadcast", authorize_blueprint)
 browse = _factory("browse", "browse")

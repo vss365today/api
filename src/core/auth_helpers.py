@@ -1,13 +1,17 @@
 import functools
 
-from flask import request
-from flask import abort
+from flask import abort, request
 
 from src.core.database import api_key
 from src.core.database.v2 import keys
 
 
-__all__ = ["authorize_blueprint", "authorize_route", "fake_authorize"]
+__all__ = [
+    "authorize_blueprint",
+    "authorize_route",
+    "fake_authorize",
+    "make_deprecation_warning",
+]
 
 
 def authorize_blueprint():
@@ -72,3 +76,9 @@ def get_auth_token() -> str:
 
 def fake_authorize():
     """Just a no-op for dummy authorization."""
+
+
+def make_deprecation_warning(endpoint: str, response) -> dict[str, str]:
+    """Send a deprecation notice with a request."""
+    response.headers["X-Deprecation-Notice"] = f"Replaced by /v2/{endpoint} endpoint"
+    return response
