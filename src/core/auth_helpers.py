@@ -10,7 +10,7 @@ __all__ = [
     "authorize_blueprint",
     "authorize_route",
     "fake_authorize",
-    "make_deprecation_warning",
+    "send_deprecation_warning",
 ]
 
 
@@ -78,7 +78,7 @@ def fake_authorize():
     """Just a no-op for dummy authorization."""
 
 
-def make_deprecation_warning(endpoint: str, response) -> dict[str, str]:
+def send_deprecation_warning(endpoint: str, response) -> dict[str, str]:
     """Send a deprecation notice with a request."""
     response.headers["X-Deprecation-Notice"] = f"Replaced by /v2/{endpoint} endpoint"
     return response

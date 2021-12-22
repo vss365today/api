@@ -7,7 +7,7 @@ from flask_smorest import Blueprint as APIBlueprint
 from src.core.auth_helpers import (
     authorize_blueprint,
     authorize_blueprint_v2,
-    make_deprecation_warning,
+    send_deprecation_warning,
 )
 
 
@@ -74,7 +74,7 @@ def _factory(
     # This endpoint has been deprecated, attach a HTTP header
     # stating this and transition info
     if new_endpoint is not None:
-        x = partial(make_deprecation_warning, new_endpoint)
+        x = partial(send_deprecation_warning, new_endpoint)
         blueprint.after_request(x)  # type: ignore
 
     return blueprint
