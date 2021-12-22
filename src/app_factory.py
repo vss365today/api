@@ -55,11 +55,6 @@ def create_app():
         # alembic_cfg = Config("alembic.ini")
         # command.upgrade(alembic_cfg, "head")
 
-        # Sometimes, the triggers don't get created
-        # This sees to make them be consistently created
-        # for trigger in models.ALL_TRIGGERS:
-        #     models.db.session.execute(trigger)
-
     # Register the resources
     for bp in all_blueprints:
         import_module(bp.import_name)

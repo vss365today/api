@@ -3,13 +3,11 @@ from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import (
-    DDL,
     Column,
     Date,
     DateTime,
     ForeignKey,
     String,
-    event,
     text,
     inspect,
 )
@@ -22,7 +20,6 @@ db = SQLAlchemy()
 
 
 __all__ = [
-    "ALL_TRIGGERS",
     "ApiKey",
     "ApiKeyHistory",
     "Email",
@@ -146,33 +143,3 @@ class HostingDate(db.Model):
     date = Column(Date, primary_key=True, nullable=False)
 
     host = relationship("Host")
-
-
-trigger_api_key_permission_changes = DDL(
-    """CREATE TRIGGER IF NOT EXISTS `api_key_permission_changes` AFTER UPDATE ON `api_keys`
-    FOR EACH ROW BEGIN
-    INSERT INTO audit_api_keys(
-        key_id,
-        has_api_key,
-        has_archive,
-        has_broadcast,
-        has_host,
-        has_prompt,
-        has_settings,
-        has_subscription
-    )
-    VALUES (
-        old._id,
-        old.has_api_key,
-        old.has_archive,
-        old.has_broadcast,
-        old.has_host,
-        old.has_prompt,
-        old.has_settings,
-        old.has_subscription
-    );
-    END;"""
-)
-event.listen(ApiKey, "after_update", trigger_api_key_permission_changes)
-
-ALL_TRIGGERS = (trigger_api_key_permission_changes,)
