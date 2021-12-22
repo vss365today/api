@@ -28,7 +28,7 @@ class Keys(MethodView):
 
 @keys.route("/<string:token>")
 class KeyByCode(MethodView):
-    @keys.arguments(models.KeyToken, as_kwargs=True)
+    @keys.arguments(models.KeyToken, location="path", as_kwargs=True)
     @keys.response(200, models.SingleKey)
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(404, schema=Generic.HttpError)
@@ -38,7 +38,8 @@ class KeyByCode(MethodView):
             return key
         abort(404)
 
-    @keys.arguments(models.KeyFull, as_kwargs=True)
+    @keys.arguments(models.KeyToken, location="path", as_kwargs=True)
+    @keys.arguments(models.SingleKey, as_kwargs=True)
     @keys.response(204, Generic.Empty)
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(422, schema=Generic.HttpError)
@@ -46,11 +47,11 @@ class KeyByCode(MethodView):
         """Update a single key."""
         db.update(kwargs)
 
-    @keys.arguments(models.KeyToken, as_kwargs=True)
+    @keys.arguments(models.KeyToken, location="path", as_kwargs=True)
     @keys.response(204, Generic.Empty)
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(404, schema=Generic.HttpError)
     def delete(self, **kwargs: str):
-        """Delete single key."""
+        """Delete a single key."""
         if not db.delete(kwargs["token"]):
             abort(404)

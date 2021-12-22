@@ -74,7 +74,7 @@ class Email(db.Model):
 class User(db.Model):
     __tablename__ = "users"
 
-    id = Column(Integer(11), primary_key=True)
+    id = Column(Integer, primary_key=True)
     username = Column(String(20, "utf8mb4_unicode_ci"), nullable=False, unique=True)
     password = Column(String(128, "utf8mb4_unicode_ci"), nullable=False)
     date_created = Column(DateTime, nullable=False, default=datetime.now)

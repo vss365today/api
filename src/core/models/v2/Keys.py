@@ -6,7 +6,7 @@ __all__ = ["KeyFull", "SingleKey", "KeyToken"]
 
 class SingleKey(Schema):
     desc = fields.String()
-    date_created = fields.DateTime()
+    date_created = fields.DateTime(dump_only=True)
     has_archive = fields.Boolean()
     has_broadcast = fields.Boolean()
     has_host = fields.Boolean()
@@ -17,7 +17,7 @@ class SingleKey(Schema):
 
 
 class KeyToken(Schema):
-    token = fields.UUID()
+    token = fields.String(max=64)
 
 
 class KeyFull(KeyToken, SingleKey):
