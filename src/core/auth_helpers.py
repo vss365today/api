@@ -5,7 +5,7 @@ from flask import abort
 
 from src.core.database import api_key
 from src.core.database.v2 import keys
-from src.core.database.models import ApiKey
+
 
 __all__ = ["authorize_blueprint", "authorize_route", "fake_authorize"]
 
@@ -39,7 +39,7 @@ def authorize_blueprint_v2():
     # Attempt to get the API key and validate it
     try:
         token = get_auth_token()
-        if not ApiKey.exists(token):
+        if not keys.exists(token):
             raise KeyError
     except (KeyError, IndexError):
         abort(403)

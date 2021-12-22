@@ -7,7 +7,7 @@ from sqlalchemy.exc import DataError
 from src.core.database.models import ApiKey, ApiKeyAudit, db
 
 
-__all__ = ["can_access", "create", "delete", "get", "get_all", "update"]
+__all__ = ["can_access", "create", "delete", "exists", "get", "get_all", "update"]
 
 
 def can_access(route: str, token: str) -> bool:
@@ -37,11 +37,16 @@ def create(data: dict) -> dict | Literal[False]:
 
 
 def delete(token: str) -> bool:
-    """Delete an API key."""
+    """Delete a key."""
     if ApiKey.exists(token):
         ApiKey.delete(token)
         return True
     return False
+
+
+def exists(token: str) -> bool:
+    """Determine if a key exists."""
+    return ApiKey.exists(token)
 
 
 def get(token: str) -> ApiKey | None:
