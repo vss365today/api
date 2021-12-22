@@ -8,11 +8,10 @@ from sqlalchemy import (
     DateTime,
     ForeignKey,
     String,
-    text,
     inspect,
 )
-from sqlalchemy.types import Boolean
-from sqlalchemy.dialects.mysql import INTEGER, TINYINT
+from sqlalchemy.types import Boolean, Integer
+from sqlalchemy.dialects.mysql import TINYINT
 from sqlalchemy.orm import relationship
 
 
@@ -69,18 +68,17 @@ class Email(db.Model):
     __tablename__ = "emails"
 
     email = Column(String(150, "utf8mb4_unicode_ci"), primary_key=True, unique=True)
-    date_added = Column(DateTime, server_default=text("current_timestamp()"))
+    date_added = Column(DateTime, default=datetime.now)
 
 
 class User(db.Model):
     __tablename__ = "users"
 
-    id = Column(INTEGER(11), primary_key=True)
+    id = Column(Integer(11), primary_key=True)
     username = Column(String(20, "utf8mb4_unicode_ci"), nullable=False, unique=True)
     password = Column(String(128, "utf8mb4_unicode_ci"), nullable=False)
-    date_created = Column(
-        DateTime, nullable=False, server_default=text("current_timestamp()")
-    )
+    date_created = Column(DateTime, nullable=False, default=datetime.now)
+
     last_signin = Column(DateTime)
 
 
@@ -124,9 +122,7 @@ class Prompt(db.Model):
     media = Column(String(512, "utf8mb4_unicode_ci"))
     media_alt_text = Column(String(1000, "utf8mb4_unicode_ci"))
     date_added = Column(
-        DateTime,
-        nullable=False,
-        server_default=text("current_timestamp() ON UPDATE current_timestamp()"),
+        DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
     )
 
     host = relationship("Host")
