@@ -83,7 +83,9 @@ def _factory(
 # v1 endpoints
 api_key = _factory("api_key", "api-key", authorize_blueprint, new_endpoint="keys")
 archive = _factory("archive", "archive")
-broadcast = _factory("broadcast", "broadcast", authorize_blueprint)
+broadcast = _factory(
+    "broadcast", "broadcast", authorize_blueprint, new_endpoint="broadcast"
+)
 browse = _factory("browse", "browse")
 host = _factory("host", "host")
 prompt = _factory("prompt", "prompt")
@@ -103,7 +105,19 @@ all_blueprints = (
 )
 
 # v2 endpoints
-keys = _api_factory(
-    "keys", "keys", authorize_blueprint_v2, description="Manage API key permissions."
+v2_broadcast = _api_factory(
+    "broadcast",
+    "broadcast",
+    authorize_blueprint_v2,
+    description="Manage email notification broadcasts.",
 )
-v2_blueprints = (keys,)
+keys = _api_factory(
+    "keys",
+    "keys",
+    authorize_blueprint_v2,
+    description="Manage API key permissions.",
+)
+v2_blueprints = (
+    v2_broadcast,
+    keys,
+)
