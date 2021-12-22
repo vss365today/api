@@ -23,7 +23,6 @@ def create(email: str) -> bool:
 
 def delete(email: str) -> bool:
     """Remove an email address."""
-    # TODO Replace exists() with try...catch block
     if exists(email):
         db.session.delete(Email.query.filter_by(email=email).first())
         db.session.commit()

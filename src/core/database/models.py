@@ -49,18 +49,6 @@ class ApiKey(db.Model):
     has_subscription = Column(Boolean, nullable=False, default=False)
 
     @classmethod
-    def delete(cls, token: str) -> None:
-        """Delete an API key."""
-        db.session.delete(cls.query.filter_by(token=token).first())
-        db.session.commit()
-        return None
-
-    @classmethod
-    def exists(cls, token: str) -> bool:
-        """Determine if an API key exists."""
-        return cls.query.filter_by(token=token).first() is not None
-
-    @classmethod
     def as_dict(cls, obj: "ApiKey") -> dict:
         return {c.key: getattr(obj, c.key) for c in inspect(obj).mapper.column_attrs}
 

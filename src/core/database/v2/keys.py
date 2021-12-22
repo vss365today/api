@@ -38,15 +38,16 @@ def create(data: dict) -> dict | Literal[False]:
 
 def delete(token: str) -> bool:
     """Delete a key."""
-    if ApiKey.exists(token):
-        ApiKey.delete(token)
+    if exists(token):
+        db.session.delete(ApiKey.query.filter_by(token=token).first())
+        db.session.commit()
         return True
     return False
 
 
 def exists(token: str) -> bool:
     """Determine if a key exists."""
-    return ApiKey.exists(token)
+    return ApiKey.query.filter_by(token=token).first() is not None
 
 
 def get(token: str) -> ApiKey | None:
