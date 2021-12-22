@@ -25,10 +25,10 @@ Flask-DB = "^0.3.2"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^4.0.0"
-mypy = "^0.910"
+mypy = "^0.920"
 black = "^21.12b0"
 sqlalchemy-stubs = "^0.4"
-types-requests = "^2.26.1"
+types-requests = "^2.26.2"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
