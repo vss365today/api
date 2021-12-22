@@ -2,7 +2,17 @@
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import DDL, Column, Date, DateTime, ForeignKey, String, event, text
+from sqlalchemy import (
+    DDL,
+    Column,
+    Date,
+    DateTime,
+    ForeignKey,
+    String,
+    event,
+    text,
+    inspect,
+)
 from sqlalchemy.types import Boolean
 from sqlalchemy.dialects.mysql import INTEGER, TINYINT
 from sqlalchemy.orm import relationship
@@ -14,7 +24,7 @@ db = SQLAlchemy()
 __all__ = [
     "ALL_TRIGGERS",
     "ApiKey",
-    "ApiKeyAudit",
+    "ApiKeyHistory",
     "Email",
     "Prompt",
     "User",
@@ -34,10 +44,10 @@ class ApiKey(db.Model):
     token = Column(String(64, "utf8mb4_unicode_ci"), nullable=False, unique=True)
     date_created = Column(DateTime, nullable=False, default=datetime.now)
     desc = Column(String(256, "utf8mb4_unicode_ci"))
-    has_keys = Column("has_api_key", Boolean, nullable=False, default=False)
     has_archive = Column(Boolean, nullable=False, default=False)
     has_broadcast = Column(Boolean, nullable=False, default=False)
     has_host = Column(Boolean, nullable=False, default=False)
+    has_keys = Column("has_api_key", Boolean, nullable=False, default=False)
     has_prompt = Column(Boolean, nullable=False, default=False)
     has_settings = Column(Boolean, nullable=False, default=False)
     has_subscription = Column(Boolean, nullable=False, default=False)
@@ -52,6 +62,10 @@ class ApiKey(db.Model):
     def exists(cls, token: str) -> bool:
         """Determine if an API key exists."""
         return cls.query.filter_by(token=token).first() is not None
+
+    @classmethod
+    def as_dict(cls, obj: "ApiKey") -> dict:
+        return {c.key: getattr(obj, c.key) for c in inspect(obj).mapper.column_attrs}
 
 
 class Email(db.Model):
@@ -80,7 +94,7 @@ class Host(db.Model):
     handle = Column(String(20, "utf8mb4_unicode_ci"), nullable=False)
 
 
-class ApiKeyAudit(db.Model):
+class ApiKeyHistory(db.Model):
     __tablename__ = "audit_api_keys"
     __table_args__ = {"comment": "Audit table to track permission changes to API keys."}
 
@@ -88,13 +102,11 @@ class ApiKeyAudit(db.Model):
     key_id = Column(
         ForeignKey("api_keys._id", ondelete="CASCADE"), nullable=False, index=True
     )
-    date_updated = Column(
-        DateTime, nullable=False, server_default=text("current_timestamp()")
-    )
-    has_api_key = Column(Boolean, nullable=False, default=False)
+    date_updated = Column(DateTime, nullable=False, default=datetime.now)
     has_archive = Column(Boolean, nullable=False, default=False)
     has_broadcast = Column(Boolean, nullable=False, default=False)
     has_host = Column(Boolean, nullable=False, default=False)
+    has_keys = Column("has_api_key", Boolean, nullable=False, default=False)
     has_prompt = Column(Boolean, nullable=False, default=False)
     has_settings = Column(Boolean, nullable=False, default=False)
     has_subscription = Column(Boolean, nullable=False, default=False)

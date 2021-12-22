@@ -4,7 +4,7 @@ from typing import Literal
 from flask import current_app
 from sqlalchemy.exc import DataError
 
-from src.core.database.models import ApiKey, ApiKeyAudit, db
+from src.core.database.models import ApiKey, ApiKeyHistory, db
 
 
 __all__ = ["can_access", "create", "delete", "exists", "get", "get_all", "update"]
@@ -61,8 +61,22 @@ def get_all() -> list[ApiKey]:
 
 def update(data: dict) -> None:
     """Update a single key."""
+    # Set up a query to get the current key object but don't fetch it
     token = data.pop("token")
     key = ApiKey.query.filter_by(token=token)
+
+    # Run the query to get the current object and record it
+    # for auditing purposes
+    original_info = ApiKey.as_dict(key.first())
+    original_info["key_id"] = original_info["_id"]
+    del original_info["_id"]
+    del original_info["desc"]
+    del original_info["token"]
+    del original_info["date_created"]
+    db.session.add(ApiKeyHistory(**original_info))
+
+    # Go back to our original object, update it with
+    # the key changes, and save everything
     key.update(data)
     db.session.commit()
     return None
