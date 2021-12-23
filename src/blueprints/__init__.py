@@ -88,7 +88,7 @@ browse = _factory("browse", "browse")
 host = _factory("host", "host")
 prompt = _factory("prompt", "prompt")
 search = _factory("search", "search")
-subscription = _factory("subscription", "subscription")
+subscription = _factory("subscription", "subscription", new_endpoint="emails")
 settings = _factory("settings", "settings", authorize_blueprint)
 all_blueprints = (
     api_key,
@@ -115,6 +115,10 @@ keys = _api_factory(
     authorize_blueprint_v2,
     description="Manage API key permissions.",
 )
-v2_blueprints = (
-    keys,
+emails = _api_factory(
+    "emails",
+    "emails",
+    authorize_blueprint_v2,
+    description="Manage email subscriptions.",
 )
+v2_blueprints = (keys, emails)

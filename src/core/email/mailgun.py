@@ -21,9 +21,8 @@ def mailing_list() -> str:
 
 def create(addr: str) -> requests.Response:
     """Add a subscription email address."""
-    mg_list_addr = mailing_list()
     return requests.post(
-        f"https://api.mailgun.net/v3/lists/{mg_list_addr}/members",
+        f"https://api.mailgun.net/v3/lists/{mailing_list()}/members",
         auth=("api", get_secret("MG_API_KEY")),
         data={"upsert": True, "subscribed": True, "address": addr},
     )
@@ -31,9 +30,8 @@ def create(addr: str) -> requests.Response:
 
 def delete(addr: str) -> requests.Response:
     """Remove a subscription email address."""
-    mg_list_addr = mailing_list()
     return requests.delete(
-        f"https://api.mailgun.net/v3/lists/{mg_list_addr}/members/{addr}",
+        f"https://api.mailgun.net/v3/lists/{mailing_list()}/members/{addr}",
         auth=("api", get_secret("MG_API_KEY")),
     )
 
