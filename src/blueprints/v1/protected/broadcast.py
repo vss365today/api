@@ -42,7 +42,7 @@ def post(args: dict):
     # when it comes to sending out a large amount of email messages
     # https://documentation.mailgun.com/en/latest/api-mailinglists.html#examples
     r = email.make_and_send(
-        mailgun.mailing_list_addr_get(),
+        mailgun.mailing_list(),
         helpers.format_datetime_pretty(prompt.date),
         "email",
         **prompt,

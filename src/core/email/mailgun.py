@@ -1,28 +1,27 @@
-from flask import current_app
 import requests
 
-from src.configuration import get_secret
+from src.configuration import get_config, get_secret
 
 
 __all__ = [
-    "mailing_list_addr_get",
-    "subscription_email_create",
-    "subscription_email_delete",
-    "validate_email_address",
+    "mailing_list",
+    "create",
+    "delete",
+    "validate",
 ]
 
 
-def mailing_list_addr_get() -> str:
+def mailing_list() -> str:
     """Construct the Mailgun mailing list address."""
     # Construct the mailing list address. It is written this way
     # because the development and production lists are different
     # and we need to use the proper one depending on the env
-    return f'{current_app.config["MG_MAILING_LIST_ADDR"]}@{get_secret("MG_DOMAIN")}'
+    return f'{get_config("MG_MAILING_LIST_ADDR")}@{get_secret("MG_DOMAIN")}'
 
 
-def subscription_email_create(addr: str) -> requests.Response:
+def create(addr: str) -> requests.Response:
     """Add a subscription email address."""
-    mg_list_addr = mailing_list_addr_get()
+    mg_list_addr = mailing_list()
     return requests.post(
         f"https://api.mailgun.net/v3/lists/{mg_list_addr}/members",
         auth=("api", get_secret("MG_API_KEY")),
@@ -30,19 +29,19 @@ def subscription_email_create(addr: str) -> requests.Response:
     )
 
 
-def subscription_email_delete(addr: str) -> requests.Response:
+def delete(addr: str) -> requests.Response:
     """Remove a subscription email address."""
-    mg_list_addr = mailing_list_addr_get()
+    mg_list_addr = mailing_list()
     return requests.delete(
         f"https://api.mailgun.net/v3/lists/{mg_list_addr}/members/{addr}",
         auth=("api", get_secret("MG_API_KEY")),
     )
 
 
-def validate_email_address(addr: str) -> bool:
+def validate(addr: str) -> bool:
     """Validate an email address using the Mailgun Email Validation API."""
     # Assume the address is valid if we can't send out emails
-    if not current_app.config["ENABLE_EMAIL_SENDING"]:
+    if not get_config("ENABLE_EMAIL_SENDING"):
         return True
 
     r = requests.get(

@@ -24,7 +24,7 @@ def post(args: dict):
     # unless we are running in production
     if current_app.config["ENV"] == "production":
         # Validate the address to decide if we should record it
-        if not mailgun.validate_email_address(args["email"]):
+        if not mailgun.validate(args["email"]):
             return error
 
     # Add the address to the local database
@@ -35,7 +35,7 @@ def post(args: dict):
         return error
 
     # Add the address to the Mailgun mailing list
-    mg_result = mailgun.subscription_email_create(args["email"])
+    mg_result = mailgun.create(args["email"])
 
     # The address was successfully recorded
     if mg_result.status_code == codes.ok:
@@ -52,6 +52,6 @@ def delete(args: dict):
     """Remove an email from the mailing list."""
     # Only attempt to remove an address if email sending is enabled
     if current_app.config["ENABLE_EMAIL_SENDING"]:
-        mailgun.subscription_email_delete(args["email"])
+        mailgun.delete(args["email"])
         database.subscription.email_delete(args["email"])
     return helpers.make_response(204)
