@@ -27,6 +27,7 @@ def create(data: dict) -> dict | Literal[False]:
         key = ApiKey(token=new_token, **data)
         db.session.add(key)
         db.session.commit()
+        current_app.logger.debug("New API key created.")
         return {"token": new_token}
 
     # We hit some DB error
@@ -41,7 +42,10 @@ def delete(token: str) -> bool:
     if exists(token):
         db.session.delete(ApiKey.query.filter_by(token=token).first())
         db.session.commit()
+        current_app.logger.debug("API key deleted.")
         return True
+
+    current_app.logger.error("API key unable to be deleted.")
     return False
 
 
@@ -75,9 +79,15 @@ def update(data: dict) -> None:
     del original_info["token"]
     del original_info["date_created"]
     db.session.add(ApiKeyHistory(**original_info))
+    current_app.logger.debug(
+        f"API key {original_info['_id']} former permissions archived."
+    )
 
     # Go back to our original object, update it with
     # the key changes, and save everything
     key.update(data)
     db.session.commit()
+    current_app.logger.debug(
+        f"API key {original_info['_id']} new permissions recorded."
+    )
     return None

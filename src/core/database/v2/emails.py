@@ -12,6 +12,7 @@ def create(email: str) -> bool:
     try:
         db.session.add(Email(email=email))
         db.session.commit()
+        current_app.logger.debug("New email added to subscription list.")
         return True
 
     # We hit some DB error
@@ -26,7 +27,10 @@ def delete(email: str) -> bool:
     if exists(email):
         db.session.delete(Email.query.filter_by(email=email).first())
         db.session.commit()
+        current_app.logger.debug("Email removed from subscription list.")
         return True
+
+    current_app.logger.error("Email unable to be removed from subscription list.")
     return False
 
 
