@@ -15,6 +15,7 @@ def _api_factory(
     partial_module_string: str,
     url_prefix: str,
     auth_function: Callable | None = None,
+    *,
     description: str = "",
 ) -> APIBlueprint:
     """Register a flask_smorest blueprint."""
@@ -40,6 +41,7 @@ def _api_factory(
     # if one was given
     if auth_function is not None:
         blueprint.before_request(auth_function)
+        blueprint.description += "\n\nNOTE: This is a protected endpoint."
     return blueprint
 
 
@@ -118,7 +120,6 @@ keys = _api_factory(
 emails = _api_factory(
     "emails",
     "emails",
-    authorize_blueprint_v2,
     description="Manage email subscriptions.",
 )
 v2_blueprints = (keys, emails)

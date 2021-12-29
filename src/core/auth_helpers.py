@@ -8,7 +8,9 @@ from src.core.database.v2 import keys
 
 __all__ = [
     "authorize_blueprint",
+    "authorize_blueprint_v2",
     "authorize_route",
+    "authorize_route_v2",
     "fake_authorize",
     "send_deprecation_warning",
 ]
@@ -64,6 +66,21 @@ def authorize_route(func):
     @functools.wraps(func)
     def wrap(*args, **kwargs):
         authorize_blueprint()
+        return func(*args, **kwargs)
+
+    return wrap
+
+
+def authorize_route_v2(func):
+    """Protect a single route.
+
+    This decorator is useful when a single endpoint
+    needs to be protected but not the entire blueprint.
+    """
+
+    @functools.wraps(func)
+    def wrap(*args, **kwargs):
+        authorize_blueprint_v2()
         return func(*args, **kwargs)
 
     return wrap
