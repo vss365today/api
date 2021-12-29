@@ -103,11 +103,11 @@ all_blueprints = (
 )
 
 # v2 endpoints
-v2_broadcast = _api_factory(
-    "broadcast",
-    "broadcast",
+notifications = _api_factory(
+    "notifications",
+    "notifications",
     authorize_blueprint_v2,
-    description="Manage email notification broadcasts.",
+    description="Manage email notifications.",
 )
 keys = _api_factory(
     "keys",

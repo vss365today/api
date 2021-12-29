@@ -1,9 +1,9 @@
 from marshmallow import Schema, fields
 
 
-__all__ = ["BroadcastDate"]
+__all__ = ["NotificationDate"]
 
 
-class BroadcastDate(Schema):
+class NotificationDate(Schema):
     date = fields.Date(required=True)
     which = fields.Integer(missing=-1)
