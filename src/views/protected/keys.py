@@ -3,8 +3,7 @@ from flask_smorest import abort
 
 from src.blueprints import keys
 from src.core.database.v2 import keys as db
-from src.core.models.v2 import Generic
-from src.core.models.v2 import Keys as models
+from src.core.models.v2 import Generic, Keys as models
 
 
 @keys.route("/")

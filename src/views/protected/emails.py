@@ -6,18 +6,23 @@ from src.blueprints import emails
 from src.configuration import get_config
 from src.core.database.v2 import emails as db
 from src.core.email import mailgun
-from src.core.models.v2 import Email as models
-from src.core.models.v2 import Generic
+from src.core.models.v2 import Generic, Email as models
 
 
 @emails.route("/")
 class Email(MethodView):
-    @emails.arguments(models.EmailAddress, location="query", as_kwargs=True)
-    @emails.response(200, Generic.Empty)
+    @emails.response(200, models.AllAddresses(many=True))
+    @emails.alt_response(403, schema=Generic.HttpError)
+    def get(self):
+        """List all email address in the mailing list."""
+        return db.get_all()
+
+    @emails.arguments(models.EmailAddress, as_kwargs=True)
+    @emails.response(201, Generic.Empty)
     @emails.alt_response(403, schema=Generic.HttpError)
     @emails.alt_response(422, schema=Generic.HttpError)
     def post(self, **kwargs: str):
-        """Add an email address to the subscription list.
+        """Add an email address to the mailing list.
 
         If an email sending is disabled or an email has aleady been added,
         a successful response will be given without attempting to record
@@ -44,12 +49,12 @@ class Email(MethodView):
         if mg_result.status_code != codes.ok:
             abort(422)
 
-    @emails.arguments(models.EmailAddress, location="query", as_kwargs=True)
+    @emails.arguments(models.EmailAddress, as_kwargs=True)
     @emails.response(204, Generic.Empty)
     @emails.alt_response(403, schema=Generic.HttpError)
     @emails.alt_response(422, schema=Generic.HttpError)
     def delete(self, **kwargs: str):
-        """Remove an email address from the subscription list.
+        """Remove an email address from the mailing list.
 
         If an email sending is disabled or an email has aleady been removed,
         a successful response will be given without attempting to remove

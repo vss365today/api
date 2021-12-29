@@ -1,7 +1,12 @@
 from marshmallow import Schema, fields
 
 
-__all__ = ["EmailAddress"]
+__all__ = ["AllAddresses", "EmailAddress"]
+
+
+class AllAddresses(Schema):
+    email = fields.Email()
+    date_added = fields.DateTime()
 
 
 class EmailAddress(Schema):
