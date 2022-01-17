@@ -173,11 +173,11 @@ SQLAlchemy-Utils = "*"
 
 [[package]]
 name = "flask-smorest"
-version = "0.35.0"
+version = "0.36.0"
 description = "Flask/Marshmallow-based REST API framework"
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.7"
 
 [package.dependencies]
 apispec = {version = ">=5.1.0,<6", extras = ["marshmallow"]}
@@ -187,9 +187,9 @@ webargs = ">=8.0.0,<9"
 werkzeug = ">=2.0,<3"
 
 [package.extras]
-dev = ["pytest (==6.2.5)", "pytest-cov (==3.0.0)", "coverage (==6.0.0)", "werkzeug (==2.0.2)", "flask (==2.0.2)", "marshmallow (==3.13.0)", "webargs (==8.0.1)", "apispec (==5.1.1)", "flake8 (==3.9.2)", "flake8-bugbear (==21.9.2)", "pre-commit (==2.15.0)"]
-lint = ["flake8 (==3.9.2)", "flake8-bugbear (==21.9.2)", "pre-commit (==2.15.0)"]
-tests = ["pytest (==6.2.5)", "pytest-cov (==3.0.0)", "coverage (==6.0.0)", "werkzeug (==2.0.2)", "flask (==2.0.2)", "marshmallow (==3.13.0)", "webargs (==8.0.1)", "apispec (==5.1.1)"]
+dev = ["pytest (==6.2.5)", "pytest-cov (==3.0.0)", "coverage (==6.2)", "werkzeug (==2.0.2)", "flask (==2.0.2)", "marshmallow (==3.14.1)", "webargs (==8.1.0)", "apispec (==5.1.1)", "flake8 (==4.0.1)", "flake8-bugbear (==22.1.11)", "pre-commit (==2.16.0)"]
+lint = ["flake8 (==4.0.1)", "flake8-bugbear (==22.1.11)", "pre-commit (==2.16.0)"]
+tests = ["pytest (==6.2.5)", "pytest-cov (==3.0.0)", "coverage (==6.2)", "werkzeug (==2.0.2)", "flask (==2.0.2)", "marshmallow (==3.14.1)", "webargs (==8.1.0)", "apispec (==5.1.1)"]
 
 [[package]]
 name = "flask-sqlalchemy"
@@ -662,7 +662,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "76ac596d22dca20bae7540c848d2ae4267ec5b6a26bd3ce987e52d7265bc93aa"
+content-hash = "6e0fe2fbf9832c7772065cd8781a13931d690c9983686a623ed3ea25a416b132"
 
 [metadata.files]
 alembic = [
@@ -716,8 +716,8 @@ flask-db = [
     {file = "Flask-DB-0.3.2.tar.gz", hash = "sha256:bf2c9e161fb415129c1ef251852ba26f84a7a53601ec100609d82a231e34fd12"},
 ]
 flask-smorest = [
-    {file = "flask-smorest-0.35.0.tar.gz", hash = "sha256:b08b20fb15e505f4f032a82dd0d5471e431d1b8da9ae16e4a0099bb70d753c47"},
-    {file = "flask_smorest-0.35.0-py3-none-any.whl", hash = "sha256:d97e114b972a0afae6a6c7883069c753c425ae1d8bb4c548028536465b1d1e19"},
+    {file = "flask-smorest-0.36.0.tar.gz", hash = "sha256:f57ecc1d7a4a9a0d671db980c7a20b169f299e67ca772fe13ecd7a75e88447c4"},
+    {file = "flask_smorest-0.36.0-py3-none-any.whl", hash = "sha256:3ef232cd65d0b2aeae0edbaa32289009d24e19450a4b74a5dde573015e0826d9"},
 ]
 flask-sqlalchemy = [
     {file = "Flask-SQLAlchemy-2.5.1.tar.gz", hash = "sha256:2bda44b43e7cacb15d4e05ff3cc1f8bc97936cc464623424102bfc2c35e95912"},
