@@ -32,7 +32,7 @@ def create_app():
     app.config["SECRET_KEY"] = sys_vars.get("SECRET_KEY_API")
 
     # Load any extensions
-    CORS().init_app(app)
+    CORS(app)
     # api = Api(app)
 
     # Create a database connection
@@ -65,6 +65,7 @@ def create_app():
     #     import_module(bp.import_name)
     #     api.register_blueprint(bp)
 
+    # TODO Remove this with v1 removal
     @app.errorhandler(HTTPException)
     def handle_http_exception(e):
         """Return JSON instead of HTML for API errors.
