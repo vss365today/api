@@ -61,9 +61,10 @@ def create_app():
         app.register_blueprint(bp)
 
     # Register the v2 endpoints
+    # TODO Change the name back to import_name after v1 is gone
     # for bp in v2_blueprints:
     #     import_module(bp.import_name)
-    #     api.register_blueprint(bp)
+    #     api.register_blueprint(bp, name=f"v2.{bp.import_name}")
 
     # TODO Remove this with v1 removal
     @app.errorhandler(HTTPException)
