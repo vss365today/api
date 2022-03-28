@@ -28,7 +28,7 @@ flake8 = "^4.0.0"
 mypy = "^0.942"
 black = "^22.1"
 sqlalchemy-stubs = "^0.4"
-types-requests = "^2.27.14"
+types-requests = "^2.27.15"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
