@@ -51,6 +51,7 @@ def put():
         return latest_archive
 
     # Delete the old archive
+    # TODO Why is this a secret in prod but a appConfig otherwise?
     save_dir = Path(get_secret("DOWNLOADS_DIR")).resolve()
     (save_dir / latest_archive["file"]).unlink(missing_ok=True)
 
