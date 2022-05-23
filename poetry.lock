@@ -15,7 +15,7 @@ tz = ["python-dateutil"]
 
 [[package]]
 name = "apispec"
-version = "5.2.1"
+version = "5.2.2"
 description = "A pluggable API specification generator. Currently supports the OpenAPI Specification (f.k.a. the Swagger specification)."
 category = "main"
 optional = false
@@ -588,7 +588,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "tweepy"
-version = "4.9.0"
+version = "4.10.0"
 description = "Twitter library for Python"
 category = "main"
 optional = false
@@ -600,7 +600,7 @@ requests = ">=2.27.0,<3"
 requests-oauthlib = ">=1.2.0,<2"
 
 [package.extras]
-async = ["aiohttp (>=3.7.3,<4)"]
+async = ["aiohttp (>=3.7.3,<4)", "async-lru (>=1.0.3,<2)"]
 dev = ["coverage (>=4.4.2)", "coveralls (>=2.1.0)", "tox (>=3.21.0)"]
 socks = ["requests[socks] (>=2.27.0,<3)"]
 test = ["vcrpy (>=1.10.3)"]
@@ -686,7 +686,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "4bfc483b0458d852b375b3bd0f0bfd1b1e4808b171979de1fd48e57b9997926f"
+content-hash = "72b293e8526f87feeac3dcc32a7fe49b41b09ce7f46c4d155f5c421fa26705cd"
 
 [metadata.files]
 alembic = [
@@ -694,8 +694,8 @@ alembic = [
     {file = "alembic-1.7.7.tar.gz", hash = "sha256:4961248173ead7ce8a21efb3de378f13b8398e6630fab0eb258dc74a8af24c58"},
 ]
 apispec = [
-    {file = "apispec-5.2.1-py3-none-any.whl", hash = "sha256:b6bd81e8b80d025608c375897ed7f84c2d2e9cef459e58d0991fe8cf8fb23fb4"},
-    {file = "apispec-5.2.1.tar.gz", hash = "sha256:cf754c439a56df12f0149fc5690a422774e9ac3395fb6798882c17fbc3a29d2d"},
+    {file = "apispec-5.2.2-py3-none-any.whl", hash = "sha256:f5f0d6b452c3e4a0e0922dce8815fac89dc4dbc758acef21fb9e01584d6602a5"},
+    {file = "apispec-5.2.2.tar.gz", hash = "sha256:6ea6542e1ebffe9fd95ba01ef3f51351eac6c200a974562c7473059b9cd20aa7"},
 ]
 black = [
     {file = "black-22.3.0-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:2497f9c2386572e28921fa8bec7be3e51de6801f7459dffd6e62492531c47e09"},
@@ -769,6 +769,7 @@ flask-sqlalchemy = [
     {file = "Flask_SQLAlchemy-2.5.1-py2.py3-none-any.whl", hash = "sha256:f12c3d4cc5cc7fdcc148b9527ea05671718c3ea45d50c7e732cceb33f574b390"},
 ]
 gunicorn = [
+    {file = "gunicorn-20.1.0-py3-none-any.whl", hash = "sha256:9dcc4547dbb1cb284accfb15ab5667a0e5d1881cc443e0677b4882a4067a807e"},
     {file = "gunicorn-20.1.0.tar.gz", hash = "sha256:e0a968b5ba15f8a328fdfd7ab1fcb5af4470c28aaf7e55df02a99bc13138e6e8"},
 ]
 idna = [
@@ -982,8 +983,8 @@ tomli = [
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
 tweepy = [
-    {file = "tweepy-4.9.0-py3-none-any.whl", hash = "sha256:4c6b99b6cf97d6e254a6972442074ad22f08eaf567febb9175195af287a296e2"},
-    {file = "tweepy-4.9.0.tar.gz", hash = "sha256:15408504a3800f64780a2775a5dcf54328f7d6777ba8d246e2eefe6436648a32"},
+    {file = "tweepy-4.10.0-py3-none-any.whl", hash = "sha256:f0abbd234a588e572f880f99a094ac321217ff3eade6c0eca118ed6db8e2cf0a"},
+    {file = "tweepy-4.10.0.tar.gz", hash = "sha256:7f92574920c2f233663fff154745fc2bb0d10aedc23617379a912d8e4fefa399"},
 ]
 types-requests = [
     {file = "types-requests-2.27.25.tar.gz", hash = "sha256:805ae7e38fd9d157153066dc4381cf585fd34dfa212f2fc1fece248c05aac571"},
