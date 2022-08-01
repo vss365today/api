@@ -24,7 +24,7 @@ PyMySQL = "^1.0.2"
 Flask-DB = "^0.3.2"
 
 [tool.poetry.dev-dependencies]
-flake8 = "^4.0.0"
+flake8 = "^5.0.1"
 mypy = "^0.971"
 black = "^22.6"
 sqlalchemy-stubs = "^0.4"
