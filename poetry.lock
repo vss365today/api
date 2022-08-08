@@ -110,7 +110,7 @@ python-versions = ">=3.6"
 
 [[package]]
 name = "flake8"
-version = "5.0.2"
+version = "5.0.4"
 description = "the modular source code checker: pep8 pyflakes and co"
 category = "dev"
 optional = false
@@ -686,7 +686,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "a9ee5762ba1b3edd94abbdcb7c0c5a859ab7f92bdb7fbb8ca692a1a6c07fea24"
+content-hash = "ef3d735a012a8a19aaf6217e0723f70c7afdc9477bc609bdd202706d17ef381a"
 
 [metadata.files]
 alembic = [
@@ -746,8 +746,8 @@ et-xmlfile = [
     {file = "et_xmlfile-1.1.0.tar.gz", hash = "sha256:8eb9e2bc2f8c97e37a2dc85a09ecdcdec9d8a396530a6d5a33b30b9a92da0c5c"},
 ]
 flake8 = [
-    {file = "flake8-5.0.2-py2.py3-none-any.whl", hash = "sha256:a7926e0b6d23c0991245b60279e774d2596dfecd9b158525d1f8c050a61eae5a"},
-    {file = "flake8-5.0.2.tar.gz", hash = "sha256:9cc32bc0c5d16eacc014c7ec6f0e9565fd81df66c2092c3c9df06e3c1ac95e5d"},
+    {file = "flake8-5.0.4-py2.py3-none-any.whl", hash = "sha256:7a1cf6b73744f5806ab95e526f6f0d8c01c66d7bbe349562d22dfca20610b248"},
+    {file = "flake8-5.0.4.tar.gz", hash = "sha256:6fbe320aad8d6b95cec8b8e47bc933004678dc63095be98528b7bdd2a9f510db"},
 ]
 flask = [
     {file = "Flask-2.1.3-py3-none-any.whl", hash = "sha256:9013281a7402ad527f8fd56375164f3aa021ecfaff89bfe3825346c24f87e04c"},
