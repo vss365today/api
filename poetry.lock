@@ -25,13 +25,13 @@ python-versions = ">=3.7"
 marshmallow = {version = ">=3.13.0", optional = true, markers = "extra == \"marshmallow\""}
 
 [package.extras]
-yaml = ["PyYAML (>=3.10)"]
-validation = ["prance[osv] (>=0.11)"]
-tests = ["mock", "pytest", "marshmallow (>=3.13.0)", "prance[osv] (>=0.11)", "PyYAML (>=3.10)"]
+dev = ["PyYAML (>=3.10)", "flake8 (==4.0.1)", "flake8-bugbear (==22.4.25)", "marshmallow (>=3.13.0)", "mock", "mypy (==0.950)", "prance[osv] (>=0.11)", "pre-commit (>=2.4,<3.0)", "pytest", "tox", "types-pyyaml"]
+docs = ["marshmallow (>=3.13.0)", "pyyaml (==6.0)", "sphinx (==4.5.0)", "sphinx-issues (==3.0.1)", "sphinx-rtd-theme (==1.0.0)"]
+lint = ["flake8 (==4.0.1)", "flake8-bugbear (==22.4.25)", "mypy (==0.950)", "pre-commit (>=2.4,<3.0)", "types-pyyaml"]
 marshmallow = ["marshmallow (>=3.13.0)"]
-lint = ["types-pyyaml", "mypy (==0.950)", "pre-commit (>=2.4,<3.0)", "flake8-bugbear (==22.4.25)", "flake8 (==4.0.1)"]
-docs = ["sphinx-rtd-theme (==1.0.0)", "sphinx-issues (==3.0.1)", "sphinx (==4.5.0)", "pyyaml (==6.0)", "marshmallow (>=3.13.0)"]
-dev = ["tox", "types-pyyaml", "mypy (==0.950)", "pre-commit (>=2.4,<3.0)", "flake8-bugbear (==22.4.25)", "flake8 (==4.0.1)", "mock", "pytest", "marshmallow (>=3.13.0)", "prance[osv] (>=0.11)", "PyYAML (>=3.10)"]
+tests = ["PyYAML (>=3.10)", "marshmallow (>=3.13.0)", "mock", "prance[osv] (>=0.11)", "pytest"]
+validation = ["prance[osv] (>=0.11)"]
+yaml = ["PyYAML (>=3.10)"]
 
 [[package]]
 name = "black"
@@ -182,9 +182,9 @@ webargs = ">=8.0.0,<9"
 werkzeug = ">=2.0,<3"
 
 [package.extras]
-tests = ["PyYAML (==6.0)", "apispec (==5.2.2)", "webargs (==8.1.0)", "marshmallow (==3.16.0)", "flask (==2.1.2)", "werkzeug (==2.1.2)", "coverage (==6.4.1)", "pytest-cov (==3.0.0)", "pytest (==7.1.2)"]
-lint = ["pre-commit (==2.19.0)", "flake8-bugbear (==22.4.25)", "flake8 (==4.0.1)"]
-dev = ["pre-commit (==2.19.0)", "flake8-bugbear (==22.4.25)", "flake8 (==4.0.1)", "PyYAML (==6.0)", "apispec (==5.2.2)", "webargs (==8.1.0)", "marshmallow (==3.16.0)", "flask (==2.1.2)", "werkzeug (==2.1.2)", "coverage (==6.4.1)", "pytest-cov (==3.0.0)", "pytest (==7.1.2)"]
+dev = ["PyYAML (==6.0)", "apispec (==5.2.2)", "coverage (==6.4.1)", "flake8 (==4.0.1)", "flake8-bugbear (==22.4.25)", "flask (==2.1.2)", "marshmallow (==3.16.0)", "pre-commit (==2.19.0)", "pytest (==7.1.2)", "pytest-cov (==3.0.0)", "webargs (==8.1.0)", "werkzeug (==2.1.2)"]
+lint = ["flake8 (==4.0.1)", "flake8-bugbear (==22.4.25)", "pre-commit (==2.19.0)"]
+tests = ["PyYAML (==6.0)", "apispec (==5.2.2)", "coverage (==6.4.1)", "flask (==2.1.2)", "marshmallow (==3.16.0)", "pytest (==7.1.2)", "pytest-cov (==3.0.0)", "webargs (==8.1.0)", "werkzeug (==2.1.2)"]
 
 [[package]]
 name = "flask-sqlalchemy"
@@ -286,9 +286,9 @@ python-versions = ">=3.7"
 packaging = ">=17.0"
 
 [package.extras]
-dev = ["pytest", "pytz", "simplejson", "mypy (==0.961)", "flake8 (==4.0.1)", "flake8-bugbear (==22.6.22)", "pre-commit (>=2.4,<3.0)", "tox"]
-docs = ["sphinx (==4.5.0)", "sphinx-issues (==3.0.1)", "alabaster (==0.7.12)", "sphinx-version-warning (==1.1.2)", "autodocsumm (==0.2.8)"]
-lint = ["mypy (==0.961)", "flake8 (==4.0.1)", "flake8-bugbear (==22.6.22)", "pre-commit (>=2.4,<3.0)"]
+dev = ["flake8 (==4.0.1)", "flake8-bugbear (==22.6.22)", "mypy (==0.961)", "pre-commit (>=2.4,<3.0)", "pytest", "pytz", "simplejson", "tox"]
+docs = ["alabaster (==0.7.12)", "autodocsumm (==0.2.8)", "sphinx (==4.5.0)", "sphinx-issues (==3.0.1)", "sphinx-version-warning (==1.1.2)"]
+lint = ["flake8 (==4.0.1)", "flake8-bugbear (==22.6.22)", "mypy (==0.961)", "pre-commit (>=2.4,<3.0)"]
 tests = ["pytest", "pytz", "simplejson"]
 
 [[package]]
@@ -313,9 +313,9 @@ tomli = {version = ">=1.1.0", markers = "python_version < \"3.11\""}
 typing-extensions = ">=3.10"
 
 [package.extras]
-reports = ["lxml"]
-python2 = ["typed-ast (>=1.4.0,<2)"]
 dmypy = ["psutil (>=4.0)"]
+python2 = ["typed-ast (>=1.4.0,<2)"]
+reports = ["lxml"]
 
 [[package]]
 name = "mypy-extensions"
@@ -334,9 +334,9 @@ optional = false
 python-versions = ">=3.6"
 
 [package.extras]
-signedtoken = ["pyjwt (>=2.0.0,<3)", "cryptography (>=3.0.0)"]
-signals = ["blinker (>=1.4.0)"]
 rsa = ["cryptography (>=3.0.0)"]
+signals = ["blinker (>=1.4.0)"]
+signedtoken = ["cryptography (>=3.0.0)", "pyjwt (>=2.0.0,<3)"]
 
 [[package]]
 name = "openpyxl"
@@ -378,8 +378,8 @@ optional = false
 python-versions = ">=3.7"
 
 [package.extras]
-test = ["pytest (>=6)", "pytest-mock (>=3.6)", "pytest-cov (>=2.7)", "appdirs (==1.4.4)"]
-docs = ["sphinx (>=4)", "sphinx-autodoc-typehints (>=1.12)", "proselint (>=0.10.2)", "furo (>=2021.7.5b38)"]
+docs = ["furo (>=2021.7.5b38)", "proselint (>=0.10.2)", "sphinx (>=4)", "sphinx-autodoc-typehints (>=1.12)"]
+test = ["appdirs (==1.4.4)", "pytest (>=6)", "pytest-cov (>=2.7)", "pytest-mock (>=3.6)"]
 
 [[package]]
 name = "pycodestyle"
@@ -406,8 +406,8 @@ optional = false
 python-versions = ">=3.6"
 
 [package.extras]
-rsa = ["cryptography"]
 ed25519 = ["PyNaCl (>=1.4.0)"]
+rsa = ["cryptography"]
 
 [[package]]
 name = "pyparsing"
@@ -448,7 +448,7 @@ tablib = ">=0.11.4"
 [package.extras]
 pandas = ["tablib"]
 pg = ["psycopg2"]
-redshift = ["sqlalchemy-redshift", "psycopg2"]
+redshift = ["psycopg2", "sqlalchemy-redshift"]
 
 [[package]]
 name = "requests"
@@ -465,8 +465,8 @@ idna = ">=2.5,<4"
 urllib3 = ">=1.21.1,<1.27"
 
 [package.extras]
-use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 socks = ["PySocks (>=1.5.6,!=1.5.7)"]
+use_chardet_on_py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
 name = "requests-oauthlib"
@@ -509,7 +509,7 @@ postgresql = ["psycopg2"]
 postgresql_pg8000 = ["pg8000 (<1.16.6)"]
 postgresql_psycopg2binary = ["psycopg2-binary"]
 postgresql_psycopg2cffi = ["psycopg2cffi"]
-pymysql = ["pymysql (<1)", "pymysql"]
+pymysql = ["pymysql", "pymysql (<1)"]
 
 [[package]]
 name = "sqlalchemy-stubs"
@@ -543,8 +543,8 @@ intervals = ["intervals (>=0.7.1)"]
 password = ["passlib (>=1.6,<2.0)"]
 pendulum = ["pendulum (>=2.0.5)"]
 phone = ["phonenumbers (>=5.9.2)"]
-test = ["pytest (>=2.7.1)", "Pygments (>=1.2)", "Jinja2 (>=2.3)", "docutils (>=0.10)", "flexmock (>=0.9.7)", "psycopg2 (>=2.5.1)", "psycopg2cffi (>=2.8.1)", "pg8000 (>=1.12.4)", "pytz (>=2014.2)", "python-dateutil (>=2.6)", "pymysql", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pyodbc", "backports.zoneinfo"]
-test_all = ["Babel (>=1.3)", "Jinja2 (>=2.3)", "Pygments (>=1.2)", "arrow (>=0.3.4)", "colour (>=0.0.4)", "cryptography (>=0.6)", "docutils (>=0.10)", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "furl (>=0.4.1)", "intervals (>=0.7.1)", "isort (>=4.2.2)", "passlib (>=1.6,<2.0)", "pendulum (>=2.0.5)", "pg8000 (>=1.12.4)", "phonenumbers (>=5.9.2)", "psycopg2 (>=2.5.1)", "psycopg2cffi (>=2.8.1)", "pymysql", "pyodbc", "pytest (>=2.7.1)", "python-dateutil", "python-dateutil (>=2.6)", "pytz (>=2014.2)", "backports.zoneinfo"]
+test = ["Jinja2 (>=2.3)", "Pygments (>=1.2)", "backports.zoneinfo", "docutils (>=0.10)", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "isort (>=4.2.2)", "pg8000 (>=1.12.4)", "psycopg2 (>=2.5.1)", "psycopg2cffi (>=2.8.1)", "pymysql", "pyodbc", "pytest (>=2.7.1)", "python-dateutil (>=2.6)", "pytz (>=2014.2)"]
+test_all = ["Babel (>=1.3)", "Jinja2 (>=2.3)", "Pygments (>=1.2)", "arrow (>=0.3.4)", "backports.zoneinfo", "colour (>=0.0.4)", "cryptography (>=0.6)", "docutils (>=0.10)", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "furl (>=0.4.1)", "intervals (>=0.7.1)", "isort (>=4.2.2)", "passlib (>=1.6,<2.0)", "pendulum (>=2.0.5)", "pg8000 (>=1.12.4)", "phonenumbers (>=5.9.2)", "psycopg2 (>=2.5.1)", "psycopg2cffi (>=2.8.1)", "pymysql", "pyodbc", "pytest (>=2.7.1)", "python-dateutil", "python-dateutil (>=2.6)", "pytz (>=2014.2)"]
 timezone = ["python-dateutil"]
 url = ["furl (>=0.4.1)"]
 
@@ -568,14 +568,14 @@ optional = false
 python-versions = ">=3.7"
 
 [package.extras]
-yaml = ["pyyaml"]
-xlsx = ["openpyxl (>=2.6.0)"]
-xls = ["xlwt", "xlrd"]
-pandas = ["pandas"]
-ods = ["odfpy"]
-html = ["markuppy"]
+all = ["markuppy", "odfpy", "openpyxl (>=2.6.0)", "pandas", "pyyaml", "tabulate", "xlrd", "xlwt"]
 cli = ["tabulate"]
-all = ["xlwt", "xlrd", "tabulate", "pyyaml", "pandas", "openpyxl (>=2.6.0)", "odfpy", "markuppy"]
+html = ["markuppy"]
+ods = ["odfpy"]
+pandas = ["pandas"]
+xls = ["xlrd", "xlwt"]
+xlsx = ["openpyxl (>=2.6.0)"]
+yaml = ["pyyaml"]
 
 [[package]]
 name = "tomli"
@@ -587,7 +587,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "tweepy"
-version = "4.10.0"
+version = "4.10.1"
 description = "Twitter library for Python"
 category = "main"
 optional = false
@@ -599,10 +599,10 @@ requests = ">=2.27.0,<3"
 requests-oauthlib = ">=1.2.0,<2"
 
 [package.extras]
-test = ["vcrpy (>=1.10.3)"]
+async = ["aiohttp (>=3.7.3,<4)", "async-lru (>=1.0.3,<2)"]
+dev = ["coverage (>=4.4.2)", "coveralls (>=2.1.0)", "tox (>=3.21.0)"]
 socks = ["requests[socks] (>=2.27.0,<3)"]
-dev = ["tox (>=3.21.0)", "coveralls (>=2.1.0)", "coverage (>=4.4.2)"]
-async = ["async-lru (>=1.0.3,<2)", "aiohttp (>=3.7.3,<4)"]
+test = ["vcrpy (>=1.10.3)"]
 
 [[package]]
 name = "types-requests"
@@ -640,9 +640,9 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, <4"
 
 [package.extras]
+brotli = ["brotli (>=1.0.9)", "brotlicffi (>=0.8.0)", "brotlipy (>=0.6.0)"]
+secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress", "pyOpenSSL (>=0.14)"]
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
-secure = ["ipaddress", "certifi", "idna (>=2.0.0)", "cryptography (>=1.3.4)", "pyOpenSSL (>=0.14)"]
-brotli = ["brotlipy (>=0.6.0)", "brotli (>=1.0.9)", "brotlicffi (>=0.8.0)"]
 
 [[package]]
 name = "webargs"
@@ -657,11 +657,11 @@ marshmallow = ">=3.0.0"
 packaging = "*"
 
 [package.extras]
-dev = ["pytest", "pytest-asyncio", "webtest (==3.0.0)", "webtest-aiohttp (==2.0.0)", "pytest-aiohttp (>=0.3.0)", "Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)", "mypy (==0.961)", "flake8 (==4.0.1)", "flake8-bugbear (==22.7.1)", "pre-commit (>=2.4,<3.0)", "tox"]
-docs = ["Sphinx (==5.0.2)", "sphinx-issues (==3.0.1)", "furo (==2022.6.21)", "Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)"]
-frameworks = ["Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)"]
-lint = ["mypy (==0.961)", "flake8 (==4.0.1)", "flake8-bugbear (==22.7.1)", "pre-commit (>=2.4,<3.0)"]
-tests = ["pytest", "pytest-asyncio", "webtest (==3.0.0)", "webtest-aiohttp (==2.0.0)", "pytest-aiohttp (>=0.3.0)", "Flask (>=0.12.5)", "Django (>=2.2.0)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "falcon (>=2.0.0)", "aiohttp (>=3.0.8)"]
+dev = ["Django (>=2.2.0)", "Flask (>=0.12.5)", "aiohttp (>=3.0.8)", "bottle (>=0.12.13)", "falcon (>=2.0.0)", "flake8 (==4.0.1)", "flake8-bugbear (==22.7.1)", "mypy (==0.961)", "pre-commit (>=2.4,<3.0)", "pyramid (>=1.9.1)", "pytest", "pytest-aiohttp (>=0.3.0)", "pytest-asyncio", "tornado (>=4.5.2)", "tox", "webtest (==3.0.0)", "webtest-aiohttp (==2.0.0)"]
+docs = ["Django (>=2.2.0)", "Flask (>=0.12.5)", "Sphinx (==5.0.2)", "aiohttp (>=3.0.8)", "bottle (>=0.12.13)", "falcon (>=2.0.0)", "furo (==2022.6.21)", "pyramid (>=1.9.1)", "sphinx-issues (==3.0.1)", "tornado (>=4.5.2)"]
+frameworks = ["Django (>=2.2.0)", "Flask (>=0.12.5)", "aiohttp (>=3.0.8)", "bottle (>=0.12.13)", "falcon (>=2.0.0)", "pyramid (>=1.9.1)", "tornado (>=4.5.2)"]
+lint = ["flake8 (==4.0.1)", "flake8-bugbear (==22.7.1)", "mypy (==0.961)", "pre-commit (>=2.4,<3.0)"]
+tests = ["Django (>=2.2.0)", "Flask (>=0.12.5)", "aiohttp (>=3.0.8)", "bottle (>=0.12.13)", "falcon (>=2.0.0)", "pyramid (>=1.9.1)", "pytest", "pytest-aiohttp (>=0.3.0)", "pytest-asyncio", "tornado (>=4.5.2)", "webtest (==3.0.0)", "webtest-aiohttp (==2.0.0)"]
 
 [[package]]
 name = "werkzeug"
@@ -688,7 +688,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "ed22b0276f47b6e9c50699488975b1629523e59458651135200d9797b0de38a0"
+content-hash = "9de94c0f8003e1f6a4acf0c8fe4615e1723077ce7a3a701a904ea1f9150f7c43"
 
 [metadata.files]
 alembic = [
@@ -985,8 +985,8 @@ tomli = [
     {file = "tomli-2.0.1.tar.gz", hash = "sha256:de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f"},
 ]
 tweepy = [
-    {file = "tweepy-4.10.0-py3-none-any.whl", hash = "sha256:f0abbd234a588e572f880f99a094ac321217ff3eade6c0eca118ed6db8e2cf0a"},
-    {file = "tweepy-4.10.0.tar.gz", hash = "sha256:7f92574920c2f233663fff154745fc2bb0d10aedc23617379a912d8e4fefa399"},
+    {file = "tweepy-4.10.1-py3-none-any.whl", hash = "sha256:0a21396b646af4fcee69762d2908c104e1fe2e2c4e1dfd6e6078a41b38771382"},
+    {file = "tweepy-4.10.1.tar.gz", hash = "sha256:310193775d7fc381abd6f37021a9af27f7e9edfcce5ec51bd73ea5f30c21fa61"},
 ]
 types-requests = [
     {file = "types-requests-2.28.9.tar.gz", hash = "sha256:feaf581bd580497a47fe845d506fa3b91b484cf706ff27774e87659837de9962"},
