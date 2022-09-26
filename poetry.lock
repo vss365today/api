@@ -622,7 +622,7 @@ test = ["vcrpy (>=1.10.3)"]
 
 [[package]]
 name = "types-requests"
-version = "2.28.9"
+version = "2.28.11"
 description = "Typing stubs for requests"
 category = "dev"
 optional = false
@@ -704,7 +704,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "09e52c8098e8cd3387f9fa4f25cb68366b366b4f20fce4ed1020793d499e147b"
+content-hash = "86d85cb881cf835dbde74381e1ab174789a166efbca5de9c7eb2a3b10c5c0318"
 
 [metadata.files]
 alembic = [
@@ -1009,8 +1009,8 @@ tweepy = [
     {file = "tweepy-4.10.1.tar.gz", hash = "sha256:310193775d7fc381abd6f37021a9af27f7e9edfcce5ec51bd73ea5f30c21fa61"},
 ]
 types-requests = [
-    {file = "types-requests-2.28.9.tar.gz", hash = "sha256:feaf581bd580497a47fe845d506fa3b91b484cf706ff27774e87659837de9962"},
-    {file = "types_requests-2.28.9-py3-none-any.whl", hash = "sha256:86cb66d3de2f53eac5c09adc42cf6547eefbd0c7e1210beca1ee751c35d96083"},
+    {file = "types-requests-2.28.11.tar.gz", hash = "sha256:7ee827eb8ce611b02b5117cfec5da6455365b6a575f5e3ff19f655ba603e6b4e"},
+    {file = "types_requests-2.28.11-py3-none-any.whl", hash = "sha256:af5f55e803cabcfb836dad752bd6d8a0fc8ef1cd84243061c0e27dee04ccf4fd"},
 ]
 types-urllib3 = [
     {file = "types-urllib3-1.26.22.tar.gz", hash = "sha256:b05af90e73889e688094008a97ca95788db8bf3736e2776fd43fb6b171485d94"},
