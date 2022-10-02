@@ -120,6 +120,7 @@ keys = _api_factory(
 emails = _api_factory(
     "emails",
     "emails",
+    authorize_blueprint_v2,
     description="Manage email subscriptions.",
 )
 v2_blueprints = (keys, emails)

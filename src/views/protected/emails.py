@@ -4,7 +4,6 @@ from requests import codes
 
 from src.blueprints import emails
 from src.configuration import get_config
-from src.core.auth_helpers import authorize_route_v2
 from src.core.database.v2 import emails as db
 from src.core.email import mailgun
 from src.core.models.v2 import Generic, Email as models
@@ -12,14 +11,10 @@ from src.core.models.v2 import Generic, Email as models
 
 @emails.route("/")
 class Email(MethodView):
-    @authorize_route_v2
     @emails.response(200, models.AllAddresses(many=True))
     @emails.alt_response(403, schema=Generic.HttpError)
     def get(self):
-        """List all email address in the mailing list.
-
-        NOTE: This is a protected route.
-        """
+        """List all email address in the mailing list."""
         return db.get_all()
 
     @emails.arguments(models.EmailAddress, as_kwargs=True)
@@ -29,7 +24,7 @@ class Email(MethodView):
     def post(self, **kwargs: str):
         """Add an email address to the mailing list.
 
-        If an email sending is disabled or an email has aleady been added,
+        If an email sending is disabled or an email has already been added,
         a successful response will be given without attempting to record
         the email address.
         """
@@ -54,7 +49,6 @@ class Email(MethodView):
         if mg_result.status_code != codes.ok:
             abort(422)
 
-    @authorize_route_v2
     @emails.arguments(models.EmailAddress, as_kwargs=True)
     @emails.response(204, Generic.Empty)
     @emails.alt_response(403, schema=Generic.HttpError)
@@ -62,11 +56,9 @@ class Email(MethodView):
     def delete(self, **kwargs: str):
         """Remove an email address from the mailing list.
 
-        If an email sending is disabled or an email has aleady been removed,
+        If an email sending is disabled or an email has already been removed,
         a successful response will be given without attempting to remove
         the email address.
-
-        NOTE: This is a protected route.
         """
         if get_config("ENABLE_EMAIL_SENDING"):
             mailgun.delete(kwargs["address"])
