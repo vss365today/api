@@ -25,7 +25,7 @@ Flask-DB = "^0.3.2"
 
 [tool.poetry.dev-dependencies]
 flake8 = "^5.0.4"
-mypy = "^0.971"
+mypy = "^0.981"
 black = "^22.8"
 sqlalchemy-stubs = "^0.4"
 types-requests = "^2.28.11"
