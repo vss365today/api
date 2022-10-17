@@ -15,22 +15,23 @@ tz = ["python-dateutil"]
 
 [[package]]
 name = "apispec"
-version = "5.2.2"
+version = "6.0.0"
 description = "A pluggable API specification generator. Currently supports the OpenAPI Specification (f.k.a. the Swagger specification)."
 category = "main"
 optional = false
 python-versions = ">=3.7"
 
 [package.dependencies]
-marshmallow = {version = ">=3.13.0", optional = true, markers = "extra == \"marshmallow\""}
+marshmallow = {version = ">=3.18.0", optional = true, markers = "extra == \"marshmallow\""}
+packaging = ">=21.3"
 
 [package.extras]
-dev = ["PyYAML (>=3.10)", "flake8 (==4.0.1)", "flake8-bugbear (==22.4.25)", "marshmallow (>=3.13.0)", "mock", "mypy (==0.950)", "prance[osv] (>=0.11)", "pre-commit (>=2.4,<3.0)", "pytest", "tox", "types-PyYAML"]
-docs = ["marshmallow (>=3.13.0)", "pyyaml (==6.0)", "sphinx (==4.5.0)", "sphinx-issues (==3.0.1)", "sphinx-rtd-theme (==1.0.0)"]
-lint = ["flake8 (==4.0.1)", "flake8-bugbear (==22.4.25)", "mypy (==0.950)", "pre-commit (>=2.4,<3.0)", "types-PyYAML"]
-marshmallow = ["marshmallow (>=3.13.0)"]
-tests = ["PyYAML (>=3.10)", "marshmallow (>=3.13.0)", "mock", "prance[osv] (>=0.11)", "pytest"]
-validation = ["prance[osv] (>=0.11)"]
+dev = ["PyYAML (>=3.10)", "flake8 (==5.0.4)", "flake8-bugbear (==22.9.23)", "marshmallow (>=3.13.0)", "mock", "mypy (==0.982)", "openapi-spec-validator (<0.5)", "prance[osv] (>=0.11)", "pre-commit (>=2.4,<3.0)", "pytest", "tox", "types-PyYAML"]
+docs = ["marshmallow (>=3.13.0)", "pyyaml (==6.0)", "sphinx (==5.2.3)", "sphinx-issues (==3.0.1)", "sphinx-rtd-theme (==1.0.0)"]
+lint = ["flake8 (==5.0.4)", "flake8-bugbear (==22.9.23)", "mypy (==0.982)", "pre-commit (>=2.4,<3.0)", "types-PyYAML"]
+marshmallow = ["marshmallow (>=3.18.0)"]
+tests = ["PyYAML (>=3.10)", "marshmallow (>=3.13.0)", "mock", "openapi-spec-validator (<0.5)", "prance[osv] (>=0.11)", "pytest"]
+validation = ["openapi-spec-validator (<0.5)", "prance[osv] (>=0.11)"]
 yaml = ["PyYAML (>=3.10)"]
 
 [[package]]
@@ -168,23 +169,23 @@ SQLAlchemy-Utils = "*"
 
 [[package]]
 name = "flask-smorest"
-version = "0.38.1"
+version = "0.40.0"
 description = "Flask/Marshmallow-based REST API framework"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 
 [package.dependencies]
-apispec = {version = ">=5.1.0,<6", extras = ["marshmallow"]}
+apispec = {version = ">=6.0.0,<7", extras = ["marshmallow"]}
 flask = ">=2.0,<3"
-marshmallow = ">=3.13.0,<4"
+marshmallow = ">=3.18.0,<4"
 webargs = ">=8.0.0,<9"
 werkzeug = ">=2.0,<3"
 
 [package.extras]
-dev = ["PyYAML (==6.0)", "apispec (==5.2.2)", "coverage (==6.4.1)", "flake8 (==4.0.1)", "flake8-bugbear (==22.4.25)", "flask (==2.1.2)", "marshmallow (==3.16.0)", "pre-commit (==2.19.0)", "pytest (==7.1.2)", "pytest-cov (==3.0.0)", "webargs (==8.1.0)", "werkzeug (==2.1.2)"]
-lint = ["flake8 (==4.0.1)", "flake8-bugbear (==22.4.25)", "pre-commit (==2.19.0)"]
-tests = ["PyYAML (==6.0)", "apispec (==5.2.2)", "coverage (==6.4.1)", "flask (==2.1.2)", "marshmallow (==3.16.0)", "pytest (==7.1.2)", "pytest-cov (==3.0.0)", "webargs (==8.1.0)", "werkzeug (==2.1.2)"]
+dev = ["PyYAML (==6.0)", "apispec (==6.0.0)", "coverage (==6.5.0)", "flake8 (==5.0.4)", "flake8-bugbear (==22.9.23)", "flask (==2.2.2)", "marshmallow (==3.18.0)", "pre-commit (==2.20.0)", "pytest (==7.1.3)", "pytest-cov (==4.0.0)", "webargs (==8.2.0)", "werkzeug (==2.2.2)"]
+lint = ["flake8 (==5.0.4)", "flake8-bugbear (==22.9.23)", "pre-commit (==2.20.0)"]
+tests = ["PyYAML (==6.0)", "apispec (==6.0.0)", "coverage (==6.5.0)", "flask (==2.2.2)", "marshmallow (==3.18.0)", "pytest (==7.1.3)", "pytest-cov (==4.0.0)", "webargs (==8.2.0)", "werkzeug (==2.2.2)"]
 
 [[package]]
 name = "flask-sqlalchemy"
@@ -704,7 +705,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "50eee9be269b77192f8a57069849758b374facd7743c91bdf2d8b30611128abe"
+content-hash = "db5171b7e4f7275856bd43988ad5ca48e609979a12c188694fcb858a5f51fe60"
 
 [metadata.files]
 alembic = [
@@ -712,8 +713,8 @@ alembic = [
     {file = "alembic-1.8.1.tar.gz", hash = "sha256:cd0b5e45b14b706426b833f06369b9a6d5ee03f826ec3238723ce8caaf6e5ffa"},
 ]
 apispec = [
-    {file = "apispec-5.2.2-py3-none-any.whl", hash = "sha256:f5f0d6b452c3e4a0e0922dce8815fac89dc4dbc758acef21fb9e01584d6602a5"},
-    {file = "apispec-5.2.2.tar.gz", hash = "sha256:6ea6542e1ebffe9fd95ba01ef3f51351eac6c200a974562c7473059b9cd20aa7"},
+    {file = "apispec-6.0.0-py3-none-any.whl", hash = "sha256:4befd7c6448d31684148b4c10e715e2b74a367117d016e312b48afbd54e99bb9"},
+    {file = "apispec-6.0.0.tar.gz", hash = "sha256:74fbde7a9ab4151ea4f9e26eff8d64f8bbc06e60a2e7530384a40046b88125ba"},
 ]
 black = [
     {file = "black-22.10.0-1fixedarch-cp310-cp310-macosx_11_0_x86_64.whl", hash = "sha256:5cc42ca67989e9c3cf859e84c2bf014f6633db63d1cbdf8fdb666dcd9e77e3fa"},
@@ -777,8 +778,8 @@ flask-db = [
     {file = "Flask-DB-0.3.2.tar.gz", hash = "sha256:bf2c9e161fb415129c1ef251852ba26f84a7a53601ec100609d82a231e34fd12"},
 ]
 flask-smorest = [
-    {file = "flask-smorest-0.38.1.tar.gz", hash = "sha256:9eb858b23d2fb74c86a297604e2dc7417165e978da0c9176be4735ad53702865"},
-    {file = "flask_smorest-0.38.1-py3-none-any.whl", hash = "sha256:8ee66da526f56ec3d976e5fa6db40b8ae361f9e16cfd3b17ba6d03a8a55eb079"},
+    {file = "flask-smorest-0.40.0.tar.gz", hash = "sha256:9b46b4937ccf78702d99fed8cfd1cd5c37608ddefd65ff16a86d1ad5c7f7d8c0"},
+    {file = "flask_smorest-0.40.0-py3-none-any.whl", hash = "sha256:b7122837a698bf63266a66880baeeef2bc8c57704973d81b9d0c6cb595af6a79"},
 ]
 flask-sqlalchemy = [
     {file = "Flask-SQLAlchemy-2.5.1.tar.gz", hash = "sha256:2bda44b43e7cacb15d4e05ff3cc1f8bc97936cc464623424102bfc2c35e95912"},
