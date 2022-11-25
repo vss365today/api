@@ -424,11 +424,11 @@ diagrams = ["jinja2", "railroad-diagrams"]
 
 [[package]]
 name = "python-dotenv"
-version = "0.19.2"
+version = "0.21.0"
 description = "Read key-value pairs from a .env file and set them as environment variables"
 category = "main"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.7"
 
 [package.extras]
 cli = ["click (>=5.0)"]
@@ -565,14 +565,14 @@ url = ["furl (>=0.4.1)"]
 
 [[package]]
 name = "sys-vars"
-version = "4.0.3"
+version = "5.0.0"
 description = "Access system variables in your code as native Python data types."
 category = "main"
 optional = false
-python-versions = ">=3.7,<4.0"
+python-versions = ">=3.8,<4.0"
 
 [package.dependencies]
-python-dotenv = ">=0.19.0,<0.20.0"
+python-dotenv = ">=0.21.0,<0.22.0"
 
 [[package]]
 name = "tablib"
@@ -696,7 +696,7 @@ python-versions = ">=3.4"
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.11"
-content-hash = "c3f8ba1be601d23707b35a8cb9e130e324aff566cb0cab2687a9587041359b27"
+content-hash = "e1b8db174e15933e5ab69fe37f71ab1a30b97c30bb106b591173d7d6babbfbe2"
 
 [metadata.files]
 alembic = [
@@ -922,8 +922,8 @@ pyparsing = [
     {file = "pyparsing-3.0.9.tar.gz", hash = "sha256:2b020ecf7d21b687f219b71ecad3631f644a47f01403fa1d1036b0c6416d70fb"},
 ]
 python-dotenv = [
-    {file = "python-dotenv-0.19.2.tar.gz", hash = "sha256:a5de49a31e953b45ff2d2fd434bbc2670e8db5273606c1e737cc6b93eff3655f"},
-    {file = "python_dotenv-0.19.2-py2.py3-none-any.whl", hash = "sha256:32b2bdc1873fd3a3c346da1c6db83d0053c3c62f28f1f38516070c4c8971b1d3"},
+    {file = "python-dotenv-0.21.0.tar.gz", hash = "sha256:b77d08274639e3d34145dfa6c7008e66df0f04b7be7a75fd0d5292c191d79045"},
+    {file = "python_dotenv-0.21.0-py3-none-any.whl", hash = "sha256:1684eb44636dd462b66c3ee016599815514527ad99965de77f43e0944634a7e5"},
 ]
 records = [
     {file = "records-0.5.3-py2.py3-none-any.whl", hash = "sha256:cdbacf52c61b4a3bc10fef1286a24a63ae95255a2e7b4e8ccb1e1f96737231ed"},
@@ -990,8 +990,8 @@ sqlalchemy-utils = [
     {file = "SQLAlchemy_Utils-0.38.3-py3-none-any.whl", hash = "sha256:5c13b5d08adfaa85f3d4e8ec09a75136216fad41346980d02974a70a77988bf9"},
 ]
 sys-vars = [
-    {file = "sys-vars-4.0.3.tar.gz", hash = "sha256:608d6bfce1c7e3faff37f0ff806a41f3d3c90641bedfd80390035949f59a860f"},
-    {file = "sys_vars-4.0.3-py3-none-any.whl", hash = "sha256:16f6d09298150abd5c17dde228f06daf163cb3ee9e8cff5011d1353540813122"},
+    {file = "sys_vars-5.0.0-py3-none-any.whl", hash = "sha256:4a621425f422493987d4859d73ce8358cf59413818d661e0a63a287fc7a473a6"},
+    {file = "sys_vars-5.0.0.tar.gz", hash = "sha256:6635d92e060c759fc6ade0c10b7cab12d922de80fbd087231180120cc16e74ce"},
 ]
 tablib = [
     {file = "tablib-3.2.1-py3-none-any.whl", hash = "sha256:870d7e688f738531a14937a055e8bba404fbc388e77d4d500b2c904075d1019c"},
