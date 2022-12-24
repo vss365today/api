@@ -23,7 +23,10 @@ flask-smorest = "0.38.1"
 PyMySQL = "^1.0.2"
 Flask-DB = "^0.3.2"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.dev]
+optional = true
+
+[tool.poetry.group.dev.dependencies]
 flake8 = "^6.0.0"
 mypy = "^0.991"
 black = "^22.12"
@@ -31,5 +34,5 @@ sqlalchemy-stubs = "^0.4"
 types-requests = "^2.28.11"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
