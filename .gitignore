@@ -82,7 +82,6 @@ celerybeat-schedule
 *.sage.py
 
 # Environments
-.env
 .venv
 env/
 venv/
@@ -108,10 +107,8 @@ backup/
 testing/
 secrets/
 *.db
-*.ini
 *.json
 *.log
 *.jpg
-.env
 requirements.txt
 !configuration/*.json

@@ -10,6 +10,7 @@
   "appConfig": {
     "APP_NAME": "#vss365 today",
     "FLASK_APP": "wsgi.py",
+    "LOG_PATH": "log",
     "DB_DBNAME": "vss365today",
     "DB_HOST": "database",
     "ENABLE_EMAIL_SENDING": false,

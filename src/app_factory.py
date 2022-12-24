@@ -4,14 +4,13 @@ from importlib import import_module
 import sys_vars
 from flask import Flask
 from flask_cors import CORS
-
-# from flask_smorest import Api
+from flask_smorest import Api
 from werkzeug.exceptions import HTTPException
 
 import src.configuration as config
 from src.blueprints import all_blueprints, v2_blueprints
-
-# from src.core.database import models
+from src.core import logger
+from src.core.database import models
 from src.core.database.core import get_db_conn_uri
 from src.core.helpers.JsonEncode import JsonEncode
 
@@ -33,27 +32,16 @@ def create_app():
 
     # Load any extensions
     CORS(app)
-    # api = Api(app)
+    api = Api(app)
 
     # Create a database connection
     with app.app_context():
-        app.config["SQLALCHEMY_DATABASE_URI"] = get_db_conn_uri()
         app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-        # models.db.init_app(app)
+        app.config["SQLALCHEMY_DATABASE_URI"] = get_db_conn_uri()
+        models.db.init_app(app)
 
-        # Create the database tables if needed
-        # if not models.db.engine.table_names():
-        #     models.db.create_all()
-
-        # Only import alembic if the database was created
-        # from alembic import command
-
-        # from alembic.config import Config
-
-        # Tell Alembic this is a new database and we don't need
-        # to update it to a newer schema
-        # alembic_cfg = Config("alembic.ini")
-        # command.upgrade(alembic_cfg, "head")
+    # Add a file logger to record errors
+    app.logger.addHandler(logger.file_handler(app.config["LOG_PATH"]))
 
     # Register the resources
     for bp in all_blueprints:
@@ -62,9 +50,9 @@ def create_app():
 
     # Register the v2 endpoints
     # TODO Change the name back to import_name after v1 is gone
-    # for bp in v2_blueprints:
-    #     import_module(bp.import_name)
-    #     api.register_blueprint(bp, name=f"v2.{bp.import_name}")
+    for bp in v2_blueprints:
+        import_module(bp.import_name)
+        api.register_blueprint(bp, name=f"v2.{bp.import_name}")
 
     # TODO Remove this with v1 removal
     @app.errorhandler(HTTPException)

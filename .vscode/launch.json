@@ -23,7 +23,8 @@
       "env": {
         "FLASK_APP": "wsgi.py",
         "FLASK_ENV": "development",
-        "SYS_VARS_PATH": "${workspaceFolder}/../secrets"
+        "SYS_VARS_PATH": "${workspaceFolder}/../secrets",
+        "FLASK_SKIP_DOTENV": "1",
       },
       "args": [
         "run",
@@ -39,7 +40,8 @@
       "env": {
         "FLASK_APP": "wsgi.py",
         "FLASK_ENV": "testing",
-        "SYS_VARS_PATH": "${workspaceFolder}/../secrets"
+        "SYS_VARS_PATH": "${workspaceFolder}/../secrets",
+        "FLASK_SKIP_DOTENV": "1",
       },
       "args": [
         "run",
