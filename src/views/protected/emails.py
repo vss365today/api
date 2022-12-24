@@ -30,7 +30,7 @@ class Email(MethodView):
         """
         # If email sending is not enabled, just pretend it worked
         if not get_config("ENABLE_EMAIL_SENDING"):
-            return
+            return None
 
         # Because the MG address validation endpoint costs money with each hit,
         # block it off unless we are running in production

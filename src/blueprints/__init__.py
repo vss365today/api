@@ -87,7 +87,7 @@ api_key = _factory("api_key", "api-key", authorize_blueprint, new_endpoint="keys
 archive = _factory("archive", "archive")
 broadcast = _factory("broadcast", "broadcast", authorize_blueprint)
 browse = _factory("browse", "browse")
-host = _factory("host", "host")
+host = _factory("host", "host", new_endpoint="hosts")
 prompt = _factory("prompt", "prompt")
 search = _factory("search", "search")
 subscription = _factory("subscription", "subscription", new_endpoint="emails")
@@ -105,11 +105,16 @@ all_blueprints = (
 )
 
 # v2 endpoints
-notifications = _api_factory(
-    "notifications",
-    "notifications",
+emails = _api_factory(
+    "emails",
+    "emails",
     authorize_blueprint_v2,
-    description="Manage email notifications.",
+    description="Manage email subscriptions.",
+)
+hosts = _api_factory(
+    "hosts",
+    "hosts",
+    description="Manage hosts.",
 )
 keys = _api_factory(
     "keys",
@@ -117,10 +122,12 @@ keys = _api_factory(
     authorize_blueprint_v2,
     description="Manage API key permissions.",
 )
-emails = _api_factory(
-    "emails",
-    "emails",
+
+notifications = _api_factory(
+    "notifications",
+    "notifications",
     authorize_blueprint_v2,
-    description="Manage email subscriptions.",
+    description="Manage email notifications.",
 )
-v2_blueprints = (keys, emails)
+
+v2_blueprints = (emails, hosts, keys)
