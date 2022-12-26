@@ -30,6 +30,12 @@ __all__ = [
 ]
 
 
+class HelperMethods:
+    def asdict(self) -> dict:
+        """Return a model as a dictionary."""
+        return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
+
+
 class ApiKey(db.Model):
     __tablename__ = "api_keys"
     __table_args__ = {
@@ -47,10 +53,6 @@ class ApiKey(db.Model):
     has_prompt = Column(Boolean, nullable=False, default=False)
     has_settings = Column(Boolean, nullable=False, default=False)
     has_subscription = Column(Boolean, nullable=False, default=False)
-
-    @classmethod
-    def as_dict(cls, obj: "ApiKey") -> dict:
-        return {c.key: getattr(obj, c.key) for c in inspect(obj).mapper.column_attrs}
 
 
 class Email(db.Model):
@@ -76,6 +78,12 @@ class Host(db.Model):
 
     uid = Column(String(30, "utf8mb4_unicode_ci"), primary_key=True, unique=True)
     handle = Column(String(20, "utf8mb4_unicode_ci"), nullable=False)
+
+    def get_handle(self):
+        ...
+
+    def get_uid(self):
+        ...
 
 
 class ApiKeyHistory(db.Model):
