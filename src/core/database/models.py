@@ -79,11 +79,28 @@ class Host(db.Model):
     uid = Column(String(30, "utf8mb4_unicode_ci"), primary_key=True, unique=True)
     handle = Column(String(20, "utf8mb4_unicode_ci"), nullable=False)
 
-    def get_handle(self):
-        ...
+    @classmethod
+    def get_handle(cls, uid: str) -> str:
+        """Get a Host's user ID from their handle."""
+        return cls.query.filter_by(id=uid).first().handle
 
-    def get_uid(self):
-        ...
+    @classmethod
+    def get_uid(cls, handle: str) -> str:
+        """Get a Host's handle from their user ID."""
+        return cls.query.filter_by(handle=handle).first().uid
+
+
+class HostingDate(db.Model):
+    __tablename__ = "writer_dates"
+
+    uid = Column(
+        ForeignKey("writers.uid", ondelete="CASCADE", onupdate="CASCADE"),
+        primary_key=True,
+        nullable=False,
+    )
+    date = Column(Date, primary_key=True, nullable=False)
+
+    host = relationship("Host")
 
 
 class ApiKeyHistory(db.Model):
@@ -121,18 +138,5 @@ class Prompt(db.Model):
     date_added = Column(
         DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
     )
-
-    host = relationship("Host")
-
-
-class HostingDate(db.Model):
-    __tablename__ = "writer_dates"
-
-    uid = Column(
-        ForeignKey("writers.uid", ondelete="CASCADE", onupdate="CASCADE"),
-        primary_key=True,
-        nullable=False,
-    )
-    date = Column(Date, primary_key=True, nullable=False)
 
     host = relationship("Host")
