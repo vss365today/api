@@ -20,7 +20,7 @@ def can_access(route: str, token: str) -> bool:
     )
 
 
-def create(data: dict) -> dict | Literal[False]:
+def create(data: dict) -> dict | None:
     """Create an API key with specified permissions."""
     try:
         new_token = token_hex()
@@ -34,7 +34,7 @@ def create(data: dict) -> dict | Literal[False]:
     except DataError as exc:
         db.session.rollback()
         current_app.logger.exception(exc)
-        return False
+        return None
 
 
 def delete(token: str) -> bool:
@@ -72,7 +72,7 @@ def update(data: dict) -> None:
 
     # Run the query to get the current object and record it
     # for auditing purposes
-    original_info = ApiKey.as_dict(key.first())
+    original_info = key.first().as_dict()
     original_info["key_id"] = original_info["_id"]
     del original_info["_id"]
     del original_info["desc"]
@@ -80,7 +80,7 @@ def update(data: dict) -> None:
     del original_info["date_created"]
     db.session.add(ApiKeyHistory(**original_info))
     current_app.logger.debug(
-        f"API key {original_info['_id']} former permissions archived."
+        f"API key {original_info['key_id']} former permissions archived."
     )
 
     # Go back to our original object, update it with
@@ -88,6 +88,6 @@ def update(data: dict) -> None:
     key.update(data)
     db.session.commit()
     current_app.logger.debug(
-        f"API key {original_info['_id']} new permissions recorded."
+        f"API key {original_info['key_id']} new permissions recorded."
     )
     return None

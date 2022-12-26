@@ -1,10 +1,10 @@
 from marshmallow import Schema, fields
 
 
-__all__ = ["KeyFull", "SingleKey", "KeyToken"]
+__all__ = ["Key", "Permissions", "Token"]
 
 
-class SingleKey(Schema):
+class Permissions(Schema):
     desc = fields.String()
     date_created = fields.DateTime(dump_only=True)
     has_archive = fields.Boolean()
@@ -16,9 +16,9 @@ class SingleKey(Schema):
     has_subscription = fields.Boolean()
 
 
-class KeyToken(Schema):
+class Token(Schema):
     token = fields.String(max=64)
 
 
-class KeyFull(KeyToken, SingleKey):
+class Key(Token, Permissions):
     ...

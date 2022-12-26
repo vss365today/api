@@ -31,15 +31,19 @@ __all__ = [
 
 
 class HelperMethods:
-    def asdict(self) -> dict:
+    def as_dict(self) -> dict:
         """Return a model as a dictionary."""
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 
-class ApiKey(db.Model):
+class ApiKey(HelperMethods, db.Model):
     __tablename__ = "api_keys"
     __table_args__ = {
-        "comment": "API keys for accessing protected API endpoints. By default, keys can only access public, unprotected endpoints and actions. Authorization can be granted on a granular level for complete control over key permissions."
+        "comment": (
+            "API keys for accessing protected API endpoints. By default, keys can only access "
+            "public, unprotected endpoints and actions. Authorization can be granted on a granular "
+            "level for complete control over key permissions."
+        )
     }
 
     _id = Column(TINYINT(3), primary_key=True)

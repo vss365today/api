@@ -8,27 +8,17 @@ from src.core.models.v2 import Generic, Keys as models
 
 @keys.route("/")
 class Keys(MethodView):
-    @keys.response(200, models.KeyFull(many=True))
+    @keys.response(200, models.Key(many=True))
     @keys.alt_response(403, schema=Generic.HttpError)
     def get(self):
         """List all keys."""
         return db.get_all()
 
-    @keys.arguments(models.SingleKey, as_kwargs=True)
-    @keys.response(201, models.KeyToken)
-    @keys.alt_response(403, schema=Generic.HttpError)
-    @keys.alt_response(422, schema=Generic.HttpError)
-    def post(self, **kwargs: str | bool):
-        """Create a new key."""
-        if token := db.create(kwargs):
-            return token
-        abort(422)
 
-
-@keys.route("/<string:token>")
-class KeyByCode(MethodView):
-    @keys.arguments(models.KeyToken, location="path", as_kwargs=True)
-    @keys.response(200, models.SingleKey)
+@keys.route("/token")
+class KeyByToken(MethodView):
+    @keys.arguments(models.Token, location="query", as_kwargs=True)
+    @keys.response(200, models.Permissions)
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(404, schema=Generic.HttpError)
     def get(self, **kwargs: str):
@@ -37,8 +27,18 @@ class KeyByCode(MethodView):
             return key
         abort(404)
 
-    @keys.arguments(models.KeyToken, location="path", as_kwargs=True)
-    @keys.arguments(models.SingleKey, as_kwargs=True)
+    @keys.arguments(models.Permissions, location="json", as_kwargs=True)
+    @keys.response(201, models.Token)
+    @keys.alt_response(403, schema=Generic.HttpError)
+    @keys.alt_response(422, schema=Generic.HttpError)
+    def post(self, **kwargs: str | bool):
+        """Create a new key."""
+        if token := db.create(kwargs):
+            return token
+        abort(422)
+
+    @keys.arguments(models.Token, location="query", as_kwargs=True)
+    @keys.arguments(models.Permissions, as_kwargs=True)
     @keys.response(204, Generic.Empty)
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(422, schema=Generic.HttpError)
@@ -46,7 +46,7 @@ class KeyByCode(MethodView):
         """Update a single key."""
         db.update(kwargs)
 
-    @keys.arguments(models.KeyToken, location="path", as_kwargs=True)
+    @keys.arguments(models.Token, location="query", as_kwargs=True)
     @keys.response(204, Generic.Empty)
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(404, schema=Generic.HttpError)
