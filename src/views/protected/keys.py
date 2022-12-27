@@ -11,7 +11,7 @@ class Keys(MethodView):
     @keys.response(200, models.Key(many=True))
     @keys.alt_response(403, schema=Generic.HttpError)
     def get(self):
-        """List all keys."""
+        """List all available keys."""
         return db.get_all()
 
 
@@ -22,7 +22,7 @@ class KeyByToken(MethodView):
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(404, schema=Generic.HttpError)
     def get(self, **kwargs: str):
-        """Get a single key."""
+        """Get a key's permissions."""
         if (key := db.get(kwargs["token"])) is not None:
             return key
         abort(404)
@@ -32,7 +32,11 @@ class KeyByToken(MethodView):
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(422, schema=Generic.HttpError)
     def post(self, **kwargs: str | bool):
-        """Create a new key."""
+        """Create a new key.
+
+        The token cannot be defined. Upon successful creation,
+        a token with the requested permissions will be provided.
+        """
         if token := db.create(kwargs):
             return token
         abort(422)
@@ -43,7 +47,7 @@ class KeyByToken(MethodView):
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(422, schema=Generic.HttpError)
     def patch(self, **kwargs: str | bool):
-        """Update a single key."""
+        """Update a key's permissions."""
         db.update(kwargs)
 
     @keys.arguments(models.Token, location="query", as_kwargs=True)
@@ -51,6 +55,11 @@ class KeyByToken(MethodView):
     @keys.alt_response(403, schema=Generic.HttpError)
     @keys.alt_response(404, schema=Generic.HttpError)
     def delete(self, **kwargs: str):
-        """Delete a single key."""
+        """Delete a key.
+
+        Once a key is deleted, it cannot be used anymore,
+        nor can it be restored. All attempts to use a deleted key
+        will result in an authorization error.
+        """
         if not db.delete(kwargs["token"]):
             abort(404)
