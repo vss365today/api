@@ -12,7 +12,6 @@ __all__ = ["can_access", "create", "delete", "exists", "get", "get_all", "update
 
 def can_access(route: str, token: str) -> bool:
     """Determine if the given API key has permission to access a route."""
-    route = "archive"
     return (
         ApiKey.query.with_entities(getattr(ApiKey, f"has_{route}"))
         .filter_by(token=token)

@@ -41,7 +41,10 @@ def _api_factory(
     # if one was given
     if auth_function is not None:
         blueprint.before_request(auth_function)
-        blueprint.description += "\n\nNOTE: This is a protected endpoint."
+        blueprint.description += (
+            "\n\n<strong>Note</strong>: This endpoint can only be used with an API key "
+            "with the appropriate permissions."
+        )
     return blueprint
 
 
