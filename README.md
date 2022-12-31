@@ -28,6 +28,6 @@ all email-related operations will pretend that they succeeded.
 
 ## License
 
-2019-2022 Caleb
+2019-2023 Caleb
 
 [MIT](LICENSE)

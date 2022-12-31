@@ -97,9 +97,6 @@ browse = _factory("browse", "browse")  # documented
 host = _factory("host", "host", new_endpoint="hosts")  # documented
 prompt = _factory("prompt", "prompt")  # documented
 search = _factory("search", "search")  # documented
-subscription = _factory(
-    "subscription", "subscription", new_endpoint="emails"
-)  # replaced
 settings = _factory("settings", "settings", authorize_blueprint)  # documented
 all_blueprints = (
     archive,
@@ -108,7 +105,6 @@ all_blueprints = (
     host,
     prompt,
     search,
-    subscription,
     settings,
 )
 

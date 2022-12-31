@@ -1,5 +1,4 @@
 from secrets import token_hex
-from typing import Literal
 
 from flask import current_app
 from sqlalchemy.exc import DataError
