@@ -14,7 +14,13 @@ class Email(MethodView):
     @emails.response(200, models.All(many=True))
     @emails.alt_response(403, schema=Generic.HttpError)
     def get(self):
-        """List all email address in the mailing list."""
+        """List all email address in the mailing list.
+
+        This list can potentially be very large, and no filtering
+        or pagination is supported. Consumers should take care to
+        use the results of this list carefully and should filter
+        it as needed before presenting to any customer.
+        """
         return db.get_all()
 
     @emails.arguments(models.Address, as_kwargs=True)
@@ -25,9 +31,13 @@ class Email(MethodView):
     def post(self, **kwargs: list[str]):
         """Add an email address to the mailing list.
 
-        If an email sending is disabled or an email has already been added,
+        If email sending is disabled or an address has already been added,
         a successful response will be given without attempting to record
-        the email address.
+        the address.
+
+        If an address cannot be successfully added to both the database and
+        Mailgun mailing list, it will not be recorded at all and an error
+        response will be given.
         """
         # If email sending is not enabled, just pretend it worked
         if not get_config("ENABLE_EMAIL_SENDING"):
