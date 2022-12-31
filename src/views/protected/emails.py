@@ -6,18 +6,18 @@ from src.blueprints import emails
 from src.configuration import get_config
 from src.core.database.v2 import emails as db
 from src.core.email import mailgun
-from src.core.models.v2 import Generic, Email as models
+from src.core.models.v2 import Emails as models, Generic
 
 
 @emails.route("/")
 class Email(MethodView):
-    @emails.response(200, models.AllAddresses(many=True))
+    @emails.response(200, models.All(many=True))
     @emails.alt_response(403, schema=Generic.HttpError)
     def get(self):
         """List all email address in the mailing list."""
         return db.get_all()
 
-    @emails.arguments(models.EmailAddress, as_kwargs=True)
+    @emails.arguments(models.Address, as_kwargs=True)
     @emails.response(201, Generic.Empty)
     @emails.alt_response(403, schema=Generic.HttpError)
     @emails.alt_response(422, schema=Generic.HttpError)
@@ -49,7 +49,7 @@ class Email(MethodView):
         if mg_result.status_code != codes.ok:
             abort(422)
 
-    @emails.arguments(models.EmailAddress, as_kwargs=True)
+    @emails.arguments(models.Address, as_kwargs=True)
     @emails.response(204, Generic.Empty)
     @emails.alt_response(403, schema=Generic.HttpError)
     @emails.alt_response(422, schema=Generic.HttpError)

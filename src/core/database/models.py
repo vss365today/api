@@ -62,7 +62,9 @@ class ApiKey(HelperMethods, db.Model):
 class Email(db.Model):
     __tablename__ = "emails"
 
-    email = Column(String(150, "utf8mb4_unicode_ci"), primary_key=True, unique=True)
+    address = Column(
+        "email", String(150, "utf8mb4_unicode_ci"), primary_key=True, unique=True
+    )
     date_added = Column(DateTime, default=datetime.now)
 
 
