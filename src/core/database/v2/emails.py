@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from src.core.database.models import Email, db
 
 
-__all__ = ["create", "delete", "exists", "get_all"]
+__all__ = ["create", "delete", "get_all"]
 
 
 def create(address: str) -> bool:
@@ -22,21 +22,12 @@ def create(address: str) -> bool:
         return False
 
 
-def delete(address: str) -> bool:
+def delete(address: str) -> None:
     """Remove an email address."""
-    if exists(address):
-        db.session.delete(Email.query.filter_by(address=address).first())
-        db.session.commit()
-        current_app.logger.debug("Email removed from subscription list.")
-        return True
-
-    current_app.logger.debug(f"Email '{address}' not in mailing list, skipping removal.")
-    return False
-
-
-def exists(address: str) -> bool:
-    """Determine if an address address exists."""
-    return Email.query.filter_by(address=address).first() is not None
+    db.session.delete(Email.query.filter_by(address=address).first())
+    db.session.commit()
+    current_app.logger.debug("Email removed from subscription list.")
+    return None
 
 
 def get_all() -> list[Email]:

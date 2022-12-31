@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 from src.configuration import get_config, get_secret
@@ -19,12 +21,13 @@ def mailing_list() -> str:
     return f'{get_config("MG_MAILING_LIST_ADDR")}@{get_secret("MG_DOMAIN")}'
 
 
-def create(addr: str) -> requests.Response:
+def create(addresses: list[str]) -> requests.Response:
     """Add a subscription email address."""
+    members = [{"subscribed": True, "address": address} for address in addresses]
     return requests.post(
-        f"https://api.mailgun.net/v3/lists/{mailing_list()}/members",
+        f"https://api.mailgun.net/v3/lists/{mailing_list()}/members.json",
         auth=("api", get_secret("MG_API_KEY")),
-        data={"upsert": True, "subscribed": True, "address": addr},
+        data={"upsert": True, "members": json.dumps(members)},
     )
 
 
@@ -37,7 +40,7 @@ def delete(addr: str) -> requests.Response:
 
 
 def validate(addr: str) -> bool:
-    """Validate an email address using the Mailgun Email Validation API."""
+    """Validate an email address using the Mailgun Email Verification service."""
     # Assume the address is valid if we can't send out emails
     if not get_config("ENABLE_EMAIL_SENDING"):
         return True

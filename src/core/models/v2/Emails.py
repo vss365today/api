@@ -5,8 +5,9 @@ __all__ = ["All", "Address"]
 
 
 class Address(Schema):
-    address = fields.Email(required=True)
+    address = fields.List(fields.Email(), required=True)
 
 
-class All(Address):
+class All(Schema):
+    address = fields.Email()
     date_added = fields.DateTime()

@@ -21,7 +21,8 @@ class Email(MethodView):
     @emails.response(201, Generic.Empty)
     @emails.alt_response(403, schema=Generic.HttpError)
     @emails.alt_response(422, schema=Generic.HttpError)
-    def post(self, **kwargs: str):
+    @emails.alt_response(500, schema=Generic.HttpError)
+    def post(self, **kwargs: list[str]):
         """Add an email address to the mailing list.
 
         If an email sending is disabled or an email has already been added,
@@ -35,25 +36,30 @@ class Email(MethodView):
         # Because the MG address validation endpoint costs money with each hit,
         # block it off unless we are running in production
         if get_config("ENV") == "production":
-            if not mailgun.validate(kwargs["address"]):
-                abort(422)
+            for addr in kwargs["address"]:
+                if not mailgun.verify(addr):
+                    abort(500)
 
-        # Attempt to add the email to the address first
-        if not db.create(kwargs["address"]):
-            abort(422)
+        # Attempt to add the address to the database first
+        for addr in kwargs["address"]:
+            if not db.create(addr):
+                abort(500)
 
-        # Attempt Add the email to the Mailgun mailing list
+        # Next, attempt to add the address to the Mailgun mailing list
         mg_result = mailgun.create(kwargs["address"])
 
-        # The address was not successfully recorded
+        # The address was not successfully recorded in Mailgun.
+        # We do not want to keep them in our database and make the lists consistent
         if mg_result.status_code != codes.ok:
-            abort(422)
+            for addr in kwargs["address"]:
+                db.delete(addr)
+            abort(500)
 
     @emails.arguments(models.Address, as_kwargs=True)
     @emails.response(204, Generic.Empty)
     @emails.alt_response(403, schema=Generic.HttpError)
     @emails.alt_response(422, schema=Generic.HttpError)
-    def delete(self, **kwargs: str):
+    def delete(self, **kwargs: list[str]):
         """Remove an email address from the mailing list.
 
         If an email sending is disabled or an email has already been removed,
@@ -61,5 +67,6 @@ class Email(MethodView):
         the email address.
         """
         if get_config("ENABLE_EMAIL_SENDING"):
-            mailgun.delete(kwargs["address"])
-            db.delete(kwargs["address"])
+            for addr in kwargs["address"]:
+                mailgun.delete(addr)
+                db.delete(addr)
