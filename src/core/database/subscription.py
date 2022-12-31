@@ -15,7 +15,7 @@ def email_create(addr: str) -> bool:
             db.query(sql, addr=addr.lower())
         return True
 
-    # That address aleady exists in the database.
+    # That address already exists in the database.
     # However, to prevent data leakage, pretend it added
     except IntegrityError as exc:
         print(f"New subscription exception: {exc}")

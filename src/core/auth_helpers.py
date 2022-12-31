@@ -51,7 +51,7 @@ def authorize_blueprint_v2():
 
     # The key is valid, now see if it has permission to access this route,
     # converting v2 route names to v1 route names as needed
-    flask_route = request.endpoint.split(".")[-2]
+    flask_route = request.endpoint.split(".")[-2].lower()
     v2_v1_translations = {
         "emails": "subscription",
         "prompts": "prompt",
