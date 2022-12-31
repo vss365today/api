@@ -9,7 +9,7 @@ __all__ = [
     "mailing_list",
     "create",
     "delete",
-    "validate",
+    "verify",
 ]
 
 
@@ -39,7 +39,7 @@ def delete(addr: str) -> requests.Response:
     )
 
 
-def validate(addr: str) -> bool:
+def verify(addr: str) -> bool:
     """Validate an email address using the Mailgun Email Verification service."""
     # Assume the address is valid if we can't send out emails
     if not get_config("ENABLE_EMAIL_SENDING"):

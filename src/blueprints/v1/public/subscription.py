@@ -24,7 +24,7 @@ def post(args: dict):
     # unless we are running in production
     if current_app.config["ENV"] == "production":
         # Validate the address to decide if we should record it
-        if not mailgun.validate(args["email"]):
+        if not mailgun.verify(args["email"]):
             return error
 
     # Add the address to the local database
@@ -35,7 +35,7 @@ def post(args: dict):
         return error
 
     # Add the address to the Mailgun mailing list
-    mg_result = mailgun.create(args["email"])
+    mg_result = mailgun.create([args["email"]])
 
     # The address was successfully recorded
     if mg_result.status_code == codes.ok:
