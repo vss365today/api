@@ -70,8 +70,7 @@ def update(data: dict) -> None:
     token = data.pop("token")
     key = ApiKey.query.filter_by(token=token)
 
-    # Run the query to get the current object and record it
-    # for auditing purposes
+    # Run the query to get the current object and record it for auditing purposes
     original_info = key.first().as_dict()
     original_info["key_id"] = original_info["_id"]
     del original_info["_id"]
