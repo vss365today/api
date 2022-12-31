@@ -165,7 +165,7 @@ def put(query_args: dict, json_args: dict):
     if args["media"] is None:
         media.delete(args["id"])
 
-    # We want to replace the existng media
+    # We want to replace the existing media
     elif (
         args["media"] is not None
         and __is_valid_url(args["media"])
@@ -189,6 +189,7 @@ def put(query_args: dict, json_args: dict):
     return helpers.make_response(204)
 
 
+@authorize_route
 @prompt.delete("/")
 @use_args({"id": fields.String(required=True)}, location="query")
 def delete(args: dict):

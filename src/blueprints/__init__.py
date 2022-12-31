@@ -83,7 +83,9 @@ def _factory(
 
 
 # v1 endpoints
-api_key = _factory("api_key", "api-key", authorize_blueprint, new_endpoint="keys")
+api_key = _factory(
+    "api_key", "api-key", authorize_blueprint, new_endpoint="keys"
+)  # replaced
 archive = _factory("archive", "archive")  # documented
 broadcast = _factory(
     "broadcast",
@@ -91,11 +93,13 @@ broadcast = _factory(
     authorize_blueprint,
     new_endpoint="notifications",
 )  # documented
-browse = _factory("browse", "browse")
+browse = _factory("browse", "browse")  # documented
 host = _factory("host", "host", new_endpoint="hosts")  # documented
 prompt = _factory("prompt", "prompt")  # documented
 search = _factory("search", "search")  # documented
-subscription = _factory("subscription", "subscription", new_endpoint="emails")
+subscription = _factory(
+    "subscription", "subscription", new_endpoint="emails"
+)  # replaced
 settings = _factory("settings", "settings", authorize_blueprint)  # documented
 all_blueprints = (
     api_key,
