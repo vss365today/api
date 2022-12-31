@@ -2,7 +2,6 @@ import functools
 
 from flask import abort, request
 
-from src.core.database import api_key
 from src.core.database.v2 import keys
 
 
@@ -25,14 +24,14 @@ def authorize_blueprint():
     # Attempt to get the API key and validate it
     try:
         token = get_auth_token()
-        if not api_key.exists(token):
+        if not keys.exists(token):
             raise KeyError
     except (KeyError, IndexError):
         abort(403)
 
     # The key is valid, now see if it has permission to access this route
     flask_route = request.endpoint.split(".")[0].replace("-", "_")
-    if not api_key.can_access(flask_route, token):
+    if not keys.can_access(flask_route, token):
         abort(403)
 
 

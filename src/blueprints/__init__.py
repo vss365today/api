@@ -86,9 +86,6 @@ def _factory(
 
 
 # v1 endpoints
-api_key = _factory(
-    "api_key", "api-key", authorize_blueprint, new_endpoint="keys"
-)  # replaced
 archive = _factory("archive", "archive")  # documented
 broadcast = _factory(
     "broadcast",
@@ -105,7 +102,6 @@ subscription = _factory(
 )  # replaced
 settings = _factory("settings", "settings", authorize_blueprint)  # documented
 all_blueprints = (
-    api_key,
     archive,
     broadcast,
     browse,
