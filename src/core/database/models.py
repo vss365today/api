@@ -2,18 +2,11 @@
 from datetime import datetime
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import (
-    Column,
-    Date,
-    DateTime,
-    ForeignKey,
-    String,
-    inspect,
-)
-from sqlalchemy.types import Boolean, Integer
+from sqlalchemy import Column, Date, DateTime, ForeignKey, String, inspect
 from sqlalchemy.dialects.mysql import TINYINT
+from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
-
+from sqlalchemy.types import Boolean, Integer
 
 db = SQLAlchemy()
 
@@ -84,6 +77,11 @@ class Host(db.Model):
 
     uid = Column(String(30, "utf8mb4_unicode_ci"), primary_key=True, unique=True)
     handle = Column(String(20, "utf8mb4_unicode_ci"), nullable=False)
+
+    @hybrid_property
+    def url(self) -> str:
+        """Create a Twitter URL to the Host's profile."""
+        return f"https://twitter.com/{self.handle}"
 
     @classmethod
     def get_handle(cls, uid: str) -> str:

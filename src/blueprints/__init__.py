@@ -135,4 +135,4 @@ notifications = _api_factory(
     description="Manage email notifications.",
 )
 
-v2_blueprints = (emails, keys)
+v2_blueprints = (emails, hosts, keys)
