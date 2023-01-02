@@ -14,6 +14,7 @@ __all__ = [
     "get",
     "get_by_date",
     "get_all",
+    "update",
 ]
 
 
@@ -173,3 +174,17 @@ def get_by_date(date: date) -> list[Host]:
 def get_all() -> list[Host]:
     """Get all recorded Hosts."""
     return Host.query.all()
+
+
+def update(handle: str, new_handle: str) -> bool:
+    """Update a Host's Twitter handle."""
+    # We can't update a Host that doesn't exist
+    host = Host.query.filter_by(handle=handle)
+    try:
+        host.one()
+    except NoResultFound:
+        return False
+
+    host.update({"handle": new_handle})
+    db.session.commit()
+    return True

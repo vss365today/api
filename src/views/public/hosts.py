@@ -53,18 +53,22 @@ class HostIndividual(MethodView):
 
     @authorize_route_v2
     @hosts.arguments(models.Handle, location="path", as_kwargs=True)
-    @hosts.arguments(models.Handle, location="json", as_kwargs=True)
+    @hosts.arguments(models.NewHandle, location="json", as_kwargs=True)
     @hosts.response(204, Generic.Empty)
     @hosts.alt_response(403, schema=Generic.HttpError)
     @hosts.alt_response(404, schema=Generic.HttpError)
-    @hosts.alt_response(500, schema=Generic.HttpError)
-    def patch(self, **kwargs: dict):
+    def patch(self, **kwargs: str):
         """Update a Host's handle.
+
+        Sometimes, a Host's Twitter handle changes. While Twitter
+        auto-redirects URLs to the new handle, we should update our
+        records to reflect the new handle to reduce confusion and retain accuracy.
 
         <strong>Note</strong>: This endpoint can only be used with an API key
         with the appropriate permissions.
         """
-        ...
+        if not db.hosts.update(**kwargs):
+            return abort(404)
 
     @authorize_route_v2
     @hosts.arguments(models.Handle, location="path", as_kwargs=True)
