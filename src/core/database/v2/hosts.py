@@ -2,7 +2,7 @@ from datetime import date
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from src.core.database.models import Host, HostingDate
+from src.core.database.models import Host, HostingDate, Prompt, db
 
 
 __all__ = [
@@ -70,8 +70,21 @@ def delete(handle: str) -> bool:
     The presence of any Prompts will stop all deletion so as to
     prevent orphaned records or an incomplete record.
     """
-    # Host.query.delete()
-    ...
+    # We can't delete a Host that does not exist.
+    try:
+        host = Host.query.filter_by(handle=handle).one()
+    except NoResultFound:
+        return False
+
+    # We can't delete a Host if they have assigned Hosting dates
+    dates = HostingDate.query.filter_by(uid=host.uid).all()
+    if dates:
+        return False
+
+    # We can delete this Host
+    db.session.delete(host)
+    db.session.commit()
+    return True
 
 
 def get(handle: str) -> Host | None:

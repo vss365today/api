@@ -70,17 +70,17 @@ class HostIndividual(MethodView):
     @hosts.response(204, Generic.Empty)
     @hosts.alt_response(403, schema=Generic.HttpError)
     @hosts.alt_response(404, schema=Generic.HttpError)
-    @hosts.alt_response(500, schema=Generic.HttpError)
-    def delete(self, **kwargs: dict):
+    def delete(self, **kwargs: str):
         """Delete a Host.
 
         This will only succeed if the Host does not have any
-        associated Prompts to prevent orphaned or incomplete records.
+         assigned Hosting Dates to prevent orphaned or incomplete records.
 
         <strong>Note</strong>: This endpoint can only be used with an API key
         with the appropriate permissions.
         """
-        ...
+        if not db.hosts.delete(kwargs["handle"]):
+            abort(404)
 
 
 @hosts.route("/<handle>/<date>")
