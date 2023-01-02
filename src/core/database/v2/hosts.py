@@ -1,4 +1,4 @@
-import calendar
+from calendar import monthrange
 from datetime import date
 from typing import TypedDict
 
@@ -26,7 +26,7 @@ def __hosting_periods_for_month(date: date) -> list[_HostingPeriod]:
     """Determine the Hosting periods for this month."""
     # Always automatically get the last day of the month for determining
     # the end of the second Host's Hosting period
-    last_day_of_month = calendar.monthrange(date.year, date.month)[1]
+    last_day_of_month = monthrange(date.year, date.month)[1]
 
     # Because February is a shorter month, the Hosting period is a little different
     if date.month == 2:
