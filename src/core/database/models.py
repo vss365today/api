@@ -104,7 +104,7 @@ class HostingDate(db.Model):
     )
     date = Column(Date, primary_key=True, nullable=False)
 
-    host = relationship("Host")
+    host: Host = relationship("Host")
 
 
 class ApiKeyHistory(db.Model):
@@ -124,7 +124,7 @@ class ApiKeyHistory(db.Model):
     has_settings = Column(Boolean, nullable=False, default=False)
     has_subscription = Column(Boolean, nullable=False, default=False)
 
-    key = relationship("ApiKey")
+    key: ApiKey = relationship("ApiKey")
 
 
 class Prompt(db.Model):
@@ -143,4 +143,9 @@ class Prompt(db.Model):
         DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
     )
 
-    host = relationship("Host")
+    host: Host = relationship("Host")
+
+    @hybrid_property
+    def url(self) -> str:
+        """Create a Twitter URL to the Host's profile."""
+        return f"https://twitter.com/{self.handle}/{self.tweet_id}"
