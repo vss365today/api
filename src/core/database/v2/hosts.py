@@ -1,43 +1,20 @@
 from datetime import date
+
+from sqlalchemy.orm.exc import NoResultFound
+
 from src.core.database.models import Host, HostingDate
 
 
-__all__ = ["delete"]
+__all__ = [
+    "by_date",
+    "current",
+    "delete",
+    "get",
+    "get_all",
+]
 
 
-def host_by_date(handle: str, date: date):
-    ...
-
-
-# SELECT writers.uid, handle
-# FROM writers
-#     JOIN writer_dates ON writer_dates.uid = writers.uid
-# WHERE writer_dates.date = :date
-
-
-def current_host() -> Host | None:
-    """Determine the current Host.
-
-    If there is no Host recording for now, this will return None.
-    """
-
-    def _get(date: date) -> Host | None:
-        return Host.query.join(HostingDate).filter(HostingDate.date == date).first()
-
-    # Always start by checking if there is a Host assigned to this single day.
-    # This is not a common occurrence but it has happened, and we don't want
-    # to prevent it from happening again in the future.
-    today = date.today()
-    if host := _get(today):
-        return host
-
-    # If we don't have a host assigned to today, we need to determine the starting date
-    # for the current hosting period and use that to get the current host
-    host_start_date = today.replace(day=hosting_start_date(today))
-    return _get(host_start_date)
-
-
-def hosting_start_date(day: date) -> int:
+def __hosting_start_date(day: date) -> int:
     """Determine the starting date for this Hosting period."""
     # Determine the Hosting period for the current month.
     # In February only, Hosts begin on the 1st and 15th,
@@ -53,6 +30,38 @@ def hosting_start_date(day: date) -> int:
     return start_dates[1]
 
 
+def by_date(date: date) -> list[Host]:
+    """Get all of the Hosts for the given date.
+
+    While the majority of the time this will only return a single item
+    in the list, historically, there have been days where multiple Hosts
+    gave out a prompt on the same day. We cannot merely support the modern
+    day prompt format of a string one Host per day, hence, it's a list.
+    """
+    return Host.query.join(HostingDate).filter(HostingDate.date == date).all()
+
+
+def current() -> Host | None:
+    """Determine the current Host.
+
+    If there is no Host recording for now, this will return None.
+    """
+    # Always start by checking if there is a Host assigned to this single day.
+    # This is not a common occurrence but it has happened, and we don't want
+    # to prevent it from happening again in the future.
+    today = date.today()
+    if host := by_date(today):
+        return host[0]
+
+    # If we don't have a host assigned to today, we need to determine the starting date
+    # for the current hosting period and use that to get the current host
+    host_start_date = today.replace(day=__hosting_start_date(today))
+    try:
+        return by_date(host_start_date)[0]
+    except IndexError:
+        return None
+
+
 def delete(handle: str) -> bool:
     """Delete a Host from the database by their Twitter ID.
 
@@ -63,3 +72,24 @@ def delete(handle: str) -> bool:
     """
     # Host.query.delete()
     ...
+
+
+def get(handle: str) -> Host | None:
+    """Get an individual Host and all Hosting dates by a Twitter handle."""
+    try:
+        host = Host.query.filter(Host.handle == handle).one()
+
+    # That host doesn't exist
+    except NoResultFound:
+        return None
+
+    # TODO: Once we upgrade to Flask-SQLAlchemy 3.0+,
+    # revise this to only pull the `HostingDate.date` column
+    dates = [r.date for r in HostingDate.query.filter_by(uid=host.uid).all()]
+    host.dates = dates
+    return host
+
+
+def get_all() -> list[Host]:
+    """Get all recorded Hosts."""
+    return Host.query.all()
