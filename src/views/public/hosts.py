@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Any
 
 from flask.views import MethodView
 from flask_smorest import abort
@@ -83,7 +84,7 @@ class HostIndividual(MethodView):
             abort(404)
 
 
-@hosts.route("/<handle>/<date>")
+@hosts.route("/<string:handle>/<string:date>")
 class HostIndividualDate(MethodView):
     @authorize_route_v2
     @hosts.arguments(models.HostingDate, location="path", as_kwargs=True)
@@ -105,8 +106,7 @@ class HostIndividualDate(MethodView):
     @hosts.alt_response(403, schema=Generic.HttpError)
     @hosts.alt_response(404, schema=Generic.HttpError)
     @hosts.alt_response(422, schema=Generic.HttpError)
-    @hosts.alt_response(500, schema=Generic.HttpError)
-    def delete(self, **kwargs: dict):
+    def delete(self, **kwargs: Any):
         """Delete a Hosting date for a Host.
 
         This will only succeed if there are not Prompts recorded
@@ -116,7 +116,8 @@ class HostIndividualDate(MethodView):
         <strong>Note</strong>: This endpoint can only be used with an API key
         with the appropriate permissions.
         """
-        ...
+        if not db.hosts.delete_date(kwargs["handle"], kwargs["date"]):
+            abort(404)
 
 
 @hosts.route("/date/<string:date>")
@@ -133,7 +134,7 @@ class HostDate(MethodView):
         <strong>Note</strong>: This endpoint can only be used with an API key
         with the appropriate permissions.
         """
-        if not (hosts := db.hosts.by_date(kwargs["date"])):
+        if not (hosts := db.hosts.get_by_date(kwargs["date"])):
             abort(404)
         return hosts
 
