@@ -34,8 +34,7 @@ class Host(MethodView):
 
         This will only succeed if the Host does not already exist.
 
-        <strong>Note</strong>: This endpoint can only be used with an API key
-        with the appropriate permissions.
+        * **Permission Required**: `has_hosts`
         """
         ...
 
@@ -64,8 +63,7 @@ class HostIndividual(MethodView):
         auto-redirects URLs to the new handle, we should update our
         records to reflect the new handle to reduce confusion and retain accuracy.
 
-        <strong>Note</strong>: This endpoint can only be used with an API key
-        with the appropriate permissions.
+        * **Permission Required**: `has_hosts`
         """
         if not db.hosts.update(**kwargs):
             return abort(404)
@@ -80,10 +78,9 @@ class HostIndividual(MethodView):
 
         This will only succeed if the Host does not have any
          assigned Hosting Dates to prevent orphaned or incomplete records.
-
+        assigned Hosting Dates to prevent orphaned or incomplete records.
         <strong>Note</strong>: This endpoint can only be used with an API key
-        with the appropriate permissions.
-        """
+        * **Permission Required**: `has_hosts`
         if not db.hosts.delete(kwargs["handle"]):
             abort(404)
 
@@ -94,13 +91,16 @@ class HostIndividualDate(MethodView):
     @hosts.arguments(models.HostingDate, location="path", as_kwargs=True)
     @hosts.response(201, Generic.Empty)
     @hosts.alt_response(403, schema=Generic.HttpError)
+    @hosts.alt_response(404, schema=Generic.HttpError)
     @hosts.alt_response(422, schema=Generic.HttpError)
-    @hosts.alt_response(500, schema=Generic.HttpError)
-    def post(self, **kwargs: dict):
-        """Create a Hosting date for a Host.
+    def post(self, **kwargs: Any):
+        """Create a Hosting Date for a Host.
 
-        <strong>Note</strong>: This endpoint can only be used with an API key
-        with the appropriate permissions.
+        This will fail if the Hosting Date has already been assigned. While historically
+        multiple Hosts may have been assigned the same day/period, the modern-day prompt
+        charter does not permit that, so neither do we.
+
+        * **Permission Required**: `has_hosts`
         """
         ...
 
@@ -111,14 +111,13 @@ class HostIndividualDate(MethodView):
     @hosts.alt_response(404, schema=Generic.HttpError)
     @hosts.alt_response(422, schema=Generic.HttpError)
     def delete(self, **kwargs: Any):
-        """Delete a Hosting date for a Host.
+        """Delete a Hosting Date for a Host.
 
         This will only succeed if there are not Prompts recorded
-        during the given Hosting range to prevent orphaned or
+        during the given Hosting period to prevent orphaned or
         incomplete records.
 
-        <strong>Note</strong>: This endpoint can only be used with an API key
-        with the appropriate permissions.
+        * **Permission Required**: `has_hosts`
         """
         if not db.hosts.delete_date(kwargs["handle"], kwargs["date"]):
             abort(404)
@@ -150,8 +149,10 @@ class HostCurrent(MethodView):
     def get(self):
         """Get the current Host.
 
-        This endpoint resolves the hosting period start date automatically
-        and provides the current Host for the day.
+        This endpoint automatically resolves the current Hosting period
+        and provides the current Host for the day. This endpoint conforms
+        to the modern-day prompt charter and only provides a single Host, as
+        there cannot be more than one Host a day anymore.
         """
         if host := db.hosts.current():
             return host

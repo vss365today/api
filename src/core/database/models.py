@@ -84,12 +84,12 @@ class Host(db.Model):
         return f"https://twitter.com/{self.handle}"
 
     @classmethod
-    def get_handle(cls, uid: str) -> str:
+    def get_handle(cls, /, uid: str) -> str:
         """Get a Host's user ID from their handle."""
         return cls.query.filter_by(id=uid).first().handle
 
     @classmethod
-    def get_uid(cls, handle: str) -> str:
+    def get_uid(cls, /, handle: str) -> str:
         """Get a Host's handle from their user ID."""
         return cls.query.filter_by(handle=handle).first().uid
 
