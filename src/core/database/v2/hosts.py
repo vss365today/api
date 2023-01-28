@@ -55,6 +55,29 @@ def __hosting_period_for_date(date: date) -> _HostingPeriod:
     return hosting_periods[1]
 
 
+def create_date(handle: str, date: date) -> bool:
+    """Create a Hosting Date for the given Host.
+
+    This will fail if the Host does not exist or a Host has already
+    been assigned to that date.
+    """
+    # We can't create a Hosting date for a Host that does not exist
+    try:
+        uid = Host.get_uid(handle)
+    except NoResultFound:
+        return False
+
+    # We can't create a Hosting date if a Host is already assigned to it
+    if HostingDate.query.filter_by(date=date).first() is not None:
+        return False
+
+    # Create the Hosting date
+    hd = HostingDate(uid=uid, date=date)
+    db.session.add(hd)
+    db.session.commit()
+    return True
+
+
 def current() -> Host | None:
     """Determine the current Host.
 

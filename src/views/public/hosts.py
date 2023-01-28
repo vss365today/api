@@ -77,10 +77,10 @@ class HostIndividual(MethodView):
         """Delete a Host.
 
         This will only succeed if the Host does not have any
-         assigned Hosting Dates to prevent orphaned or incomplete records.
         assigned Hosting Dates to prevent orphaned or incomplete records.
-        <strong>Note</strong>: This endpoint can only be used with an API key
+
         * **Permission Required**: `has_hosts`
+        """
         if not db.hosts.delete(kwargs["handle"]):
             abort(404)
 
@@ -102,7 +102,9 @@ class HostIndividualDate(MethodView):
 
         * **Permission Required**: `has_hosts`
         """
-        ...
+        abort(404)
+        # if not db.hosts.create_date(**kwargs):
+        #     abort(404)
 
     @authorize_route_v2
     @hosts.arguments(models.HostingDate, location="path", as_kwargs=True)
@@ -132,10 +134,14 @@ class HostDate(MethodView):
     @hosts.alt_response(404, schema=Generic.HttpError)
     @hosts.alt_response(422, schema=Generic.HttpError)
     def get(self, **kwargs: date):
-        """Get the Host(s) for the given Hosting date.
+        """Get the Host(s) for the given Hosting Date.
 
-        <strong>Note</strong>: This endpoint can only be used with an API key
-        with the appropriate permissions.
+        While the majority of the time this will only return a single item
+        in the list, historically, there have been days where multiple Hosts
+        gave out a prompt on the same day, meaning care should be taken to
+        handle multiple Hosts for a single Hosting date.
+
+        * **Permission Required**: `has_hosts`
         """
         if not (hosts := db.hosts.get_by_date(kwargs["date"])):
             abort(404)
