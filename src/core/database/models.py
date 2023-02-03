@@ -18,7 +18,7 @@ __all__ = [
     "Prompt",
     "User",
     "Writer",
-    "HostingDate",
+    "WriterDate",
     "db",
 ]
 
@@ -94,7 +94,7 @@ class Writer(db.Model):
         return cls.query.filter_by(handle=handle).first().uid
 
 
-class HostingDate(db.Model):
+class WriterDate(db.Model):
     __tablename__ = "writer_dates"
 
     uid = Column(
@@ -104,7 +104,7 @@ class HostingDate(db.Model):
     )
     date = Column(Date, primary_key=True, nullable=False)
 
-    host: Writer = relationship("Host")
+    host: Writer = relationship("Writer")
 
 
 class ApiKeyHistory(db.Model):
@@ -143,7 +143,7 @@ class Prompt(db.Model):
         DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
     )
 
-    host: Writer = relationship("Host")
+    host: Writer = relationship("Writer")
 
     @hybrid_property
     def url(self) -> str:
