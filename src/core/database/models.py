@@ -188,7 +188,7 @@ class HostDate(db.Model):
     _id = Column(BigInteger, primary_key=True, autoincrement=True)
     date = Column(Date, nullable=False)
     host_id = Column(
-        ForeignKey("host._id", ondelete="RESTRICT", onupdate="CASCADE"),
+        ForeignKey("hosts._id", ondelete="RESTRICT", onupdate="CASCADE"),
         nullable=False,
     )
 
