@@ -2,16 +2,6 @@ CREATE DATABASE IF NOT EXISTS `vss365today` /*!40100 COLLATE 'utf8mb4_unicode_ci
 USE vss365today;
 
 -- Create the tables
-CREATE TABLE IF NOT EXISTS users (
-  _id INTEGER NOT NULL PRIMARY KEY AUTO_INCREMENT UNIQUE,
-  username VARCHAR(20) NOT NULL UNIQUE,
-  password VARCHAR(128) NOT NULL,
-  date_created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  last_signin DATETIME NULL
-)
-COLLATE='utf8mb4_unicode_ci'
-ENGINE=InnoDB;
-
 CREATE TABLE IF NOT EXISTS emails (
   email VARCHAR(150) NOT NULL UNIQUE,
   date_added DATETIME NULL DEFAULT CURRENT_TIMESTAMP,
@@ -21,10 +11,12 @@ COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS writers (
+  _id INT NOT NULL UNIQUE PRIMARY KEY AUTO_INCREMENT,
   uid VARCHAR(30) NOT NULL UNIQUE,
   handle VARCHAR(20) NOT NULL,
   PRIMARY KEY(uid)
 )
+COMMENT='Legacy table for storing Host infomation.'
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
 
@@ -37,6 +29,7 @@ CREATE TABLE IF NOT EXISTS writer_dates (
     ON UPDATE CASCADE
     ON DELETE CASCADE
 )
+COMMENT='Legacy table for storing hosting date infomation.'
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
 
@@ -92,5 +85,29 @@ CREATE TABLE audit_api_keys (
     ON DELETE CASCADE
 )
 COMMENT='Audit table to track permission changes to API keys.'
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB;
+
+
+-- 2023+ tables
+CREATE TABLE IF NOT EXISTS `hosts` (
+  `_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `handle` VARCHAR(30) NOT NULL UNIQUE,
+  `twitter_uid` VARCHAR(40) NOT NULL UNIQUE,
+  PRIMARY KEY(`_id`)
+)
+COLLATE='utf8mb4_unicode_ci'
+COMMENT='Store the #vss365 Hosts.'
+ENGINE=InnoDB;
+
+CREATE TABLE `host_dates` (
+  `_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `host_id` BIGINT NOT NULL,
+  `date` DATE NOT NULL,
+  PRIMARY KEY (`_id`),
+  INDEX `host_id-host_dates_host_id` (`host_id`),
+  CONSTRAINT `host_id-host_dates_host_id` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`_id`) ON UPDATE CASCADE ON DELETE RESTRICT
+)
+COMMENT='Store the hosting dates of #vss365 Hosts.'
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;

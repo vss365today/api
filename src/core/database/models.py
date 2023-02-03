@@ -6,7 +6,7 @@ from sqlalchemy import Column, Date, DateTime, ForeignKey, String, inspect
 from sqlalchemy.dialects.mysql import TINYINT
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
-from sqlalchemy.types import Boolean, Integer
+from sqlalchemy.types import Boolean, Integer, BigInteger
 
 db = SQLAlchemy()
 
@@ -149,3 +149,47 @@ class Prompt(db.Model):
     def url(self) -> str:
         """Create a Twitter URL to the Host's profile."""
         return f"https://twitter.com/{self.handle}/{self.tweet_id}"
+
+
+# 2023+ models
+class Host(db.Model):
+    __tablename__ = "hosts"
+    __table_args__ = {"comment": "Store the #vss365 Hosts."}
+
+    _id = Column(BigInteger, primary_key=True, autoincrement=True)
+    handle = Column(String(30, "utf8mb4_unicode_ci"), nullable=False, unique=True)
+    twitter_uid = Column(String(40, "utf8mb4_unicode_ci"), nullable=False, unique=True)
+
+    @hybrid_property
+    def url(self) -> str:
+        """Create a Twitter URL to the Host's profile."""
+        return f"https://twitter.com/{self.handle}"
+
+    @classmethod
+    def get_handle(cls, /, id: str) -> str:
+        """Get a Host's handle from their user ID."""
+        return cls.query.filter_by(_id=id).first().handle
+
+    @classmethod
+    def get_id(cls, /, handle: str) -> str:
+        """Get a Host's user ID from their handle."""
+        return cls.query.filter_by(handle=handle).first()._id
+
+    @classmethod
+    def get_twitter_uid(cls, /, handle: str) -> str:
+        """Get a Host's Twitter ID from their handle."""
+        return cls.query.filter_by(handle=handle).first().twitter_uid
+
+
+class HostDate(db.Model):
+    __tablename__ = "host_dates"
+    __table_args__ = {"comment": "Store the hosting dates of #vss365 Hosts."}
+
+    _id = Column(BigInteger, primary_key=True, , autoincrement=True)
+    date = Column(Date, nullable=False)
+    host_id = Column(
+        ForeignKey("host._id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
+    )
+
+    host: Host = relationship("Host")
