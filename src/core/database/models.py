@@ -185,7 +185,7 @@ class HostDate(db.Model):
     __tablename__ = "host_dates"
     __table_args__ = {"comment": "Store the hosting dates of #vss365 Hosts."}
 
-    _id = Column(BigInteger, primary_key=True, , autoincrement=True)
+    _id = Column(BigInteger, primary_key=True, autoincrement=True)
     date = Column(Date, nullable=False)
     host_id = Column(
         ForeignKey("host._id", ondelete="RESTRICT", onupdate="CASCADE"),
