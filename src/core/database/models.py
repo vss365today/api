@@ -17,7 +17,7 @@ __all__ = [
     "Email",
     "Prompt",
     "User",
-    "Host",
+    "Writer",
     "HostingDate",
     "db",
 ]
@@ -72,7 +72,7 @@ class User(db.Model):
     last_signin = Column(DateTime)
 
 
-class Host(db.Model):
+class Writer(db.Model):
     __tablename__ = "writers"
 
     uid = Column(String(30, "utf8mb4_unicode_ci"), primary_key=True, unique=True)
@@ -104,7 +104,7 @@ class HostingDate(db.Model):
     )
     date = Column(Date, primary_key=True, nullable=False)
 
-    host: Host = relationship("Host")
+    host: Writer = relationship("Host")
 
 
 class ApiKeyHistory(db.Model):
@@ -143,7 +143,7 @@ class Prompt(db.Model):
         DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
     )
 
-    host: Host = relationship("Host")
+    host: Writer = relationship("Host")
 
     @hybrid_property
     def url(self) -> str:

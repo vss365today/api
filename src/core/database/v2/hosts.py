@@ -4,7 +4,7 @@ from typing import TypedDict
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from src.core.database.models import Host, HostingDate, Prompt, db
+from src.core.database.models import Writer, HostingDate, Prompt, db
 
 
 __all__ = [
@@ -63,7 +63,7 @@ def create_date(handle: str, date: date) -> bool:
     """
     # We can't create a Hosting date for a Host that does not exist
     try:
-        uid = Host.get_uid(handle)
+        uid = Writer.get_uid(handle)
     except NoResultFound:
         return False
 
@@ -78,7 +78,7 @@ def create_date(handle: str, date: date) -> bool:
     return True
 
 
-def current() -> Host | None:
+def current() -> Writer | None:
     """Determine the current Host.
 
     If there is no Host recording for now, this will return None.
@@ -109,7 +109,7 @@ def delete(handle: str) -> bool:
     """
     # We can't delete a Host that does not exist.
     try:
-        host = Host.query.filter_by(handle=handle).one()
+        host = Writer.query.filter_by(handle=handle).one()
     except NoResultFound:
         return False
 
@@ -135,7 +135,7 @@ def delete_date(handle: str, given_date: date) -> bool:
     """
     # We can't delete a Hosting Date for a Host that does not exist
     try:
-        host = Host.query.filter_by(handle=handle).one()
+        host = Writer.query.filter_by(handle=handle).one()
     except NoResultFound:
         return False
 
@@ -167,10 +167,10 @@ def delete_date(handle: str, given_date: date) -> bool:
     return True
 
 
-def get(handle: str) -> Host | None:
+def get(handle: str) -> Writer | None:
     """Get an individual Host and all Hosting dates by a Twitter handle."""
     try:
-        host = Host.query.filter_by(handle=handle).one()
+        host = Writer.query.filter_by(handle=handle).one()
 
     # That host doesn't exist
     except NoResultFound:
@@ -183,7 +183,7 @@ def get(handle: str) -> Host | None:
     return host
 
 
-def get_by_date(date: date) -> list[Host]:
+def get_by_date(date: date) -> list[Writer]:
     """Get all of the Hosts for the given date.
 
     While the majority of the time this will only return a single item
@@ -191,18 +191,18 @@ def get_by_date(date: date) -> list[Host]:
     gave out a prompt on the same day. We cannot merely support the modern
     day prompt format of a string one Host per day, hence, it's a list.
     """
-    return Host.query.join(HostingDate).filter(HostingDate.date == date).all()
+    return Writer.query.join(HostingDate).filter(HostingDate.date == date).all()
 
 
-def get_all() -> list[Host]:
+def get_all() -> list[Writer]:
     """Get all recorded Hosts."""
-    return Host.query.all()
+    return Writer.query.all()
 
 
 def update(handle: str, new_handle: str) -> bool:
     """Update a Host's Twitter handle."""
     # We can't update a Host that doesn't exist
-    host = Host.query.filter_by(handle=handle)
+    host = Writer.query.filter_by(handle=handle)
     try:
         host.one()
     except NoResultFound:
