@@ -5,7 +5,7 @@ __all__ = ["Basic", "Date", "Handle", "Host", "HostingDate", "NewHandle"]
 
 
 class Basic(Schema):
-    uid = fields.String()
+    twitter_uid = fields.String()
     handle = fields.String()
     url = fields.Url()
 
