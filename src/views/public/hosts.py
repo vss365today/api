@@ -99,7 +99,7 @@ class HostIndividualDate(MethodView):
         """Create a Hosting Date for a Host.
 
         This will fail if the Hosting Date has already been assigned. While historically
-        multiple Hosts may have been assigned the same day/period, the modern-day prompt
+        multiple Hosts may have been assigned the same day/period, the modern day prompt
         charter does not permit that, so neither do we.
 
         * **Permission Required**: `has_hosts`

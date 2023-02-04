@@ -1,4 +1,4 @@
-from src.core.database.v2 import emails, hosts, keys
+from src.core.database.v2 import emails, hosts, keys, prompts
 
 
-__all__ = ["emails", "hosts", "keys"]
+__all__ = ["emails", "hosts", "keys", "prompts"]

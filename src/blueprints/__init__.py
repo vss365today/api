@@ -95,7 +95,7 @@ broadcast = _factory(
 )  # documented
 browse = _factory("browse", "browse")  # documented
 host = _factory("host", "host", new_endpoint="hosts")  # documented
-prompt = _factory("prompt", "prompt")  # documented
+prompt = _factory("prompt", "prompt", new_endpoint="prompts")  # documented
 search = _factory("search", "search")  # documented
 settings = _factory("settings", "settings", authorize_blueprint)  # documented
 all_blueprints = (
@@ -119,8 +119,8 @@ emails = _api_factory(
 hosts = _api_factory(
     "hosts",
     "hosts",
-    description="Manage hosts.",
-)
+    description="Manage Hosts.",
+)  # done
 keys = _api_factory(
     "keys",
     "keys",
@@ -134,5 +134,10 @@ notifications = _api_factory(
     authorize_blueprint_v2,
     description="Manage email notifications.",
 )
+prompts = _api_factory(
+    "prompts",
+    "prompts",
+    description="Manage Prompts.",
+)
 
-v2_blueprints = (emails, hosts, keys)
+v2_blueprints = (emails, hosts, keys, prompts)
