@@ -102,9 +102,8 @@ class HostIndividualDate(MethodView):
 
         * **Permission Required**: `has_hosts`
         """
-        abort(404)
-        # if not db.hosts.create_date(**kwargs):
-        #     abort(404)
+        if not db.hosts.create_date(**kwargs):
+            abort(404)
 
     @authorize_route_v2
     @hosts.arguments(models.HostingDate, location="path", as_kwargs=True)
