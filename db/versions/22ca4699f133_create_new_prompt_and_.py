@@ -1,7 +1,7 @@
 """Create new Prompt and PromptMedia models
 
 Revision ID: 22ca4699f133
-Revises: 12aa20de16b0
+Revises: 03a61012d6f9
 Create Date: 2023-02-03 21:22:39.068860
 
 """
@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = "22ca4699f133"
-down_revision = "12aa20de16b0"
+down_revision = "03a61012d6f9"
 branch_labels = None
 depends_on = None
 
