@@ -12,7 +12,7 @@ sys.path.insert(0, APP_ROOT.as_posix())
 
 
 from db.dummy_db import create_app
-from src.core.database import schema
+from src.core.database import models
 
 
 def create_database():
@@ -20,11 +20,12 @@ def create_database():
     app = create_app()
     with app.app_context():
         # Create the database tables if needed
-        if not bool(inspect(schema.db.engine).get_table_names()):
+        if not bool(inspect(models.db.engine).get_table_names()):
             print("Creating new database...")
-            schema.db.create_all()
+            models.db.create_all()
 
-            # Tell Alembic this is a new database and we don't need to update it to a newer schema
+            # Tell Alembic this is a new database and
+            # we don't need to update it to a newer schema
             alembic_cfg = Config("alembic.ini")
             command.stamp(alembic_cfg, "head")
 
