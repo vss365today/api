@@ -4,7 +4,7 @@ from typing import TypedDict
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from src.core.database.models import Writer, WriterDate, Prompt, db
+from src.core.database.models import Host, HostDate, Prompt, db
 
 
 __all__ = [
@@ -63,22 +63,21 @@ def create_date(handle: str, date: date) -> bool:
     """
     # We can't create a Hosting date for a Host that does not exist
     try:
-        uid = Writer.get_uid(handle)
+        uid = Host.get_id(handle)
     except NoResultFound:
         return False
 
     # We can't create a Hosting date if a Host is already assigned to it
-    if WriterDate.query.filter_by(date=date).first() is not None:
+    if HostDate.query.filter_by(date=date).first() is not None:
         return False
 
     # Create the Hosting date
-    hd = WriterDate(uid=uid, date=date)
-    db.session.add(hd)
+    db.session.add(HostDate(host_id=uid, date=date))
     db.session.commit()
     return True
 
 
-def current() -> Writer | None:
+def current() -> Host | None:
     """Determine the current Host.
 
     If there is no Host recording for now, this will return None.
@@ -109,12 +108,12 @@ def delete(handle: str) -> bool:
     """
     # We can't delete a Host that does not exist.
     try:
-        host = Writer.query.filter_by(handle=handle).one()
+        host = Host.query.filter_by(handle=handle).one()
     except NoResultFound:
         return False
 
     # We can't delete a Host if they have assigned Hosting dates
-    dates = WriterDate.query.filter_by(uid=host.uid).all()
+    dates = HostDate.query.filter_by(host_id=host._id).all()
     if dates:
         return False
 
@@ -135,14 +134,14 @@ def delete_date(handle: str, given_date: date) -> bool:
     """
     # We can't delete a Hosting Date for a Host that does not exist
     try:
-        host = Writer.query.filter_by(handle=handle).one()
+        host = Host.query.filter_by(handle=handle).one()
     except NoResultFound:
         return False
 
     # We can't delete a Hosting Date if it is not recorded or
     # they are not assigned to it
     try:
-        hdate = WriterDate.query.filter_by(uid=host.uid, date=given_date).one()
+        hdate = HostDate.query.filter_by(host_id=host._id, date=given_date).one()
     except NoResultFound:
         return False
 
@@ -154,7 +153,7 @@ def delete_date(handle: str, given_date: date) -> bool:
     # We can't delete a Hosting Date if the Host
     # has given out a Prompt during the Hosting period
     prompt = Prompt.query.filter(
-        Prompt.uid == host.uid,
+        Prompt.host_id == host._id,
         Prompt.date >= hp_start,
         Prompt.date <= hp_end,
     ).first()
@@ -167,10 +166,10 @@ def delete_date(handle: str, given_date: date) -> bool:
     return True
 
 
-def get(handle: str) -> Writer | None:
+def get(handle: str) -> Host | None:
     """Get an individual Host and all Hosting dates by a Twitter handle."""
     try:
-        host = Writer.query.filter_by(handle=handle).one()
+        host = Host.query.filter_by(handle=handle).one()
 
     # That host doesn't exist
     except NoResultFound:
@@ -178,12 +177,12 @@ def get(handle: str) -> Writer | None:
 
     # TODO: Once we upgrade to Flask-SQLAlchemy 3.0+,
     # revise this to only pull the `HostingDate.date` column
-    dates = [r.date for r in WriterDate.query.filter_by(uid=host.uid).all()]
+    dates = [r.date for r in HostDate.query.filter_by(host_id=host._id).all()]
     host.dates = dates
     return host
 
 
-def get_by_date(date: date) -> list[Writer]:
+def get_by_date(date: date) -> list[Host]:
     """Get all of the Hosts for the given date.
 
     While the majority of the time this will only return a single item
@@ -191,18 +190,18 @@ def get_by_date(date: date) -> list[Writer]:
     gave out a prompt on the same day. We cannot merely support the modern
     day prompt format of a string one Host per day, hence, it's a list.
     """
-    return Writer.query.join(WriterDate).filter(WriterDate.date == date).all()
+    return Host.query.join(HostDate).filter(HostDate.date == date).all()
 
 
-def get_all() -> list[Writer]:
+def get_all() -> list[Host]:
     """Get all recorded Hosts."""
-    return Writer.query.all()
+    return Host.query.all()
 
 
 def update(handle: str, new_handle: str) -> bool:
     """Update a Host's Twitter handle."""
     # We can't update a Host that doesn't exist
-    host = Writer.query.filter_by(handle=handle)
+    host = Host.query.filter_by(handle=handle)
     try:
         host.one()
     except NoResultFound:
