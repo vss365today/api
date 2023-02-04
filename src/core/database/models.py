@@ -6,7 +6,7 @@ from sqlalchemy import Column, Date, DateTime, ForeignKey, String, inspect
 from sqlalchemy.dialects.mysql import TINYINT
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import relationship
-from sqlalchemy.types import Boolean, Integer, BigInteger
+from sqlalchemy.types import Boolean, BigInteger
 
 db = SQLAlchemy()
 
@@ -15,10 +15,13 @@ __all__ = [
     "ApiKey",
     "ApiKeyHistory",
     "Email",
-    "Prompt",
-    "User",
+    "PromptLegacy",
     "Writer",
     "WriterDate",
+    "Prompt",
+    "PromptMedia",
+    "Host",
+    "HostDate",
     "db",
 ]
 
@@ -93,7 +96,7 @@ class WriterDate(db.Model):
     )
     date = Column(Date, primary_key=True, nullable=False)
 
-    host: Writer = relationship("Writer")
+    writer: Writer = relationship("Writer")
 
 
 class ApiKeyHistory(db.Model):
@@ -116,8 +119,9 @@ class ApiKeyHistory(db.Model):
     key: ApiKey = relationship("ApiKey")
 
 
-class Prompt(db.Model):
+class PromptLegacy(db.Model):
     __tablename__ = "prompts"
+    __table_args__ = {"comment": "Legacy table for storing prompts."}
 
     tweet_id = Column(String(25, "utf8mb4_unicode_ci"), primary_key=True, unique=True)
     date = Column(Date, nullable=False)
@@ -129,10 +133,13 @@ class Prompt(db.Model):
     media = Column(String(512, "utf8mb4_unicode_ci"))
     media_alt_text = Column(String(1000, "utf8mb4_unicode_ci"))
     date_added = Column(
-        DateTime, nullable=False, default=datetime.now, onupdate=datetime.now
+        DateTime,
+        nullable=False,
+        default=datetime.now,
+        onupdate=datetime.now,
     )
 
-    host: Writer = relationship("Writer")
+    writer: Writer = relationship("Writer")
 
     @hybrid_property
     def url(self) -> str:
@@ -182,3 +189,50 @@ class HostDate(db.Model):
     )
 
     host: Host = relationship("Host")
+
+
+class Prompt(db.Model):
+    __tablename__ = "prompts_new"
+    __table_args__ = {"comment": "Store the #vss365 Prompts."}
+
+    _id = Column(BigInteger, primary_key=True, autoincrement=True)
+    twitter_id = Column(
+        String(30, "utf8mb4_unicode_ci"),
+        nullable=False,
+        unique=True,
+    )
+    date = Column(Date, nullable=False)
+    date_added = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.now,
+        onupdate=datetime.now,
+    )
+    word = Column(String(30, "utf8mb4_unicode_ci"), nullable=False)
+    content = Column(String(2048, "utf8mb4_unicode_ci"), nullable=False)
+    host_id = Column(
+        ForeignKey("hosts._id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
+    )
+
+    host: Host = relationship("Host")
+
+    @hybrid_property
+    def url(self) -> str:
+        """Create a Twitter URL to the Host's profile."""
+        return f"https://twitter.com/{self.handle}/{self.tweet_id}"
+
+
+class PromptMedia(db.Model):
+    __tablename__ = "prompt_media"
+    __table_args__ = {"comment": "Store the #vss365 Prompt media."}
+
+    _id = Column(BigInteger, primary_key=True, autoincrement=True)
+    media = Column(String(512, "utf8mb4_unicode_ci"))
+    alt_text = Column(String(1000, "utf8mb4_unicode_ci"))
+    prompt_id = Column(
+        ForeignKey("prompts_new._id", ondelete="RESTRICT", onupdate="CASCADE"),
+        nullable=False,
+    )
+
+    prompt: Prompt = relationship("Prompt")

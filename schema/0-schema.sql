@@ -48,6 +48,7 @@ CREATE TABLE IF NOT EXISTS prompts (
     ON UPDATE CASCADE
     ON DELETE RESTRICT
 )
+COMMENT='Legacy table for storing prompts.'
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
 
@@ -100,14 +101,52 @@ COLLATE='utf8mb4_unicode_ci'
 COMMENT='Store the #vss365 Hosts.'
 ENGINE=InnoDB;
 
-CREATE TABLE `host_dates` (
+CREATE TABLE IF NOT EXISTS `host_dates` (
   `_id` BIGINT NOT NULL AUTO_INCREMENT,
   `host_id` BIGINT NOT NULL,
   `date` DATE NOT NULL,
   PRIMARY KEY (`_id`),
   INDEX `host_id-host_dates_host_id` (`host_id`),
-  CONSTRAINT `host_id-host_dates_host_id` FOREIGN KEY (`host_id`) REFERENCES `hosts` (`_id`) ON UPDATE CASCADE ON DELETE RESTRICT
+  CONSTRAINT `host_id-host_dates_host_id`
+    FOREIGN KEY (`host_id`) REFERENCES `hosts` (`_id`)
+    ON UPDATE CASCADE
+    ON DELETE RESTRICT
 )
 COMMENT='Store the hosting dates of #vss365 Hosts.'
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `prompts_new` (
+  `_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `twitter_id` VARCHAR(30) NOT NULL UNIQUE,
+  `date` DATE NOT NULL,
+  `date_added` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `word` VARCHAR(30) NOT NULL,
+  `content` VARCHAR(2048) NOT NULL,
+  `host_id` BIGINT NOT NULL,
+  PRIMARY KEY (`_id`),
+  INDEX `host_id-prompts_host_id` (`host_id`),
+  CONSTRAINT `host_id-prompts_host_id`
+    FOREIGN KEY (`host_id`) REFERENCES `hosts` (`_id`)
+    ON UPDATE CASCADE
+    ON DELETE RESTRICT
+)
+COMMENT='Store the #vss365 Prompts.'
+COLLATE='utf8mb4_unicode_ci'
+ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS `prompt_media` (
+  `_id` BIGINT NOT NULL AUTO_INCREMENT,
+  `media` VARCHAR(512),
+  `alt_text` VARCHAR(1000),
+  `prompt_id` BIGINT NOT NULL,
+  PRIMARY KEY (`_id`),
+  INDEX `prompt_media_id-prompts_id` (`prompt_id`),
+  CONSTRAINT `prompt_media_id-prompts_id`
+    FOREIGN KEY (`prompt_id`) REFERENCES `prompts_new` (`_id`)
+    ON UPDATE CASCADE
+    ON DELETE RESTRICT
+)
+COMMENT='Store the #vss365 Prompt media.'
 COLLATE='utf8mb4_unicode_ci'
 ENGINE=InnoDB;
