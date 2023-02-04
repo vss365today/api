@@ -5,6 +5,7 @@ from typing import TypedDict
 from sqlalchemy.orm.exc import NoResultFound
 
 from src.core.database.models import Host, HostDate, Prompt, db
+from src.core.helpers import twitter_v2_api
 
 
 __all__ = [
@@ -53,6 +54,27 @@ def __hosting_period_for_date(date: date) -> _HostingPeriod:
 
     # Except it's not in that first range, so we're in the second Host's period
     return hosting_periods[1]
+
+
+def create(handle: str) -> Host | None:
+    """Create a new Host.
+
+    This will fail if the Host already exists or the Twitter user ID cannot be found.
+    """
+    # Attempt to get the user ID from the Twitter API
+    api = twitter_v2_api()
+    host = api.get_user(username=handle)
+
+    # That username couldn't be found
+    if host.errors:
+        return None
+
+    # Create the Host. A database level unique constraint
+    # will stop duplicate Hosts from being created
+    host = Host(handle=handle, twitter_uid=host.data.id)
+    db.session.add(host)
+    db.session.commit()
+    return host
 
 
 def create_date(handle: str, date: date) -> bool:

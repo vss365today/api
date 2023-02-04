@@ -36,7 +36,9 @@ class Host(MethodView):
 
         * **Permission Required**: `has_hosts`
         """
-        ...
+        if (host := db.hosts.create(kwargs["handle"])) is None:
+            abort(500)
+        return host
 
 
 @hosts.route("/<string:handle>")
