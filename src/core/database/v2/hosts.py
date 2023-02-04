@@ -128,7 +128,7 @@ def delete(handle: str) -> bool:
     The presence of any Prompts will stop all deletion so as to
     prevent orphaned records or an incomplete record.
     """
-    # We can't delete a Host that does not exist.
+    # We can't delete a Host that does not exist
     try:
         host = Host.query.filter_by(handle=handle).one()
     except NoResultFound:

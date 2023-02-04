@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS `prompt_media` (
   CONSTRAINT `prompt_media_id-prompts_id`
     FOREIGN KEY (`prompt_id`) REFERENCES `prompts_new` (`_id`)
     ON UPDATE CASCADE
-    ON DELETE RESTRICT
+    ON DELETE CASCADE
 )
 COMMENT='Store the #vss365 Prompt media.'
 COLLATE='utf8mb4_unicode_ci'

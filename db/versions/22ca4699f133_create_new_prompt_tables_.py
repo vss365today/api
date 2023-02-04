@@ -59,7 +59,7 @@ def upgrade():
         ),
         sa.Column("prompt_id", sa.BigInteger(), nullable=False),
         sa.ForeignKeyConstraint(
-            ["prompt_id"], ["prompts_new._id"], onupdate="CASCADE", ondelete="RESTRICT"
+            ["prompt_id"], ["prompts_new._id"], onupdate="CASCADE", ondelete="CASCADE"
         ),
         sa.PrimaryKeyConstraint("_id"),
         comment="Store the #vss365 Prompt media.",

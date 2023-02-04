@@ -231,7 +231,7 @@ class PromptMedia(db.Model):
     media = Column(String(512, "utf8mb4_unicode_ci"))
     alt_text = Column(String(1000, "utf8mb4_unicode_ci"))
     prompt_id = Column(
-        ForeignKey("prompts_new._id", ondelete="RESTRICT", onupdate="CASCADE"),
+        ForeignKey("prompts_new._id", ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False,
     )
 
