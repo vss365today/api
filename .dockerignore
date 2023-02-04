@@ -1,5 +1,6 @@
-.vscode/
 .git/
+.github/
+.vscode/
 __pycache__/
 db/
 backup/
