@@ -1,6 +1,6 @@
 from sqlalchemy.orm.exc import NoResultFound
 
-from src.core.database.models import Prompt, db
+from src.core.database.models import Prompt, PromptMedia, db
 
 
 __all__ = []
@@ -11,7 +11,7 @@ def delete(_id: int) -> bool:
 
     This will fail if the given Prompt does not exist.
 
-    A database FK constraint will ensure any associated media is also deleted.
+    A database FK constraint will ensure any associated media records is also deleted.
     """
     # We can't delete a Prompt that does not exist
     try:
@@ -19,15 +19,28 @@ def delete(_id: int) -> bool:
     except NoResultFound:
         return False
 
-    # Delete the Prompt and any associated Media.
-    # TODO: Actually delete the media file(s)
+    # Delete the Prompt and any associated Media records
     db.session.delete(prompt)
     db.session.commit()
     return True
 
 
-def create():
-    ...
+def create(info: dict):
+
+    media = info.pop("media")
+    prompt = Prompt(**info)
+    db.session.add(prompt)
+
+    pm = PromptMedia(**media)
+    db.session.add(pm)
+
+    db.session.commit()
+
+    prompt.media = pm
+
+    # TODO: Add navigation obj
+
+    return prompt
 
 
 def update():
