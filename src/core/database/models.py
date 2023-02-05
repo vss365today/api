@@ -219,7 +219,7 @@ class Prompt(db.Model):
 
     @hybrid_property
     def url(self) -> str:
-        """Create a Twitter URL to the Host's profile."""
+        """Create a Twitter URL to the Prompt's source tweet."""
         return f"https://twitter.com/{self.handle}/{self.tweet_id}"
 
 
