@@ -1,7 +1,7 @@
 from marshmallow import Schema, fields
 
 
-__all__ = ["Prompt"]
+__all__ = ["Prompt", "PromptDate", "PromptId"]
 
 
 class Media(Schema):
@@ -27,3 +27,11 @@ class Prompt(Schema):
     twitter_id = fields.String(required=True)
     url = fields.String(dump_only=True)
     word = fields.String(required=True)
+
+
+class PromptDate(Schema):
+    date = fields.Date("iso", required=True)
+
+
+class PromptId(Schema):
+    id = fields.Integer(strict=True, required=True)

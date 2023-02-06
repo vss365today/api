@@ -217,6 +217,9 @@ class Prompt(db.Model):
 
     host: Host = relationship("Host")
 
+    def __str__(self) -> str:
+        return f"Prompt {self._id}, {self.date.isoformat()}, {self.word}"
+
     @hybrid_property
     def url(self) -> str:
         """Create a Twitter URL to the Prompt's source tweet."""

@@ -3,7 +3,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from src.core.database.models import Prompt, PromptMedia, db
 
 
-__all__ = []
+__all__ = ["delete"]
 
 
 def delete(_id: int) -> bool:
