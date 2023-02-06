@@ -1,5 +1,5 @@
 from flask import current_app
-from sqlalchemy.orm.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError
 
 from src.core.database.models import Email, db
 
