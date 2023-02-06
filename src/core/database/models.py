@@ -1,5 +1,7 @@
 # coding: utf-8
-from datetime import datetime
+from contextlib import suppress
+from datetime import date as date_obj, datetime, timedelta
+from typing import TypedDict
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Date, DateTime, ForeignKey, String, inspect
@@ -24,6 +26,13 @@ __all__ = [
     "HostDate",
     "db",
 ]
+
+
+class PromptNavigation(TypedDict):
+    """Typing Hint for Prompt surrounding dates."""
+
+    next: date_obj | None
+    previous: date_obj | None
 
 
 class HelperMethods:
@@ -223,7 +232,27 @@ class Prompt(db.Model):
     @hybrid_property
     def url(self) -> str:
         """Create a Twitter URL to the Prompt's source tweet."""
-        return f"https://twitter.com/{self.handle}/{self.tweet_id}"
+        return f"https://twitter.com/{self.host.handle}/{self.twitter_id}"
+
+    @hybrid_property
+    def navigation(self) -> PromptNavigation:
+        """Get the previous/next Prompt dates."""
+        # Because the previous or next day is not always available,
+        # we must be careful to handle NoneType values correctly
+        navi = PromptNavigation(next=None, previous=None)
+        with suppress(AttributeError):
+            navi["previous"] = (
+                Prompt.query.filter_by(date=self.date - timedelta(days=1)).first().date
+            )
+            navi["next"] = (
+                Prompt.query.filter_by(date=self.date + timedelta(days=1)).first().date
+            )
+        return navi
+
+    @hybrid_property
+    def media(self) -> list["PromptMedia"]:
+        """Get any associated Prompt media."""
+        return PromptMedia.query.filter_by(prompt_id=self._id).all()
 
 
 class PromptMedia(db.Model):

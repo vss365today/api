@@ -1,5 +1,7 @@
 from marshmallow import Schema, fields
 
+from src.core.models.v2 import Hosts
+
 
 __all__ = ["Prompt", "PromptDate", "PromptId"]
 
@@ -20,9 +22,10 @@ class Prompt(Schema):
     content = fields.String(required=True)
     date = fields.Date("iso", required=True)
     date_added = fields.DateTime("iso", dump_only=True)
-    host = fields.String(required=True)
+    host = fields.Nested(Hosts.Basic, dump_only=True)
+    host_handle = fields.String(required=True, load_only=True)
     is_duplicate = fields.Boolean(missing=None, allow_None=True, load_only=True)
-    media = fields.Nested(Media, missing=None, dump_only=True)
+    media = fields.List(fields.Nested(Media, missing=None), dump_only=True)
     navigation = fields.Nested(Navigation, missing=None, dump_only=True)
     twitter_id = fields.String(required=True)
     url = fields.String(dump_only=True)
