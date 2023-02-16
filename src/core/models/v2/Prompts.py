@@ -8,7 +8,8 @@ __all__ = ["Prompt", "PromptDate", "PromptId"]
 
 class Media(Schema):
     alt_text = fields.String(required=True, allow_none=True)
-    media = fields.String(required=True, allow_none=True)
+    media = fields.String(required=True, allow_none=True, dump_only=True)
+    url = fields.Url(required=True, load_only=True)
     replace = fields.Boolean(missing=False, load_only=True)
 
 

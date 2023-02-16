@@ -30,9 +30,13 @@ def create(info: dict) -> Prompt | None:
     # TODO: Proper media file names, see v1 prompt route code
     if media is not None:
         for item in media:
-            # We don't respect the `replace` flag in this context
-            del item["replace"]
-            pm = PromptMedia(prompt=prompt, **item)
+            # Note that we don't respect the `replace` flag in this context.
+            # It does not make sense here as we are creating Media for the first time
+            pm = PromptMedia(
+                prompt=prompt,
+                alt_text=item["alt_text"],
+                media=item["url"],
+            )
             db.session.add(pm)
 
     # Now that we have everything created, provide the caller

@@ -1,11 +1,14 @@
 from typing import Any
+
 from flask.views import MethodView
 from flask_smorest import abort
 
 import src.core.database.v2 as db
 from src.blueprints import prompts
 from src.core.auth_helpers import authorize_route_v2
-from src.core.models.v2 import Generic, Prompts as models
+from src.core.helpers import is_valid_url, media
+from src.core.models.v2 import Generic
+from src.core.models.v2 import Prompts as models
 
 
 @prompts.route("/")
@@ -34,6 +37,7 @@ class Prompt(MethodView):
     @prompts.arguments(models.Prompt, location="json", as_kwargs=True)
     @prompts.response(201, models.Prompt)
     @prompts.alt_response(403, schema=Generic.HttpError)
+    @prompts.alt_response(422, schema=Generic.HttpError)
     @prompts.alt_response(500, schema=Generic.HttpError)
     def post(self, **kwargs: Any):
         """Create a new Prompt.
@@ -48,7 +52,8 @@ class Prompt(MethodView):
         if not kwargs.pop("is_additional"):
             if db.prompts.exists(kwargs["date"]):
                 # TODO: Figure out how to put this message in the response
-                abort(422, "Multiple Prompts cannot be created for a single day.")
+                # https://github.com/marshmallow-code/flask-smorest/blob/53001cf2308acd123bd3d274d3c00aaa75526129/tests/test_error_handler.py
+                abort(422, message="Multiple Prompts cannot be created for a single day.")
 
         # TODO: Handle downloading any media and file name stuff
 
@@ -83,6 +88,7 @@ class PromptAlter(MethodView):
 
         * **Permission Required**: `has_prompts`
         """
+        # TODO: Also delete any associated media from the file system
         if not db.prompts.delete(kwargs["id"]):
             abort(404)
 

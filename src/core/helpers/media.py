@@ -1,8 +1,8 @@
-from pathlib import Path, PurePath
 import secrets
-from urllib3.util import parse_url
+from pathlib import Path, PurePath
 
 import requests
+from urllib3.util import parse_url
 
 from src.configuration import get_secret
 
@@ -11,10 +11,10 @@ __all__ = ["delete", "download", "move", "saved_name"]
 
 
 def delete(prompt_id: str) -> bool:
-    """Delete a media file."""
-    f_name = sorted(Path(get_secret("IMAGES_DIR")).glob(f"{prompt_id}*"))
-    if len(f_name) == 1:
-        f_name[0].unlink()
+    """Delete any Media files attached to a Prompt."""
+    all_media = Path(get_secret("IMAGES_DIR")).glob(f"{prompt_id}*")
+    for f in all_media:
+        f.unlink()
     return True
 
 
@@ -52,8 +52,7 @@ def original_name(url: str) -> str:
     # Extract the media filename from the URL
     name = parse_url(url).path.split("/")[2]
 
-    # If there's a colon in the filename,
-    # it means there's an image size tag.
+    # If there's a colon in the filename, it means there's an image size tag.
     # We want to remove this from the filename
     if ":" in name:
         name = name[: name.find(":")]
