@@ -24,7 +24,7 @@ class Prompt(Schema):
     date_added = fields.DateTime("iso", dump_only=True)
     host = fields.Nested(Hosts.Basic, dump_only=True)
     host_handle = fields.String(required=True, load_only=True)
-    is_duplicate = fields.Boolean(missing=False, load_only=True)
+    is_additional = fields.Boolean(missing=False, load_only=True)
     media = fields.List(fields.Nested(Media), allow_none=True)
     navigation = fields.Nested(Navigation, dump_only=True)
     twitter_id = fields.String(required=True)

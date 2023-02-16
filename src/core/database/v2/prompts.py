@@ -6,26 +6,7 @@ from src.core.database.models import Prompt, PromptMedia, db
 from src.core.database.v2 import hosts
 
 
-__all__ = ["delete", "get_by_date", "get_current"]
-
-
-def delete(_id: int) -> bool:
-    """Delete a Prompt from the database by the Prompt ID.
-
-    This will fail if the given Prompt does not exist.
-
-    A database FK constraint will ensure any associated media records is also deleted.
-    """
-    # We can't delete a Prompt that does not exist
-    try:
-        prompt = Prompt.query.filter_by(_id=_id).one()
-    except NoResultFound:
-        return False
-
-    # Delete the Prompt and any associated Media records
-    db.session.delete(prompt)
-    db.session.commit()
-    return True
+__all__ = ["create", "delete", "exists", "get_by_date", "get_current"]
 
 
 def create(info: dict) -> Prompt | None:
@@ -58,6 +39,30 @@ def create(info: dict) -> Prompt | None:
     # with the full Prompt context and info
     db.session.commit()
     return prompt
+
+
+def delete(_id: int) -> bool:
+    """Delete a Prompt from the database by the Prompt ID.
+
+    This will fail if the given Prompt does not exist.
+
+    A database FK constraint will ensure any associated media records is also deleted.
+    """
+    # We can't delete a Prompt that does not exist
+    try:
+        prompt = Prompt.query.filter_by(_id=_id).one()
+    except NoResultFound:
+        return False
+
+    # Delete the Prompt and any associated Media records
+    db.session.delete(prompt)
+    db.session.commit()
+    return True
+
+
+def exists(prompt_date: date) -> bool:
+    """Determine if a Prompt has been recorded for this date."""
+    return bool(Prompt.query.filter_by(date=prompt_date).count())
 
 
 def update():

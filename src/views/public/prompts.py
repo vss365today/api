@@ -38,12 +38,17 @@ class Prompt(MethodView):
     def post(self, **kwargs: Any):
         """Create a new Prompt.
 
+        By default, recording a Prompt for day that already has a Prompt is forbidden
+        unless the `is_additional` property is `true`.
+
         * **Permission Required**: `has_prompts`
         """
         # Unless specifically stated, we do not allow
         # creating  multiple Prompts for a single day
-        if kwargs.pop("is_duplicate"):
-            abort(500)
+        if not kwargs.pop("is_additional"):
+            if db.prompts.exists(kwargs["date"]):
+                # TODO: Figure out how to put this message in the response
+                abort(422, "Multiple Prompts cannot be created for a single day.")
 
         # TODO: Handle downloading any media and file name stuff
 
