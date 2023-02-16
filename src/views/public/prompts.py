@@ -58,12 +58,28 @@ class Prompt(MethodView):
                     message="Multiple Prompts cannot be created for a single day.",
                 )
 
-        # TODO: Handle downloading any media and file name stuff
+        # Download the given media, silently discarding any invalid URLs,
+        # recording if we saved each file successfully
+        media_saved = []
+        if kwargs["media"] is not None:
+            for item in kwargs["media"]:
+                # The URL to the media is invalid, throw it out
+                if not is_valid_url(item["url"]):
+                    continue
 
-        # If we can't create the Prompt, error
-        if (prompt := db.prompts.create(kwargs)) is None:
-            # TODO: Delete any saved media as needed
-            abort(500)
+                # Download the media to our predefined location, and rewrite the url
+                # field with just the new media file name to save to the database
+                save_result = media.move(
+                    media.download(kwargs["twitter_id"], item["url"])
+                )
+                item["url"] = media.saved_name(kwargs["twitter_id"], item["url"])
+                media_saved.append(save_result)
+
+        # If we can't create the Prompt or some of the Media didn't save, error
+        if (prompt := db.prompts.create(kwargs)) is None or not all(media_saved):
+            # Delete any saved media
+            media.delete(kwargs["twitter_id"])
+            abort(500, message="Unable to create Prompt for this day.")
         return prompt
 
 
