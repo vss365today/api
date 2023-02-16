@@ -9,7 +9,7 @@ __all__ = ["Prompt", "PromptDate", "PromptId"]
 class Media(Schema):
     alt_text = fields.String(required=True, allow_none=True)
     media = fields.String(required=True, allow_none=True)
-    replace = fields.Boolean(required=True, allow_none=True, load_only=True)
+    replace = fields.Boolean(missing=False, load_only=True)
 
 
 class Navigation(Schema):
@@ -24,8 +24,8 @@ class Prompt(Schema):
     date_added = fields.DateTime("iso", dump_only=True)
     host = fields.Nested(Hosts.Basic, dump_only=True)
     host_handle = fields.String(required=True, load_only=True)
-    is_duplicate = fields.Boolean(missing=None, allow_None=True, load_only=True)
-    media = fields.List(fields.Nested(Media), dump_only=True)
+    is_duplicate = fields.Boolean(missing=False, load_only=True)
+    media = fields.List(fields.Nested(Media), allow_none=True)
     navigation = fields.Nested(Navigation, dump_only=True)
     twitter_id = fields.String(required=True)
     url = fields.String(dump_only=True)

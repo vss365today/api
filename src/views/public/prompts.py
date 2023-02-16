@@ -31,14 +31,27 @@ class Prompt(MethodView):
         return db.prompts.get_current()
 
     @authorize_route_v2
+    @prompts.arguments(models.Prompt, location="json", as_kwargs=True)
     @prompts.response(201, models.Prompt)
     @prompts.alt_response(403, schema=Generic.HttpError)
+    @prompts.alt_response(500, schema=Generic.HttpError)
     def post(self, **kwargs: Any):
         """Create a new Prompt.
 
         * **Permission Required**: `has_prompts`
         """
-        ...
+        # Unless specifically stated, we do not allow
+        # creating  multiple Prompts for a single day
+        if kwargs.pop("is_duplicate"):
+            abort(500)
+
+        # TODO: Handle downloading any media and file name stuff
+
+        # If we can't create the Prompt, error
+        if (prompt := db.prompts.create(kwargs)) is None:
+            # TODO: Delete any saved media as needed
+            abort(500)
+        return prompt
 
 
 @prompts.route("/<int:id>")

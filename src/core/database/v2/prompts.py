@@ -1,7 +1,9 @@
 from datetime import date
+
 from sqlalchemy.orm.exc import NoResultFound
 
 from src.core.database.models import Prompt, PromptMedia, db
+from src.core.database.v2 import hosts
 
 
 __all__ = ["delete", "get_by_date", "get_current"]
@@ -26,21 +28,35 @@ def delete(_id: int) -> bool:
     return True
 
 
-def create(info: dict):
+def create(info: dict) -> Prompt | None:
+    """Create a new Prompt."""
 
+    # Start by extracting Media and Host info from the Prompt.
+    # We'll deal with the after we create the Prompt
     media = info.pop("media")
-    prompt = Prompt(**info)
+
+    # Get the Host who gave out this Prompt
+    host = hosts.get(info.pop("host_handle"))
+    if host is None:
+        return None
+
+    # Create the Prompt itself
+    prompt = Prompt(host=host, **info)
     db.session.add(prompt)
 
-    pm = PromptMedia(**media)
-    db.session.add(pm)
+    # If this Prompt has media attached to it, we need to keep
+    # a record of all provided items
+    # TODO: Proper media file names, see v1 prompt route code
+    if media is not None:
+        for item in media:
+            # We don't respect the `replace` flag in this context
+            del item["replace"]
+            pm = PromptMedia(prompt=prompt, **item)
+            db.session.add(pm)
 
+    # Now that we have everything created, provide the caller
+    # with the full Prompt context and info
     db.session.commit()
-
-    prompt.media = pm
-
-    # TODO: Add navigation obj
-
     return prompt
 
 
