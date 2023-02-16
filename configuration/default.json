@@ -5,7 +5,9 @@
     "DB_PASSWORD",
     "TWITTER_BEARER",
     "MG_DOMAIN",
-    "MG_API_KEY"
+    "MG_API_KEY",
+    "IMAGES_DIR",
+    "IMAGES_DIR_TEMP"
   ],
   "appConfig": {
     "APP_NAME": "#vss365 today",

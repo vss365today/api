@@ -3,8 +3,6 @@
   "appConfig": {
     "DEBUG": true,
     "DOWNLOADS_DIR": "../static/downloads",
-    "IMAGES_DIR": "../static/images",
-    "IMAGES_DIR_TEMP": "../static/images/temp",
     "DB_HOST": "vss365today-db",
 
     "OPENAPI_URL_PREFIX": "/",

@@ -53,7 +53,10 @@ class Prompt(MethodView):
             if db.prompts.exists(kwargs["date"]):
                 # TODO: Figure out how to put this message in the response
                 # https://github.com/marshmallow-code/flask-smorest/blob/53001cf2308acd123bd3d274d3c00aaa75526129/tests/test_error_handler.py
-                abort(422, message="Multiple Prompts cannot be created for a single day.")
+                abort(
+                    422,
+                    message="Multiple Prompts cannot be created for a single day.",
+                )
 
         # TODO: Handle downloading any media and file name stuff
 
