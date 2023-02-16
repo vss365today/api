@@ -1,8 +1,7 @@
 {
   "secrets": [
     "MG_API_KEY",
-    "MG_DOMAIN",
-    "DOWNLOADS_DIR"
+    "MG_DOMAIN"
   ],
   "appConfig": {
     "ENABLE_EMAIL_SENDING": true,

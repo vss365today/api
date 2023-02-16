@@ -7,7 +7,8 @@
     "MG_DOMAIN",
     "MG_API_KEY",
     "IMAGES_DIR",
-    "IMAGES_DIR_TEMP"
+    "IMAGES_DIR_TEMP",
+    "DOWNLOADS_DIR"
   ],
   "appConfig": {
     "APP_NAME": "#vss365 today",

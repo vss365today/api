@@ -2,7 +2,6 @@
   "secrets": [],
   "appConfig": {
     "DEBUG": true,
-    "DOWNLOADS_DIR": "../static/downloads",
     "DB_HOST": "vss365today-db",
 
     "OPENAPI_URL_PREFIX": "/",
