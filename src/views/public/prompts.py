@@ -12,9 +12,21 @@ from src.core.models.v2 import Generic, Prompts as models
 class Prompt(MethodView):
     @prompts.response(200, models.Prompt(many=True))
     def get(self):
-        """Get the current Prompt(s).
+        """Get the Prompt(s) for the current day.
 
-        TODO: Multiple Prompts consideration
+        The current day is defined as the latest day recorded in the database.
+        It would be helpful to think of it as "the latest or newest Prompt(s)."
+
+        Special care should be taken to recognize multiple possible
+        prompts being provided when consuming this endpoint.
+        Historically, and as late as 2020, multiple Prompts could be
+        and occasionally were given out on the same day. Even the 2021+ charter
+        does not mention nor forbid multiple Prompts on the same day, though
+        that is frowned upon and understood to not happen.
+
+        Nevertheless, in lieu of a formal declaration, this endpoint will provide
+        all Prompts recorded for the current day. In practice, there should only be
+        one Prompt. Regardless, consumers should take care to handle multiple Prompts.
         """
         return db.prompts.get_current()
 
@@ -65,7 +77,15 @@ class PromptDate(MethodView):
     def get(self, **kwargs: Any):
         """Get the Prompt(s) for a date.
 
-        TODO: Multiple Prompts consideration
+        Special care should be taken to recognize multiple possible
+        prompts being provided when consuming this endpoint.
+        Historically, and as late as 2020, multiple Prompts could be
+        and occasionally were given out on the same day. Even the 2021+ charter
+        does not mention nor forbid multiple Prompts on the same day, though
+        that is frowned upon and understood to not happen.
+
+        As a result, this endpoint will provide all Prompts recorded for the given day,
+        though for the vast majority of dates, there should only be one Prompt.
         """
         # TODO: Handle One Day, 2017-09-05
         if not (prompts := db.prompts.get_by_date(kwargs["date"])):

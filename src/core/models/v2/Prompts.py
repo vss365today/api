@@ -13,8 +13,8 @@ class Media(Schema):
 
 
 class Navigation(Schema):
-    next = fields.String(allow_none=True)
-    previous = fields.String(allow_none=True)
+    next = fields.Date(allow_none=True)
+    previous = fields.Date(allow_none=True)
 
 
 class Prompt(Schema):
@@ -26,7 +26,7 @@ class Prompt(Schema):
     host_handle = fields.String(required=True, load_only=True)
     is_duplicate = fields.Boolean(missing=None, allow_None=True, load_only=True)
     media = fields.List(fields.Nested(Media, missing=None), dump_only=True)
-    navigation = fields.Nested(Navigation, missing=None, dump_only=True)
+    navigation = fields.Nested(Navigation, dump_only=True)
     twitter_id = fields.String(required=True)
     url = fields.String(dump_only=True)
     word = fields.String(required=True)
