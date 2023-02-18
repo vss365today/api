@@ -4,6 +4,7 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from src.core.database.models import Prompt, PromptMedia, db
 from src.core.database.v2 import hosts
+from src.core.helpers import media
 
 
 __all__ = ["create", "delete", "exists", "get_by_date", "get_current"]
@@ -14,7 +15,7 @@ def create(info: dict) -> Prompt | None:
 
     # Start by extracting Media and Host info from the Prompt.
     # We'll deal with the after we create the Prompt
-    media = info.pop("media")
+    prompt_media = info.pop("media")
 
     # Get the Host who gave out this Prompt
     host = hosts.get(info.pop("host_handle"))
@@ -27,9 +28,8 @@ def create(info: dict) -> Prompt | None:
 
     # If this Prompt has media attached to it, we need to keep
     # a record of all provided items
-    # TODO: Proper media file names, see v1 prompt route code
-    if media is not None:
-        for item in media:
+    if prompt_media is not None:
+        for item in prompt_media:
             # Note that we don't respect the `replace` flag in this context.
             # It does not make sense here as we are creating Media for the first time
             pm = PromptMedia(
@@ -45,7 +45,7 @@ def create(info: dict) -> Prompt | None:
     return prompt
 
 
-def delete(_id: int) -> bool:
+def delete(prompt_id: int) -> bool:
     """Delete a Prompt from the database by the Prompt ID.
 
     This will fail if the given Prompt does not exist.
@@ -54,13 +54,14 @@ def delete(_id: int) -> bool:
     """
     # We can't delete a Prompt that does not exist
     try:
-        prompt = Prompt.query.filter_by(_id=_id).one()
+        prompt = Prompt.query.filter_by(_id=prompt_id).one()
     except NoResultFound:
         return False
 
-    # Delete the Prompt and any associated Media records
+    # Delete the Prompt and any associated Media records and files
     db.session.delete(prompt)
     db.session.commit()
+    media.delete(prompt["twitter_id"])
     return True
 
 

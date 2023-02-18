@@ -105,9 +105,10 @@ class PromptAlter(MethodView):
     def delete(self, **kwargs: Any):
         """Delete an existing Prompt.
 
+        This will also delete any associated media record and files.
+
         * **Permission Required**: `has_prompts`
         """
-        # TODO: Also delete any associated media from the file system
         if not db.prompts.delete(kwargs["id"]):
             abort(404)
 
@@ -130,7 +131,6 @@ class PromptDate(MethodView):
         As a result, this endpoint will provide all Prompts recorded for the given day,
         though for the vast majority of dates, there should only be one Prompt.
         """
-        # TODO: Handle One Day, 2017-09-05
         if not (prompts := db.prompts.get_by_date(kwargs["date"])):
             abort(404)
         return prompts

@@ -193,7 +193,7 @@ def get(handle: str) -> Host | None:
     try:
         host = Host.query.filter_by(handle=handle).one()
 
-    # That host doesn't exist
+    # That Host doesn't exist
     except NoResultFound:
         return None
 
