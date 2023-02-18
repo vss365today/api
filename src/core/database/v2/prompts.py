@@ -1,20 +1,20 @@
 from datetime import date
+from typing import cast
 
 from sqlalchemy.orm.exc import NoResultFound
 
-from src.core.database.models import Prompt, PromptMedia, db
+from src.core.database.models import Host, Prompt, PromptMedia, db
 from src.core.database.v2 import hosts
 from src.core.helpers import media
 
 
-__all__ = ["create", "delete", "exists", "get_by_date", "get_current"]
+__all__ = ["create", "delete", "exists", "get_by_date", "get_current", "meta", "update"]
 
 
 def create(info: dict) -> Prompt | None:
     """Create a new Prompt."""
-
-    # Start by extracting Media and Host info from the Prompt.
-    # We'll deal with the after we create the Prompt
+    # Start by extracting Media info from the Prompt.
+    # We'll deal with it after we create the Prompt
     prompt_media = info.pop("media")
 
     # Get the Host who gave out this Prompt
@@ -70,10 +70,6 @@ def exists(prompt_date: date) -> bool:
     return bool(Prompt.query.filter_by(date=prompt_date).count())
 
 
-def update():
-    ...
-
-
 def get_by_date(prompt_date: date) -> list[Prompt]:
     """Get all of the Prompts for this date."""
     return Prompt.query.filter_by(date=prompt_date).all()
@@ -92,3 +88,39 @@ def get_current() -> list[Prompt]:
     # ever occurring again, meaning we future-proof this to support
     # multiple Prompts, at risk of YAGNI
     return get_by_date(newest_date)
+
+
+def meta(_type: str):
+    return None
+
+
+def update(info: dict) -> bool:
+    """Update an existing Prompt."""
+    # We have to have a Prompt to update
+    try:
+        prompt_q = Prompt.query.filter_by(_id=info["id"])
+        prompt = prompt_q.one()
+    except NoResultFound:
+        return False
+
+    # If a Host handle if given, we assume we want to change the Prompt association
+    if (host_handle := info.pop("host_handle", None)) is not None:
+        # That Host doesn't exist in the system, we can't continue on
+        if (new_host := hosts.get(host_handle)) is None:
+            return False
+
+        # The given prompt Host is different from the recorded Host.
+        # Let's presume that means we want to change the Host association
+        new_host = cast(Host, new_host)
+        if prompt.host != new_host:
+            info["host_id"] = new_host._id
+
+    # # Extract any Media info from the Prompt
+    # if (prompt_media := info.pop("media", None)) is not None:
+    # TODO: This needs working out
+    #     ...
+
+    del info["id"]
+    prompt_q.update(info)
+    db.session.commit()
+    return True

@@ -87,15 +87,21 @@ class Prompt(MethodView):
 class PromptAlter(MethodView):
     @authorize_route_v2
     @prompts.arguments(models.PromptId, location="path", as_kwargs=True)
+    @prompts.arguments(models.PromptUpdate, location="json", as_kwargs=True)
     @prompts.response(204, schema=Generic.Empty)
     @prompts.alt_response(403, schema=Generic.HttpError)
-    @prompts.alt_response(404, schema=Generic.HttpError)
+    @prompts.alt_response(500, schema=Generic.HttpError)
     def patch(self, **kwargs: Any):
         """Update an existing Prompt.
 
+        Providing a Host handle different from the current Host will associate
+        the Prompt with the new Host. The new Host must already exist.
+        It will not be created automatically.
+
         * **Permission Required**: `has_prompts`
         """
-        ...
+        if not db.prompts.update(kwargs):
+            return abort(500)
 
     @authorize_route_v2
     @prompts.arguments(models.PromptId, location="path", as_kwargs=True)
@@ -134,3 +140,10 @@ class PromptDate(MethodView):
         if not (prompts := db.prompts.get_by_date(kwargs["date"])):
             abort(404)
         return prompts
+
+
+@prompts.route("/meta/<string:type>")
+class PromptMeta(MethodView):
+    @prompts.response(200, Generic.Empty)
+    def get(self, **kwargs: Any):
+        ...

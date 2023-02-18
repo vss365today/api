@@ -3,7 +3,7 @@ from marshmallow import Schema, fields
 from src.core.models.v2 import Hosts
 
 
-__all__ = ["Prompt", "PromptDate", "PromptId"]
+__all__ = ["Prompt", "PromptDate", "PromptId", "PromptUpdate"]
 
 
 class Media(Schema):
@@ -31,6 +31,14 @@ class Prompt(Schema):
     twitter_id = fields.String(required=True)
     url = fields.String(dump_only=True)
     word = fields.String(required=True)
+
+
+class PromptUpdate(Schema):
+    content = fields.String()
+    date = fields.Date("iso")
+    host_handle = fields.String()
+    # media = fields.List(fields.Nested(Media), allow_none=True, missing="")
+    word = fields.String()
 
 
 class PromptDate(Schema):

@@ -223,8 +223,8 @@ def get_all() -> list[Host]:
 def update(handle: str, new_handle: str) -> bool:
     """Update a Host's Twitter handle."""
     # We can't update a Host that doesn't exist
-    host = Host.query.filter_by(handle=handle)
     try:
+        host = Host.query.filter_by(handle=handle)
         host.one()
     except NoResultFound:
         return False
