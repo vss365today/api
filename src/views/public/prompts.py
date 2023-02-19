@@ -140,10 +140,3 @@ class PromptDate(MethodView):
         if not (prompts := db.prompts.get_by_date(kwargs["date"])):
             abort(404)
         return prompts
-
-
-@prompts.route("/meta/<string:type>")
-class PromptMeta(MethodView):
-    @prompts.response(200, Generic.Empty)
-    def get(self, **kwargs: Any):
-        ...

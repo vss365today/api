@@ -1,6 +1,7 @@
-from datetime import date
+from datetime import date, datetime
 from typing import cast
 
+from sqlalchemy.sql import func
 from sqlalchemy.orm.exc import NoResultFound
 
 from src.core.database.models import Host, Prompt, PromptMedia, db
@@ -8,7 +9,16 @@ from src.core.database.v2 import hosts
 from src.core.helpers import media
 
 
-__all__ = ["create", "delete", "exists", "get_by_date", "get_current", "meta", "update"]
+__all__ = [
+    "create",
+    "delete",
+    "exists",
+    "get_by_date",
+    "get_current",
+    "get_months",
+    "get_years",
+    "update",
+]
 
 
 def create(info: dict) -> Prompt | None:
@@ -90,8 +100,42 @@ def get_current() -> list[Prompt]:
     return get_by_date(newest_date)
 
 
-def meta(_type: str):
-    return None
+def get_months(year: int) -> list[int]:
+    """Make all Prompts dates for a given year into a unique set.
+
+    For some months in 2017, November 2020, and in 2021 and beyond,
+    there are multiple Hosts per month giving out the prompts.
+    While the individual dates are stored distinctly,
+    we need a unique month list in order to correctly display
+    the year browsing page.
+    """
+    # TODO: Expose this in browse endpoint, not prompts
+    # Be sure to filter out any future, as of yet unreleased, Prompt years
+    current_year = datetime.now().year
+    r = (
+        Prompt.query.with_entities(func.month(Prompt.date).label("month"))
+        .distinct()
+        .filter(
+            func.year(Prompt.date) == year,
+            func.year(Prompt.date) <= current_year,
+        )
+        .order_by("month")
+    )
+    return [month[0] for month in r]
+
+
+def get_years() -> list[int]:
+    """Get a list of years of recorded Prompts."""
+    # TODO: Expose this in browse endpoint, not prompts
+    # Be sure to filter out any future, as of yet unreleased, Prompt years
+    current_year = datetime.now().year
+    r = (
+        Prompt.query.with_entities(func.year(Prompt.date).label("year"))
+        .distinct()
+        .filter(func.year(Prompt.date) <= current_year)
+        .order_by("year")
+    )
+    return [year[0] for year in r]
 
 
 def update(info: dict) -> bool:
