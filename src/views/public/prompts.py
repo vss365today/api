@@ -44,6 +44,9 @@ class Prompt(MethodView):
 
         By default, recording a Prompt for day that already has a Prompt is forbidden
         unless the `is_additional` property is `true`.
+        This should not happen under the 2021+ charter, but, as with the other
+        endpoints, such a possibility is not explicitly forbidden,
+        meaning the scenario is supported at a technical level.
 
         * **Permission Required**: `has_prompts`
         """
@@ -111,7 +114,7 @@ class PromptAlter(MethodView):
     def delete(self, **kwargs: Any):
         """Delete an existing Prompt.
 
-        This will also delete any associated media record and files.
+        This will also delete any and all associated media record and files.
 
         * **Permission Required**: `has_prompts`
         """

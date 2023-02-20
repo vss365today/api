@@ -19,18 +19,23 @@ class Navigation(Schema):
 
 
 class Prompt(Schema):
-    _id = fields.Integer(strict=True, dump_only=True)
+    # "Standard" fields
     content = fields.String(required=True)
     date = fields.Date("iso", required=True)
-    date_added = fields.DateTime("iso", dump_only=True)
-    host = fields.Nested(Hosts.Basic, dump_only=True)
+    twitter_id = fields.String(required=True)
+    word = fields.String(required=True)
+
+    # Fields that are only present in Prompt creation
     host_handle = fields.String(required=True, load_only=True)
     is_additional = fields.Boolean(missing=False, load_only=True)
-    media = fields.List(fields.Nested(Media), allow_none=True)
+
+    # Fields that are only present in Prompt fetching
+    _id = fields.Integer(strict=True, dump_only=True)
+    date_added = fields.DateTime("iso", dump_only=True)
+    host = fields.Nested(Hosts.Basic, dump_only=True)
+    media = fields.List(fields.Nested(Media), allow_none=True, dump_only=True)
     navigation = fields.Nested(Navigation, dump_only=True)
-    twitter_id = fields.String(required=True)
     url = fields.String(dump_only=True)
-    word = fields.String(required=True)
 
 
 class PromptUpdate(Schema):
