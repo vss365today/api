@@ -1,5 +1,6 @@
 import secrets
 from pathlib import Path, PurePath
+from typing import Literal
 
 import requests
 from urllib3.util import parse_url
@@ -7,12 +8,25 @@ from urllib3.util import parse_url
 from src.configuration import get_secret
 
 
-__all__ = ["delete", "download", "move", "saved_name"]
+__all__ = ["delete", "delete_v2", "download", "move", "saved_name"]
 
 
-def delete(prompt_id: str) -> bool:
+def delete(prompt_id: str) -> Literal[True]:
     """Delete any Media files attached to a Prompt."""
     all_media = Path(get_secret("IMAGES_DIR")).glob(f"{prompt_id}*")
+    for f in all_media:
+        f.unlink()
+    return True
+
+
+def delete_v2(prompt_id: int, media_id: int | None = None) -> Literal[True]:
+    """Delete media files associated with a Prompt.
+
+    If a specific Media file ID is given, only that file will be deleted.
+    Otherwise, all files associated with the Prompt ID will be deleted.
+    """
+    pattern = f"{prompt_id}*" if media_id is None else f"{prompt_id}-{media_id}*"
+    all_media = Path(get_secret("IMAGES_DIR")).glob(pattern)
     for f in all_media:
         f.unlink()
     return True
