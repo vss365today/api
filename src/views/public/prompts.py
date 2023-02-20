@@ -6,7 +6,6 @@ from flask_smorest import abort
 import src.core.database.v2 as db
 from src.blueprints import prompts
 from src.core.auth_helpers import authorize_route_v2
-from src.core.helpers import is_valid_url, media
 from src.core.models.v2 import Generic
 from src.core.models.v2 import Prompts as models
 
@@ -61,27 +60,8 @@ class Prompt(MethodView):
                     message="Multiple Prompts cannot be created for a single day.",
                 )
 
-        # Download the given media, silently discarding any invalid URLs,
-        # recording if we saved each file successfully
-        media_saved = []
-        if kwargs["media"] is not None:
-            for item in kwargs["media"]:
-                # The URL to the media is invalid, throw it out
-                if not is_valid_url(item["url"]):
-                    continue
-
-                # Download the media to our predefined location, and rewrite the url
-                # field with just the new media file name to save to the database
-                save_result = media.move(
-                    media.download(kwargs["twitter_id"], item["url"])
-                )
-                item["url"] = media.saved_name(kwargs["twitter_id"], item["url"])
-                media_saved.append(save_result)
-
-        # If we can't create the Prompt or some of the Media didn't save, error
-        if (prompt := db.prompts.create(kwargs)) is None or not all(media_saved):
-            # Delete any saved media
-            media.delete(kwargs["twitter_id"])
+        # If we can't create the Prompt, error
+        if (prompt := db.prompts.create(kwargs)) is None:
             abort(500, message="Unable to create Prompt for this day.")
         return prompt
 
@@ -143,3 +123,37 @@ class PromptDate(MethodView):
         if not (prompts := db.prompts.get_by_date(kwargs["date"])):
             abort(404)
         return prompts
+
+
+@prompts.route("/<int:id>/media/")
+class MediaCreate(MethodView):
+    @authorize_route_v2
+    @prompts.arguments(models.PromptId, location="path", as_kwargs=True)
+    @prompts.arguments(models.Media(many=True), location="json", as_kwargs=True)
+    @prompts.response(204, schema=Generic.Empty)
+    @prompts.alt_response(403, schema=Generic.HttpError)
+    @prompts.alt_response(404, schema=Generic.HttpError)
+    def post(self, **kwargs):
+        """Create a Prompt Media record.
+
+        * **Permission Required**: `has_prompts`
+        """
+        if not db.prompts.create_media(kwargs):
+            abort(404)
+
+
+@prompts.route("/<int:id>/media/<int:media_id>")
+class MediaDelete(MethodView):
+    @authorize_route_v2
+    @prompts.arguments(models.PromptId, location="path", as_kwargs=True)
+    @prompts.arguments(models.MediaId, location="path", as_kwargs=True)
+    @prompts.response(204, schema=Generic.Empty)
+    @prompts.alt_response(403, schema=Generic.HttpError)
+    @prompts.alt_response(404, schema=Generic.HttpError)
+    def delete(self, **kwargs):
+        """Delete an existing Prompt Media record.
+
+        * **Permission Required**: `has_prompts`
+        """
+        if not db.prompts.delete_media(kwargs):
+            abort(404)

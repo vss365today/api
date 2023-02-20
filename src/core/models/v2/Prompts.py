@@ -3,14 +3,18 @@ from marshmallow import Schema, fields
 from src.core.models.v2 import Hosts
 
 
-__all__ = ["Prompt", "PromptDate", "PromptId", "PromptUpdate"]
+__all__ = ["Media", "MediaId", "Prompt", "PromptDate", "PromptId", "PromptUpdate"]
 
 
 class Media(Schema):
+    _id = fields.Integer(strict=True, dump_only=True)
     alt_text = fields.String(required=True, allow_none=True)
     media = fields.String(required=True, allow_none=True, dump_only=True)
     url = fields.Url(required=True, load_only=True)
-    replace = fields.Boolean(missing=False, load_only=True)
+
+
+class MediaId(Schema):
+    media_id = fields.Integer(strict=True, required=True)
 
 
 class Navigation(Schema):
@@ -42,7 +46,6 @@ class PromptUpdate(Schema):
     content = fields.String()
     date = fields.Date("iso")
     host_handle = fields.String()
-    # media = fields.List(fields.Nested(Media), allow_none=True, missing="")
     word = fields.String()
 
 

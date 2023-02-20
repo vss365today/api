@@ -11,7 +11,9 @@ from src.core.helpers import media
 
 __all__ = [
     "create",
+    "create_media",
     "delete",
+    "delete_media",
     "exists",
     "get_by_date",
     "get_current",
@@ -23,10 +25,6 @@ __all__ = [
 
 def create(info: dict) -> Prompt | None:
     """Create a new Prompt."""
-    # Start by extracting Media info from the Prompt.
-    # We'll deal with it after we create the Prompt
-    prompt_media = info.pop("media")
-
     # Get the Host who gave out this Prompt
     host = hosts.get(info.pop("host_handle"))
     if host is None:
@@ -36,23 +34,41 @@ def create(info: dict) -> Prompt | None:
     prompt = Prompt(host=host, **info)
     db.session.add(prompt)
 
-    # If this Prompt has media attached to it, we need to keep
-    # a record of all provided items
-    if prompt_media is not None:
-        for item in prompt_media:
-            # Note that we don't respect the `replace` flag in this context.
-            # It does not make sense here as we are creating Media for the first time
-            pm = PromptMedia(
-                prompt=prompt,
-                alt_text=item["alt_text"],
-                media=item["url"],
-            )
-            db.session.add(pm)
-
     # Now that we have everything created, provide the caller
     # with the full Prompt context and info
     db.session.commit()
     return prompt
+
+
+def create_media(info: dict):
+    """Create media files and records for an associated Prompt."""
+    # Download the given media, silently discarding any invalid URLs,
+    # recording if we saved each file successfully
+    # media_saved = []
+    # if kwargs["media"] is not None:
+    #     for item in kwargs["media"]:
+    #         # The URL to the media is invalid, throw it out
+    #         if not is_valid_url(item["url"]):
+    #             continue
+
+    #         # Download the media to our predefined location, and rewrite the url
+    #         # field with just the new media file name to save to the database
+    #         save_result = media.move(
+    #             media.download(kwargs["twitter_id"], item["url"])
+    #         )
+    #         item["url"] = media.saved_name(kwargs["twitter_id"], item["url"])
+    #         media_saved.append(save_result)
+
+    # If this Prompt has media attached to it, we need to keep
+    # a record of all provided items
+    # if info is not None:
+    #     for item in info:
+    #         pm = PromptMedia(
+    #             prompt=prompt,
+    #             alt_text=item["alt_text"],
+    #             media=item["url"],
+    #         )
+    #         db.session.add(pm)
 
 
 def delete(prompt_id: int) -> bool:
@@ -71,7 +87,22 @@ def delete(prompt_id: int) -> bool:
     # Delete the Prompt and any associated Media records and files
     db.session.delete(prompt)
     db.session.commit()
-    media.delete(prompt["twitter_id"])
+    media.delete_v2(prompt_id)
+    return True
+
+
+def delete_media(info: dict) -> bool:
+    """Delete media files and media records from a Prompt."""
+    # We can't delete media that does not exist
+    try:
+        pm = PromptMedia.query.filter_by(_id=info["media_id"]).one()
+    except NoResultFound:
+        return False
+
+    # Delete the Prompt and any associated Media records and files
+    db.session.delete(pm)
+    db.session.commit()
+    media.delete_v2(info["id"], info["media_id"])
     return True
 
 
