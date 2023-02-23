@@ -2,8 +2,6 @@ from datetime import datetime, timedelta
 from typing import Literal, Optional, Union
 
 from flask import jsonify
-from urllib3.exceptions import LocationParseError
-from urllib3.util import parse_url
 from webargs import fields
 from webargs.flaskparser import use_args
 
@@ -33,25 +31,6 @@ def prompt_exists(
     if database.prompt.get_by_date(helpers.format_datetime_ymd(diff)):
         return diff
     return None
-
-
-def __is_valid_url(url: str) -> bool:
-    """Attempt to determine if a URL is valid."""
-    # Make sure it's an actual web URL
-    if not url.lower().startswith("http"):
-        return False
-
-    try:
-        result = parse_url(url)
-
-        # We're missing parts of the URL
-        if not result.scheme or not result.host:
-            return False
-        return True
-
-    # This is a SUPER malformed thing
-    except LocationParseError:
-        return False
 
 
 @prompt.get("/")
@@ -121,7 +100,7 @@ def post(args: dict):
 
     # Download the given media
     media_result = True
-    if args["media"] is not None and __is_valid_url(args["media"]):
+    if args["media"] is not None and media.is_valid_url(args["media"]):
         media_url = args["media"]
         media_result = media.move(media.download(args["id"], media_url))
 
@@ -168,7 +147,7 @@ def put(query_args: dict, json_args: dict):
     # We want to replace the existing media
     elif (
         args["media"] is not None
-        and __is_valid_url(args["media"])
+        and media.is_valid_url(args["media"])
         and args["media_replace"]
     ):
         # Start by deleting the old media

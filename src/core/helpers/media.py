@@ -3,12 +3,13 @@ from pathlib import Path, PurePath
 from typing import Literal
 
 import requests
+from urllib3.exceptions import LocationParseError
 from urllib3.util import parse_url
 
 from src.configuration import get_secret
 
 
-__all__ = ["delete", "delete_v2", "download", "move", "saved_name"]
+__all__ = ["delete", "delete_v2", "download", "is_valid_url", "move", "saved_name"]
 
 
 def delete(prompt_id: str) -> Literal[True]:
@@ -51,6 +52,25 @@ def download(prompt_id: str, url: str) -> dict[str, str]:
         "temp": temp_f_name,
         "final": saved_name(prompt_id, url),
     }
+
+
+def is_valid_url(url: str) -> bool:
+    """Attempt to determine if a URL is valid."""
+    # Make sure it's an actual web URL
+    if not url.lower().startswith("http"):
+        return False
+
+    try:
+        result = parse_url(url)
+
+        # We're missing parts of the URL
+        if not result.scheme or not result.host:
+            return False
+        return True
+
+    # This is a SUPER malformed thing
+    except LocationParseError:
+        return False
 
 
 def move(details: dict) -> bool:
