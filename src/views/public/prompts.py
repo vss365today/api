@@ -129,7 +129,7 @@ class PromptDate(MethodView):
 class MediaCreate(MethodView):
     @authorize_route_v2
     @prompts.arguments(models.PromptId, location="path", as_kwargs=True)
-    @prompts.arguments(models.Media(many=True), location="json", as_kwargs=True)
+    @prompts.arguments(models.MediaItems, location="json", as_kwargs=True)
     @prompts.response(204, schema=Generic.Empty)
     @prompts.alt_response(403, schema=Generic.HttpError)
     @prompts.alt_response(404, schema=Generic.HttpError)
@@ -138,7 +138,7 @@ class MediaCreate(MethodView):
 
         * **Permission Required**: `has_prompts`
         """
-        if not db.prompts.create_media(kwargs["id"], kwargs["media"]):
+        if not db.prompts.create_media(kwargs["id"], kwargs["items"]):
             abort(404)
 
 

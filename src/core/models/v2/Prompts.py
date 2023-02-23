@@ -3,7 +3,15 @@ from marshmallow import Schema, fields
 from src.core.models.v2 import Hosts
 
 
-__all__ = ["Media", "MediaId", "Prompt", "PromptDate", "PromptId", "PromptUpdate"]
+__all__ = [
+    "Media",
+    "MediaId",
+    "MediaItems",
+    "Prompt",
+    "PromptDate",
+    "PromptId",
+    "PromptUpdate",
+]
 
 
 class Media(Schema):
@@ -15,6 +23,10 @@ class Media(Schema):
 
 class MediaId(Schema):
     media_id = fields.Integer(strict=True, required=True)
+
+
+class MediaItems(Schema):
+    items = fields.List(fields.Nested(Media))
 
 
 class Navigation(Schema):
