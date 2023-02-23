@@ -199,11 +199,11 @@ def get(handle: str) -> Host | None:
         return None
 
     # Pull the Hosting Dates for the Host, ensuring to take out any future dates
-    current_year = datetime.now().year
+    today = date.today()
     dates = [
         r.date
         for r in HostDate.query.with_entities(HostDate.date)
-        .filter(func.year(HostDate.date) <= current_year, HostDate.host_id == host._id)
+        .filter(HostDate.host_id == host._id, HostDate.date <= today)
         .all()
     ]
     host.dates = dates

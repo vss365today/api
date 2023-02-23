@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date
 from typing import cast
 
 from sqlalchemy.sql import func
@@ -164,7 +164,7 @@ def get_months(year: int) -> list[int]:
     """
     # TODO: Expose this in browse endpoint, not prompts
     # Be sure to filter out any future, as of yet unreleased, Prompt years
-    current_year = datetime.now().year
+    current_year = date.today().year
     r = (
         Prompt.query.with_entities(func.month(Prompt.date).label("month"))
         .distinct()
@@ -181,7 +181,7 @@ def get_years() -> list[int]:
     """Get a list of years of recorded Prompts."""
     # TODO: Expose this in browse endpoint, not prompts
     # Be sure to filter out any future, as of yet unreleased, Prompt years
-    current_year = datetime.now().year
+    current_year = date.today().year
     r = (
         Prompt.query.with_entities(func.year(Prompt.date).label("year"))
         .distinct()
