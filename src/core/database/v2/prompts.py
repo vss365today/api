@@ -61,6 +61,7 @@ def create_media(prompt_id: int, media_info: list[dict]) -> bool:
             media=item["url"],
         )
         db.session.add(pm)
+        db.session.flush()
         media_recorded.append(pm)
 
     media_saved = []
@@ -69,6 +70,7 @@ def create_media(prompt_id: int, media_info: list[dict]) -> bool:
         temp_file = media.download_v2(item.media)
         final_file = media.saved_name_v2(prompt_id, item._id, item.media)
         save_result = media.move_v2(temp_file, final_file)
+        media_saved.append(save_result)
 
         # After it is downloaded, we need to update the database record
         # with the proper  media URL. This is a little bit of a chicken
@@ -76,7 +78,6 @@ def create_media(prompt_id: int, media_info: list[dict]) -> bool:
         # but to get it, we need to save the media to the database first.
         # Oh well ¯\_(ツ)_/¯
         item.media = final_file
-        media_saved.append(save_result)
 
     # If all of the media saved successfully, we can write everything to the database
     if all(media_saved):

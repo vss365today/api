@@ -5,6 +5,7 @@ from src.core.models.v2 import Hosts
 
 __all__ = [
     "Media",
+    "MediaDelete",
     "MediaId",
     "MediaItems",
     "Prompt",
@@ -67,3 +68,7 @@ class PromptDate(Schema):
 
 class PromptId(Schema):
     id = fields.Integer(strict=True, required=True)
+
+
+class MediaDelete(PromptId, MediaId):
+    ...

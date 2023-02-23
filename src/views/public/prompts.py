@@ -130,7 +130,7 @@ class MediaCreate(MethodView):
     @authorize_route_v2
     @prompts.arguments(models.PromptId, location="path", as_kwargs=True)
     @prompts.arguments(models.MediaItems, location="json", as_kwargs=True)
-    @prompts.response(204, schema=Generic.Empty)
+    @prompts.response(201, schema=Generic.Empty)
     @prompts.alt_response(403, schema=Generic.HttpError)
     @prompts.alt_response(404, schema=Generic.HttpError)
     def post(self, **kwargs):
@@ -145,8 +145,7 @@ class MediaCreate(MethodView):
 @prompts.route("/<int:id>/media/<int:media_id>")
 class MediaDelete(MethodView):
     @authorize_route_v2
-    @prompts.arguments(models.PromptId, location="path", as_kwargs=True)
-    @prompts.arguments(models.MediaId, location="path", as_kwargs=True)
+    @prompts.arguments(models.MediaDelete, location="path", as_kwargs=True)
     @prompts.response(204, schema=Generic.Empty)
     @prompts.alt_response(403, schema=Generic.HttpError)
     @prompts.alt_response(404, schema=Generic.HttpError)
