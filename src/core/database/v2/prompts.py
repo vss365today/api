@@ -138,9 +138,12 @@ def get_by_date(prompt_date: date) -> list[Prompt]:
 def get_current() -> list[Prompt]:
     """Get the current Prompt."""
     # Start by determining the newest recorded Prompt date
-    # TODO: Once we upgrade to Flask-SQLAlchemy 3.0+,
-    # revise this to only pull the `Prompt.date` column
-    newest_date = Prompt.query.order_by(Prompt.date.desc()).first().date
+    newest_date = (
+        Prompt.query.with_entities(Prompt.date)
+        .order_by(Prompt.date.desc())
+        .first()
+        .date
+    )
 
     # Now that we have the latest recorded date, nab all the Prompts for it.
     # This really should be a single Prompt under the 2021+ character,
