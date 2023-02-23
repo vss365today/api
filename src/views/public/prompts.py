@@ -19,6 +19,9 @@ class Prompt(MethodView):
         The current day is defined as the latest day recorded in the database.
         It would be helpful to think of it as "the latest or newest Prompt(s)."
 
+        This endpoint will not expose any future Prompts that may be recorded
+        but not yet released.
+
         Special care should be taken to recognize multiple possible
         prompts being provided when consuming this endpoint.
         Historically, and as late as 2020, multiple Prompts could be
@@ -119,6 +122,9 @@ class PromptDate(MethodView):
 
         As a result, this endpoint will provide all Prompts recorded for the given day,
         though for the vast majority of dates, there should only be one Prompt.
+
+        This endpoint will not expose any future Prompts that may be recorded
+        but not yet released.
         """
         if not (prompts := db.prompts.get_by_date(kwargs["date"])):
             abort(404)

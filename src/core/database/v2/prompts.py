@@ -133,14 +133,18 @@ def exists(prompt_date: date) -> bool:
 
 def get_by_date(prompt_date: date) -> list[Prompt]:
     """Get all of the Prompts for this date."""
-    return Prompt.query.filter_by(date=prompt_date).all()
+    # Don't expose tomorrow's (or next week's) Prompt
+    return Prompt.query.filter(
+        Prompt.date == prompt_date, Prompt.date <= date.today()
+    ).all()
 
 
 def get_current() -> list[Prompt]:
     """Get the current Prompt."""
-    # Start by determining the newest recorded Prompt date
+    # Start by determining the newest recorded Prompt date that's also not in the future
     newest_date = (
         Prompt.query.with_entities(Prompt.date)
+        .filter(Prompt.date <= date.today())
         .order_by(Prompt.date.desc())
         .first()
         .date
@@ -150,8 +154,10 @@ def get_current() -> list[Prompt]:
     # This really should be a single Prompt under the 2021+ character,
     # bu we cannot be 100% sure of multiple Prompts on a single day
     # ever occurring again, meaning we future-proof this to support
-    # multiple Prompts, at risk of YAGNI
-    return get_by_date(newest_date)
+    # multiple Prompts, at risk of YAGNI. We can't reuse our
+    # `get_by_date` method here because we don't need to restrict ourselves
+    # from pulling today's Prompt, as that would do
+    return Prompt.query.filter_by(date=newest_date).all()
 
 
 def get_months(year: int) -> list[int]:
