@@ -1,7 +1,8 @@
 from calendar import monthrange
-from datetime import date
+from datetime import date, datetime
 from typing import TypedDict
 
+from sqlalchemy.sql import func
 from sqlalchemy.orm.exc import NoResultFound
 
 from src.core.database.models import Host, HostDate, Prompt, db
@@ -197,9 +198,14 @@ def get(handle: str) -> Host | None:
     except NoResultFound:
         return None
 
-    # TODO: Once we upgrade to Flask-SQLAlchemy 3.0+,
-    # revise this to only pull the `HostingDate.date` column
-    dates = [r.date for r in HostDate.query.filter_by(host_id=host._id).all()]
+    # Pull the Hosting Dates for the Host, ensuring to take out any future dates
+    current_year = datetime.now().year
+    dates = [
+        r.date
+        for r in HostDate.query.with_entities(HostDate.date)
+        .filter(func.year(HostDate.date) <= current_year, HostDate.host_id == host._id)
+        .all()
+    ]
     host.dates = dates
     return host
 
