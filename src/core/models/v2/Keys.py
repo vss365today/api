@@ -8,12 +8,12 @@ class Permissions(Schema):
     desc = fields.String()
     date_created = fields.DateTime(dump_only=True)
     has_archive = fields.Boolean()
-    has_broadcast = fields.Boolean()
-    has_host = fields.Boolean()
+    has_notifications = fields.Boolean()
+    has_hosts = fields.Boolean()
     has_keys = fields.Boolean()
-    has_prompt = fields.Boolean()
+    has_prompts = fields.Boolean()
     has_settings = fields.Boolean()
-    has_subscription = fields.Boolean()
+    has_emails = fields.Boolean()
 
 
 class Token(Schema):

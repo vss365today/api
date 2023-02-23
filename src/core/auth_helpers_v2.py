@@ -29,14 +29,6 @@ def authorize_blueprint():
     # The key is valid, now see if it has permission to access this route,
     # converting v2 route names to v1 route names as needed
     flask_route = request.endpoint.split(".")[-2].lower()
-    v2_v1_translations = {
-        "keys": "api_key",
-        "notifications": "broadcast",
-        "hosts": "host",
-        "prompts": "prompt",
-        "emails": "subscription",
-    }
-    flask_route = v2_v1_translations.get(flask_route, flask_route)
     if not keys.can_access(flask_route, token):
         abort(403)
 

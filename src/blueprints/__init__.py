@@ -4,11 +4,8 @@ from typing import Callable
 from flask import Blueprint
 from flask_smorest import Blueprint as APIBlueprint
 
-from src.core.auth_helpers import (
-    authorize_blueprint,
-    authorize_blueprint_v2,
-    send_deprecation_warning,
-)
+from src.core import auth_helpers as v1_auth
+from src.core import auth_helpers_v2 as v2_auth
 
 
 def _api_factory(
@@ -68,7 +65,9 @@ def _factory(
 
     # Actually create the blueprint
     blueprint = Blueprint(
-        partial_module_string, import_path, url_prefix=f"/v1/{url_prefix}"
+        partial_module_string,
+        import_path,
+        url_prefix=f"/v1/{url_prefix}",
     )
 
     # Protect the endpoint with an authorization routine
@@ -79,7 +78,7 @@ def _factory(
     # This endpoint has been deprecated, attach a HTTP header
     # stating this and transition info
     if new_endpoint is not None:
-        x = partial(send_deprecation_warning, new_endpoint)
+        x = partial(v1_auth.send_deprecation_warning, new_endpoint)
         blueprint.after_request(x)  # type: ignore
 
     return blueprint
@@ -90,14 +89,14 @@ archive = _factory("archive", "archive")  # documented
 broadcast = _factory(
     "broadcast",
     "broadcast",
-    authorize_blueprint,
+    v1_auth.authorize_blueprint,
     new_endpoint="notifications",
 )  # documented
 browse = _factory("browse", "browse")  # documented
 host = _factory("host", "host", new_endpoint="hosts")  # documented
 prompt = _factory("prompt", "prompt", new_endpoint="prompts")  # documented
 search = _factory("search", "search")  # documented
-settings = _factory("settings", "settings", authorize_blueprint)  # documented
+settings = _factory("settings", "settings", v1_auth.authorize_blueprint)  # documented
 all_blueprints = (
     archive,
     broadcast,
@@ -112,7 +111,7 @@ all_blueprints = (
 emails = _api_factory(
     "emails",
     "emails",
-    authorize_blueprint_v2,
+    v2_auth.authorize_blueprint,
     description="Manage email subscriptions.",
 )  # done
 
@@ -124,14 +123,14 @@ hosts = _api_factory(
 keys = _api_factory(
     "keys",
     "keys",
-    authorize_blueprint_v2,
+    v2_auth.authorize_blueprint,
     description="Manage API key permissions.",
 )  # done
 
 notifications = _api_factory(
     "notifications",
     "notifications",
-    authorize_blueprint_v2,
+    v2_auth.authorize_blueprint,
     description="Manage email notifications.",
 )
 prompts = _api_factory(
