@@ -56,12 +56,12 @@ class ApiKey(HelperMethods, db.Model):
     date_created = Column(DateTime, nullable=False, default=datetime.now)
     desc = Column(String(256, "utf8mb4_unicode_ci"))
     has_archive = Column(Boolean, nullable=False, default=False)
-    has_broadcast = Column(Boolean, nullable=False, default=False)
-    has_host = Column(Boolean, nullable=False, default=False)
+    has_notifications = Column("has_broadcast", Boolean, nullable=False, default=False)
+    has_hosts = Column("has_host", Boolean, nullable=False, default=False)
     has_keys = Column("has_api_key", Boolean, nullable=False, default=False)
-    has_prompt = Column(Boolean, nullable=False, default=False)
+    has_prompts = Column("has_prompt", Boolean, nullable=False, default=False)
     has_settings = Column(Boolean, nullable=False, default=False)
-    has_subscription = Column(Boolean, nullable=False, default=False)
+    has_emails = Column("has_subscription", Boolean, nullable=False, default=False)
 
 
 class Email(db.Model):
