@@ -138,7 +138,7 @@ class MediaCreate(MethodView):
 
         * **Permission Required**: `has_prompts`
         """
-        if not db.prompts.create_media(kwargs):
+        if not db.prompts.create_media(kwargs["id"], kwargs["media"]):
             abort(404)
 
 

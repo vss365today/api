@@ -40,35 +40,54 @@ def create(info: dict) -> Prompt | None:
     return prompt
 
 
-def create_media(info: dict):
+def create_media(prompt_id: int, media_info: list[dict]) -> bool:
     """Create media files and records for an associated Prompt."""
-    # Download the given media, silently discarding any invalid URLs,
-    # recording if we saved each file successfully
-    # media_saved = []
-    # if kwargs["media"] is not None:
-    #     for item in kwargs["media"]:
-    #         # The URL to the media is invalid, throw it out
-    #         if not is_valid_url(item["url"]):
-    #             continue
+    # Start by filtering out all media items with invalid URLs.
+    # It's ok if invalid media URLs are silently discarded
+    media_info = [item for item in media_info if media.is_valid_url(item["url"])]
 
-    #         # Download the media to our predefined location, and rewrite the url
-    #         # field with just the new media file name to save to the database
-    #         save_result = media.move(
-    #             media.download(kwargs["twitter_id"], item["url"])
-    #         )
-    #         item["url"] = media.saved_name(kwargs["twitter_id"], item["url"])
-    #         media_saved.append(save_result)
+    # If there's no media to save, we should shortcut
+    # the remainder of the process and report all is well
+    if not media_info:
+        return True
 
-    # If this Prompt has media attached to it, we need to keep
-    # a record of all provided items
-    # if info is not None:
-    #     for item in info:
-    #         pm = PromptMedia(
-    #             prompt=prompt,
-    #             alt_text=item["alt_text"],
-    #             media=item["url"],
-    #         )
-    #         db.session.add(pm)
+    # If there are any valid media URLs, create a record
+    # that associates them with the given Prompt
+    media_recorded = []
+    for item in media_info:
+        pm = PromptMedia(
+            prompt_id=prompt_id,
+            alt_text=item["alt_text"],
+            media=item["url"],
+        )
+        db.session.add(pm)
+        media_recorded.append(pm)
+
+    media_saved = []
+    for item in media_recorded:
+        # Download the media to its final resting place
+        temp_file = media.download_v2(item.media)
+        final_file = media.saved_name_v2(prompt_id, item._id, item.media)
+        save_result = media.move_v2(temp_file, final_file)
+
+        # After it is downloaded, we need to update the database record
+        # with the proper  media URL. This is a little bit of a chicken
+        # and egg problem. We want to save  the media file with the media ID,
+        # but to get it, we need to save the media to the database first.
+        # Oh well ¯\_(ツ)_/¯
+        item.media = final_file
+        media_saved.append(save_result)
+
+    # If all of the media saved successfully, we can write everything to the database
+    if all(media_saved):
+        db.session.commit()
+        return True
+
+    # But if all of the media *didn't* save correctly, we need to remove all of them
+    # so there's no orphan records
+    db.session.rollback()
+    media.delete_v2(prompt_id)
+    return False
 
 
 def delete(prompt_id: int) -> bool:
