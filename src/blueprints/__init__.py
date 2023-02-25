@@ -34,14 +34,19 @@ def _api_factory(
         description=description,
     )
 
-    # Protect the endpoint with an authorization routine
-    # if one was given
+    # Protect the endpoint with an authorization routine if one was given
     if auth_function is not None:
         blueprint.before_request(auth_function)
         blueprint.description += (
             "\n\n<strong>Note</strong>: This endpoint can only be used with an API key "
             "with the appropriate permissions."
         )
+    else:
+        blueprint.description += (
+            "\n\n<strong>Note</strong>: Some endpoints may require an API key "
+            "with the appropriate permissions."
+        )
+
     return blueprint
 
 
@@ -111,7 +116,7 @@ all_blueprints = (
 emails = _api_factory(
     "emails",
     "emails",
-    v2_auth.authorize_blueprint,
+    partial(v2_auth.protect_blueprint, "emails"),
     description="Manage email subscriptions.",
 )  # done
 
@@ -123,14 +128,14 @@ hosts = _api_factory(
 keys = _api_factory(
     "keys",
     "keys",
-    v2_auth.authorize_blueprint,
+    partial(v2_auth.protect_blueprint, "keys"),
     description="Manage API key permissions.",
 )  # done
 
 notifications = _api_factory(
     "notifications",
     "notifications",
-    v2_auth.authorize_blueprint,
+    partial(v2_auth.protect_blueprint, "notifications"),
     description="Manage email notifications.",
 )
 prompts = _api_factory(

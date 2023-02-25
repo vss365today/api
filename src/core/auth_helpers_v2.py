@@ -1,4 +1,4 @@
-import functools
+from functools import wraps
 from typing import NoReturn
 
 from flask import abort, request
@@ -7,7 +7,7 @@ from src.core.database.v2 import keys
 
 
 __all__ = [
-    "authorize_blueprint",
+    "protect_blueprint",
     "require_permission",
     "fake_authorize",
 ]
@@ -16,14 +16,24 @@ __all__ = [
 ALL_PERMISSIONS = keys.available_permissions()
 
 
-def authorize_blueprint():
-    """Determine if the request to a blueprint has been properly authorized."""
-    # The key is valid, now see if it has permission to access this route,
-    # converting v2 route names to v1 route names as needed
+def protect_blueprint(*perms: str) -> None | NoReturn:
+    # Sanity-check myself to make sure I don't use an non-existent permission
+    all_perms = set(ALL_PERMISSIONS)
+    requested_perms = set(perms)
+    if unknown := requested_perms - all_perms:
+        abort(
+            403,
+            f"Unknown permissions attempted to be used: {','.join(unknown)}",
+        )
+
+    # Check if the token has the proper permissions
     token = get_token_from_request()
-    flask_route = request.endpoint.split(".")[-2].lower()
-    if not keys.can_access(flask_route, token):
-        abort(403)
+    if not keys.can_access_v2(token, requested_perms):
+        abort(
+            403,
+            "API key does not contain all required permissions for this endpoint.",
+        )
+    return None
 
 
 def require_permission(*perms: str):
@@ -34,28 +44,13 @@ def require_permission(*perms: str):
     """
 
     def decorator(func):
-        @functools.wraps(func)
-        def wrap(*args, **kwargs):
-            # Sanity-check myself to make sure I don't use an non-existent permission
-            all_perms = set(ALL_PERMISSIONS)
-            requested_perms = set(perms)
-            if unknown := requested_perms - all_perms:
-                abort(
-                    403,
-                    f"Unknown permissions attempted to be used: {','.join(unknown)}",
-                )
-
-            # Check if the token has the proper permissions
-            token = get_token_from_request()
-            if not keys.can_access_v2(token, requested_perms):
-                abort(
-                    403,
-                    "API key does not contain all required permissions for this endpoint.",
-                )
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            protect_blueprint(*perms)
 
             return func(*args, **kwargs)
 
-        return wrap
+        return wrapper
 
     return decorator
 
