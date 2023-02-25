@@ -27,7 +27,8 @@ def authorize_blueprint():
     except (KeyError, IndexError):
         abort(403)
 
-    # The key is valid, now see if it has permission to access this route
+    # The key is valid, now see if it has permission to access this route,
+    # converting v1 route names to v2 db names as needed
     flask_route = request.endpoint.split(".")[0].replace("-", "_")
     v1_v2_translation = {
         "api_key": "keys",

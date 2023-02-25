@@ -1,12 +1,31 @@
 from secrets import token_hex
 
 from flask import current_app
+from sqlalchemy import inspect
 from sqlalchemy.exc import DataError
 
 from src.core.database.models import ApiKey, ApiKeyHistory, db
 
 
-__all__ = ["can_access", "create", "delete", "exists", "get", "get_all", "update"]
+__all__ = [
+    "available_permissions",
+    "can_access",
+    "create",
+    "delete",
+    "exists",
+    "get",
+    "get_all",
+    "update",
+]
+
+
+def available_permissions() -> list[str]:
+    """List all permissions that can be used to protect an endpoint."""
+    return [
+        c.removeprefix("has_")
+        for c in inspect(ApiKey).columns.keys()
+        if c.startswith("has_")
+    ]
 
 
 def can_access(route: str, token: str) -> bool:
@@ -16,6 +35,12 @@ def can_access(route: str, token: str) -> bool:
         .filter_by(token=token)
         .first()[0]
     )
+
+
+def can_access_v2(token: str, perms: set) -> bool:
+    """Determine if the given API key has all permissions needed to access an endpoint."""
+    filters = [getattr(ApiKey, f"has_{perm}") == 1 for perm in perms]
+    return ApiKey.query.filter(*filters, ApiKey.token == token).first()
 
 
 def create(data: dict) -> dict | None:
