@@ -56,6 +56,7 @@ class ApiKey(HelperMethods, db.Model):
     date_created = Column(DateTime, nullable=False, default=datetime.now)
     desc = Column(String(256, "utf8mb4_unicode_ci"))
     has_archive = Column(Boolean, nullable=False, default=False)
+    has_media = Column(Boolean, nullable=False, default=False)
     has_notifications = Column("has_broadcast", Boolean, nullable=False, default=False)
     has_hosts = Column("has_host", Boolean, nullable=False, default=False)
     has_keys = Column("has_api_key", Boolean, nullable=False, default=False)
@@ -109,6 +110,7 @@ class WriterDate(db.Model):
 
 
 class ApiKeyHistory(db.Model):
+    # TODO: Rename columns to match new names and DON'T drop existing, only rename
     __tablename__ = "audit_api_keys"
     __table_args__ = {"comment": "Audit table to track permission changes to API keys."}
 
@@ -118,6 +120,7 @@ class ApiKeyHistory(db.Model):
     )
     date_updated = Column(DateTime, nullable=False, default=datetime.now)
     has_archive = Column(Boolean, nullable=False, default=False)
+    has_media = Column(Boolean, nullable=False, default=False)
     has_broadcast = Column(Boolean, nullable=False, default=False)
     has_host = Column(Boolean, nullable=False, default=False)
     has_keys = Column("has_api_key", Boolean, nullable=False, default=False)
