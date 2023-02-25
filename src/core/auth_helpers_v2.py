@@ -8,7 +8,6 @@ from src.core.database.v2 import keys
 
 __all__ = [
     "authorize_blueprint",
-    "authorize_route",
     "require_permission",
     "fake_authorize",
 ]
@@ -28,7 +27,11 @@ def authorize_blueprint():
 
 
 def require_permission(*perms: str):
-    """Determine if the request to an endpoint has been properly authorized."""
+    """Protect a single endpoint with the specified permissions.
+
+    This decorator is useful when a single endpoint
+    needs to be protected but not the entire blueprint.
+    """
 
     def decorator(func):
         @functools.wraps(func)
@@ -55,21 +58,6 @@ def require_permission(*perms: str):
         return wrap
 
     return decorator
-
-
-def authorize_route(func):
-    """Protect a single route.
-
-    This decorator is useful when a single endpoint
-    needs to be protected but not the entire blueprint.
-    """
-
-    @functools.wraps(func)
-    def wrap(*args, **kwargs):
-        authorize_blueprint()
-        return func(*args, **kwargs)
-
-    return wrap
 
 
 def get_auth_token() -> str:

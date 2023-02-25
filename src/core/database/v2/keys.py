@@ -10,6 +10,7 @@ from src.core.database.models import ApiKey, ApiKeyHistory, db
 __all__ = [
     "available_permissions",
     "can_access",
+    "can_access_v2",
     "create",
     "delete",
     "exists",

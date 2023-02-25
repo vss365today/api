@@ -5,13 +5,14 @@ from flask_smorest import abort
 
 import src.core.database.v2 as db
 from src.blueprints import prompts
-from src.core.auth_helpers_v2 import authorize_route
+from src.core.auth_helpers_v2 import require_permission
 from src.core.models.v2 import Generic
 from src.core.models.v2 import Prompts as models
 
 
 @prompts.route("/")
 class Prompt(MethodView):
+    @require_permission("prompts")
     @prompts.response(200, models.Prompt(many=True))
     def get(self):
         """Get the Prompt(s) for the current day.
@@ -35,7 +36,7 @@ class Prompt(MethodView):
         """
         return db.prompts.get_current()
 
-    @authorize_route
+    @require_permission("prompts")
     @prompts.arguments(models.Prompt, location="json", as_kwargs=True)
     @prompts.response(201, models.Prompt)
     @prompts.alt_response(403, schema=Generic.HttpError)
@@ -71,7 +72,7 @@ class Prompt(MethodView):
 
 @prompts.route("/<int:id>")
 class PromptAlter(MethodView):
-    @authorize_route
+    @require_permission("prompts")
     @prompts.arguments(models.PromptId, location="path", as_kwargs=True)
     @prompts.arguments(models.PromptUpdate, location="json", as_kwargs=True)
     @prompts.response(204, schema=Generic.Empty)
@@ -89,7 +90,7 @@ class PromptAlter(MethodView):
         if not db.prompts.update(kwargs):
             return abort(500)
 
-    @authorize_route
+    @require_permission("prompts")
     @prompts.arguments(models.PromptId, location="path", as_kwargs=True)
     @prompts.response(204, schema=Generic.Empty)
     @prompts.alt_response(403, schema=Generic.HttpError)
@@ -133,7 +134,7 @@ class PromptDate(MethodView):
 
 @prompts.route("/<int:id>/media/")
 class MediaCreate(MethodView):
-    @authorize_route
+    @require_permission("prompts")
     @prompts.arguments(models.PromptId, location="path", as_kwargs=True)
     @prompts.arguments(models.MediaItems, location="json", as_kwargs=True)
     @prompts.response(201, schema=Generic.Empty)
@@ -150,7 +151,7 @@ class MediaCreate(MethodView):
 
 @prompts.route("/<int:id>/media/<int:media_id>")
 class MediaDelete(MethodView):
-    @authorize_route
+    @require_permission("prompts")
     @prompts.arguments(models.MediaDelete, location="path", as_kwargs=True)
     @prompts.response(204, schema=Generic.Empty)
     @prompts.alt_response(403, schema=Generic.HttpError)

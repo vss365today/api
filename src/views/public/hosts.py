@@ -6,7 +6,7 @@ from flask_smorest import abort
 
 import src.core.database.v2 as db
 from src.blueprints import hosts
-from src.core.auth_helpers_v2 import authorize_route
+from src.core.auth_helpers_v2 import require_permission
 from src.core.models.v2 import Generic, Hosts as models
 
 
@@ -23,7 +23,7 @@ class Host(MethodView):
         """
         return db.hosts.get_all()
 
-    @authorize_route
+    @require_permission("hosts")
     @hosts.arguments(models.Handle, location="json", as_kwargs=True)
     @hosts.response(201, models.Basic)
     @hosts.alt_response(403, schema=Generic.HttpError)
@@ -52,7 +52,7 @@ class HostIndividual(MethodView):
             abort(404)
         return host
 
-    @authorize_route
+    @require_permission("hosts")
     @hosts.arguments(models.Handle, location="path", as_kwargs=True)
     @hosts.arguments(models.NewHandle, location="json", as_kwargs=True)
     @hosts.response(204, Generic.Empty)
@@ -70,7 +70,7 @@ class HostIndividual(MethodView):
         if not db.hosts.update(**kwargs):
             return abort(404)
 
-    @authorize_route
+    @require_permission("hosts")
     @hosts.arguments(models.Handle, location="path", as_kwargs=True)
     @hosts.response(204, Generic.Empty)
     @hosts.alt_response(403, schema=Generic.HttpError)
@@ -89,7 +89,7 @@ class HostIndividual(MethodView):
 
 @hosts.route("/<string:handle>/<string:date>")
 class HostIndividualDate(MethodView):
-    @authorize_route
+    @require_permission("hosts")
     @hosts.arguments(models.HostingDate, location="path", as_kwargs=True)
     @hosts.response(201, Generic.Empty)
     @hosts.alt_response(403, schema=Generic.HttpError)
@@ -107,7 +107,7 @@ class HostIndividualDate(MethodView):
         if not db.hosts.create_date(**kwargs):
             abort(404)
 
-    @authorize_route
+    @require_permission("hosts")
     @hosts.arguments(models.HostingDate, location="path", as_kwargs=True)
     @hosts.response(204, Generic.Empty)
     @hosts.alt_response(403, schema=Generic.HttpError)
@@ -128,7 +128,7 @@ class HostIndividualDate(MethodView):
 
 @hosts.route("/date/<string:date>")
 class HostDate(MethodView):
-    @authorize_route
+    @require_permission("hosts")
     @hosts.arguments(models.Date, location="path", as_kwargs=True)
     @hosts.response(200, models.Basic(many=True))
     @hosts.alt_response(403, schema=Generic.HttpError)
