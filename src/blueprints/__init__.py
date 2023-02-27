@@ -142,6 +142,6 @@ prompts = _api_factory(
     "prompts",
     "prompts",
     description="Manage Prompts.",
-)
+)  # done
 
-v2_blueprints = (emails, hosts, keys, prompts)
+v2_blueprints = (emails, hosts, keys, notifications, prompts)

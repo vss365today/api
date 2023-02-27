@@ -219,11 +219,7 @@ def update(info: dict) -> bool:
         if prompt.host != new_host:
             info["host_id"] = new_host._id
 
-    # # Extract any Media info from the Prompt
-    # if (prompt_media := info.pop("media", None)) is not None:
-    # TODO: This needs working out
-    #     ...
-
+    # Finally, save the updated Prompt
     del info["id"]
     prompt_q.update(info)
     db.session.commit()
