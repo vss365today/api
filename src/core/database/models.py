@@ -118,12 +118,12 @@ class ApiKeyHistory(db.Model):
     )
     date_updated = Column(DateTime, nullable=False, default=datetime.now)
     has_archive = Column(Boolean, nullable=False, default=False)
-    has_broadcast = Column(Boolean, nullable=False, default=False)
-    has_host = Column(Boolean, nullable=False, default=False)
+    has_hosts = Column(Boolean, nullable=False, default=False)
     has_keys = Column("has_api_key", Boolean, nullable=False, default=False)
-    has_prompt = Column(Boolean, nullable=False, default=False)
+    has_notifications = Column(Boolean, nullable=False, default=False)
+    has_prompts = Column(Boolean, nullable=False, default=False)
     has_settings = Column(Boolean, nullable=False, default=False)
-    has_subscription = Column(Boolean, nullable=False, default=False)
+    has_emails = Column(Boolean, nullable=False, default=False)
 
     key: ApiKey = relationship("ApiKey")
 
