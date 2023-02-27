@@ -200,7 +200,7 @@ class HostDate(db.Model):
     host: Host = relationship("Host")
 
 
-class Prompt(db.Model):
+class Prompt(HelperMethods, db.Model):
     __tablename__ = "prompts_new"
     __table_args__ = {"comment": "Store the #vss365 Prompts."}
 
