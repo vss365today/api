@@ -134,7 +134,7 @@ class PromptDate(MethodView):
 
 @prompts.route("/<int:id>/media/")
 class MediaCreate(MethodView):
-    @require_permission("media", "prompts")
+    @require_permission("prompts")
     @prompts.arguments(models.PromptId, location="path", as_kwargs=True)
     @prompts.arguments(models.MediaItems, location="json", as_kwargs=True)
     @prompts.response(201, schema=Generic.Empty)
@@ -143,7 +143,7 @@ class MediaCreate(MethodView):
     def post(self, **kwargs):
         """Create a Prompt Media record.
 
-        * **Permission Required**: `has_media`, `has_prompts`
+        * **Permission Required**: `has_prompts`
         """
         if not db.prompts.create_media(kwargs["id"], kwargs["items"]):
             abort(404)
@@ -151,7 +151,7 @@ class MediaCreate(MethodView):
 
 @prompts.route("/<int:id>/media/<int:media_id>")
 class MediaDelete(MethodView):
-    @require_permission("media", "prompts")
+    @require_permission("prompts")
     @prompts.arguments(models.MediaDelete, location="path", as_kwargs=True)
     @prompts.response(204, schema=Generic.Empty)
     @prompts.alt_response(403, schema=Generic.HttpError)
@@ -159,7 +159,7 @@ class MediaDelete(MethodView):
     def delete(self, **kwargs):
         """Delete an existing Prompt Media record.
 
-        * **Permission Required**: `has_media`, `has_prompts`
+        * **Permission Required**: `has_prompts`
         """
         if not db.prompts.delete_media(kwargs):
             abort(404)
