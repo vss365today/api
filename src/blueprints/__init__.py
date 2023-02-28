@@ -125,6 +125,7 @@ hosts = _api_factory(
     "hosts",
     description="Manage Hosts.",
 )  # done
+
 keys = _api_factory(
     "keys",
     "keys",
@@ -137,7 +138,8 @@ notifications = _api_factory(
     "notifications",
     partial(v2_auth.protect_blueprint, "notifications"),
     description="Manage email notifications.",
-)
+)  # done
+
 prompts = _api_factory(
     "prompts",
     "prompts",

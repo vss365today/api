@@ -5,7 +5,7 @@ Today's writing prompt is:
 
 {{ word }}
 
-Prompt by {{ writer_handle }}
+Prompt by {{ host_handle }}
 {{ url }}
 
 To get a definition, visit https://www.merriam-webster.com/dictionary/{{ word|lower }}
