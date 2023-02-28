@@ -169,7 +169,6 @@ def get_months(year: int) -> list[int]:
     we need a unique month list in order to correctly display
     the year browsing page.
     """
-    # TODO: Expose this in browse endpoint, not prompts
     # Be sure to filter out any future, as of yet unreleased, Prompt years
     current_year = date.today().year
     r = (
@@ -186,7 +185,6 @@ def get_months(year: int) -> list[int]:
 
 def get_years() -> list[int]:
     """Get a list of years of recorded Prompts."""
-    # TODO: Expose this in browse endpoint, not prompts
     # Be sure to filter out any future, as of yet unreleased, Prompt years
     current_year = date.today().year
     r = (

@@ -41,10 +41,18 @@ class Archive(MethodView):
     @require_permission("archive")
     @archive_v2.response(201, models.File)
     @archive_v2.alt_response(403, schema=Generic.HttpError)
-    @archive_v2.alt_response(422, schema=Generic.HttpError)
+    @archive_v2.alt_response(404, schema=Generic.HttpError)
     def post(self):
-        """TODO: write me!
+        """Generate a new Prompt archive using today's date.
 
         * **Permission Required**: `has_archive`
         """
-        ...
+        # If there's already an archive with today's date, pretend we just created it
+        if (file := db.archive.get_for_date(date.today())) is not None:
+            return {"file_name": file}
+
+        # Attempt to create a new archive file
+        if (file := db.archive.create()) is not None:
+            return {"file_name": file}
+
+        abort(404, "Unable to generate new Prompt archive file.")
