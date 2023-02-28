@@ -1,5 +1,5 @@
 from json import dumps
-from typing import Dict, List
+from typing import Any
 
 from flask import current_app, render_template
 import requests
@@ -12,7 +12,7 @@ __all__ = ["batch_construct", "construct", "render", "send", "make_and_send"]
 
 
 def batch_construct(
-    mailing_list: List[str], subject: str, content: EmailTemplate
+    mailing_list: list[str], subject: str, content: EmailTemplate
 ) -> dict:
     """Construct a Mailgun email dictionary for batching sending.
 
@@ -54,7 +54,7 @@ def render(template_name: str, **render_opts: str) -> EmailTemplate:
     )
 
 
-def send(email: Dict[str, str]) -> bool:
+def send(email: dict[str, str]) -> bool:
     """Send out a completed email."""
     # If email sending is not configured, just pretend the email
     # sent out correctly instead of making the caller handle the special case
@@ -72,7 +72,7 @@ def send(email: Dict[str, str]) -> bool:
 
 
 def make_and_send(
-    email_addr: str, subject: str, template_name: str, **render_opts: str
+    email_addr: str, subject: str, template_name: str, **render_opts: Any
 ) -> bool:
     """Helper function to construct and send a single email."""
     email_content = render(template_name, **render_opts)

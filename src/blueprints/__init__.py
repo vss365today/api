@@ -90,7 +90,11 @@ def _factory(
 
 
 # v1 endpoints
-archive = _factory("archive", "archive")  # documented
+archive = _factory(
+    "archive",
+    "archive",
+    new_endpoint="archive",
+)  # documented
 broadcast = _factory(
     "broadcast",
     "broadcast",
@@ -113,6 +117,12 @@ all_blueprints = (
 )
 
 # v2 endpoints
+archive_v2 = _api_factory(
+    "archive",
+    "archive",
+    description="Manage the Prompt archive.",
+)
+
 emails = _api_factory(
     "emails",
     "emails",
@@ -146,4 +156,4 @@ prompts = _api_factory(
     description="Manage Prompts.",
 )  # done
 
-v2_blueprints = (emails, hosts, keys, notifications, prompts)
+v2_blueprints = (archive_v2, emails, hosts, keys, notifications, prompts)
