@@ -1,5 +1,4 @@
-from datetime import date
-from typing import Any
+from datetime import date, timedelta
 
 from flask.views import MethodView
 from flask_smorest import abort
@@ -15,7 +14,18 @@ class Archive(MethodView):
     @archive_v2.response(200, models.File)
     @archive_v2.alt_response(404, schema=Generic.HttpError)
     def get(self):
-        ...
+        """Get the file name of the newest Prompt archive."""
+        # Attempt to get an archive with today's date,
+        # then yesterday's date if that fails
+        today = date.today()
+        if (file := db.archive.get_for_date(today)) is not None:
+            return {"file_name": file}
+        if (file := db.archive.get_for_date(today - timedelta(days=1))) is not None:
+            return {"file_name": file}
+
+        # We don't have an archive to download. This really shouldn't happen
+        # but it can if an archive hasn't been generated for a few days
+        abort(404, "Latest Prompt archive currently unavailable.")
 
     @require_permission("archive")
     @archive_v2.response(201, Generic.Empty)

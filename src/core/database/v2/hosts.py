@@ -1,8 +1,7 @@
 from calendar import monthrange
-from datetime import date, datetime
+from datetime import date
 from typing import TypedDict
 
-from sqlalchemy.sql import func
 from sqlalchemy.orm.exc import NoResultFound
 
 from src.core.database.models import Host, HostDate, Prompt, db
