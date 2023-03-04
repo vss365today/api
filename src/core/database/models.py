@@ -63,6 +63,8 @@ class ApiKey(HelperMethods, db.Model):
     has_settings = Column(Boolean, nullable=False, default=False)
     has_emails = Column("has_subscription", Boolean, nullable=False, default=False)
 
+    history = relationship("ApiKeyHistory", backref="history")
+
 
 class Email(db.Model):
     __tablename__ = "emails"
@@ -105,7 +107,7 @@ class WriterDate(db.Model):
     )
     date = Column(Date, primary_key=True, nullable=False)
 
-    writer: Writer = relationship("Writer")
+    writer = relationship("Writer")
 
 
 class ApiKeyHistory(db.Model):
@@ -125,7 +127,7 @@ class ApiKeyHistory(db.Model):
     has_settings = Column(Boolean, nullable=False, default=False)
     has_emails = Column(Boolean, nullable=False, default=False)
 
-    key: ApiKey = relationship("ApiKey")
+    key = relationship("ApiKey", backref="key")
 
 
 class PromptLegacy(db.Model):
@@ -148,7 +150,7 @@ class PromptLegacy(db.Model):
         onupdate=datetime.now,
     )
 
-    writer: Writer = relationship("Writer")
+    writer = relationship("Writer")
 
     @hybrid_property
     def url(self) -> str:
@@ -164,6 +166,8 @@ class Host(db.Model):
     _id = Column(BigInteger, primary_key=True, autoincrement=True)
     handle = Column(String(30, "utf8mb4_unicode_ci"), nullable=False, unique=True)
     twitter_uid = Column(String(40, "utf8mb4_unicode_ci"), nullable=False, unique=True)
+
+    prompts = relationship("Prompt", backref="prompts", lazy="dynamic")
 
     @hybrid_property
     def url(self) -> str:
@@ -197,7 +201,7 @@ class HostDate(db.Model):
         nullable=False,
     )
 
-    host: Host = relationship("Host")
+    host = relationship("Host", backref="host")
 
 
 class Prompt(HelperMethods, db.Model):
@@ -224,7 +228,8 @@ class Prompt(HelperMethods, db.Model):
         nullable=False,
     )
 
-    host: Host = relationship("Host")
+    host = relationship("Host")
+    media = relationship("PromptMedia")
 
     def __str__(self) -> str:
         return f"Prompt {self._id}, {self.date.isoformat()}, {self.word}"
@@ -249,11 +254,6 @@ class Prompt(HelperMethods, db.Model):
             )
         return navi
 
-    @hybrid_property
-    def media(self) -> list["PromptMedia"]:
-        """Get any associated Prompt media."""
-        return PromptMedia.query.filter_by(prompt_id=self._id).all()
-
 
 class PromptMedia(db.Model):
     __tablename__ = "prompt_media"
@@ -267,4 +267,4 @@ class PromptMedia(db.Model):
         nullable=False,
     )
 
-    prompt: Prompt = relationship("Prompt")
+    prompt = relationship("Prompt", backref="prompt")
