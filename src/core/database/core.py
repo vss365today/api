@@ -16,7 +16,7 @@ __all__ = ["connect_to_db", "connect_to_db2", "get_db_conn_uri"]
 class _Result:
     """Wrapper class for a raw SQL query result."""
 
-    def __init__(self, result: ResultProxy) -> None:
+    def __init__(self, /, result: ResultProxy) -> None:
         self._result: ResultProxy = result
 
     def __iter__(self) -> Generator[dict[str, Any], None, None]:
