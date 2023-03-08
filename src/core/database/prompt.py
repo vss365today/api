@@ -103,7 +103,7 @@ def get_latest() -> list[Prompt]:
     # Get the latest date in the database
     latest_date_sql = "SELECT date FROM prompts ORDER BY date DESC LIMIT 1"
     with connect_to_db() as db:
-        latest_date = db.query(latest_date_sql).one().date
+        latest_date = db.query(latest_date_sql).one()["date"]
 
     # Using the latest date, fetch the prompt(s) for the date
     sql = """

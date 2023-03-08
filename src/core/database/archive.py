@@ -27,12 +27,12 @@ def prompt_date_range() -> dict[str, date]:
     # Get the oldest prompt date
     sql = "SELECT DISTINCT `date` FROM prompts ORDER BY `date` ASC LIMIT 1"
     with connect_to_db() as db:
-        dates["oldest"] = db.query(sql).one().date
+        dates["oldest"] = db.query(sql).one()["date"]
 
     # Get the newest prompt date
     sql = "SELECT DISTINCT `date` FROM prompts ORDER BY `date` DESC LIMIT 1"
     with connect_to_db() as db:
-        dates["newest"] = db.query(sql).one().date
+        dates["newest"] = db.query(sql).one()["date"]
     return dates
 
 
