@@ -3,7 +3,7 @@ from typing import Literal, Optional
 
 from sqlalchemy.exc import IntegrityError
 
-from src.core.database.core import connect_to_db, flatten_records
+from src.core.database.core import connect_to_db
 from src.core.models.v1.Prompt import Prompt
 
 __all__ = [
@@ -127,14 +127,14 @@ def get_months(year: str) -> list[str]:
     the year browsing page.
     """
     sql = """
-    SELECT DISTINCT DATE_FORMAT(date, '%m')
+    SELECT DISTINCT DATE_FORMAT(date, '%m') as `month`
     FROM prompts
     WHERE YEAR(date) = :year AND
         :year <= YEAR(CURRENT_TIMESTAMP())
     ORDER BY MONTH(date) ASC
     """
     with connect_to_db() as db:
-        return flatten_records(db.query(sql, year=year).all())
+        return [r["month"] for r in db.query(sql, year=year).all()]
 
 
 def get_one_year() -> dict:
@@ -247,12 +247,12 @@ def get_one_year() -> dict:
 def get_years() -> list[str]:
     """Get a list of years of recorded Prompts."""
     sql = """
-    SELECT DISTINCT CAST(YEAR(date) AS CHAR)
+    SELECT DISTINCT CAST(YEAR(date) AS CHAR) as `year`
     FROM prompts
     ORDER BY date ASC
     """
     with connect_to_db() as db:
-        return flatten_records(db.query(sql).all())
+        return [r["year"] for r in db.query(sql).all()]
 
 
 def search(word: str) -> list[Prompt]:
