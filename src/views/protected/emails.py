@@ -1,3 +1,5 @@
+from os import getenv
+
 from flask.views import MethodView
 from flask_smorest import abort
 from requests import codes
@@ -45,7 +47,7 @@ class Email(MethodView):
 
         # Because the MG address validation endpoint costs money with each hit,
         # block it off unless we are running in production
-        if get_config("ENV") == "production":
+        if getenv("FLASK_ENV") == "production":
             for addr in kwargs["address"]:
                 if not mailgun.verify(addr):
                     abort(500)

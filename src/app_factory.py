@@ -1,6 +1,7 @@
 import json
 from datetime import date, datetime
 from importlib import import_module
+from os import getenv
 from typing import Any
 
 import sys_vars
@@ -37,8 +38,8 @@ def create_app() -> Flask:
 
     # Load the app configuration
     app.config.update(config.get_app_config("default"))
-    app.config.update(config.get_app_config(app.config["ENV"]))
-    app.config.update(config.get_secrets_list(app.config["ENV"]))
+    app.config.update(config.get_app_config(getenv("FLASK_ENV")))
+    app.config.update(config.get_secrets_list(getenv("FLASK_ENV")))
 
     # Put the app secret key into the expected key
     app.config["SECRET_KEY"] = sys_vars.get("SECRET_KEY_API")
