@@ -1,8 +1,7 @@
 from datetime import date, datetime
-from typing import Optional
+from typing import Any
 from pathlib import Path
 
-from records import Record
 import xlsxwriter
 
 from src.configuration import get_secret
@@ -36,7 +35,7 @@ def prompt_date_range() -> dict[str, date]:
     return dates
 
 
-def get(year: int) -> list[Record]:
+def get(year: int):
     """Get the full word archive for the given year."""
     sql = """
 SELECT
@@ -52,7 +51,7 @@ ORDER BY word ASC"""
         return db.query(sql, year=year)
 
 
-def get_column_widths(year: int) -> Record:
+def get_column_widths(year: int) -> dict[str, Any] | None:
     """Determine the best column widths for the yearly data."""
     sql = """
 SELECT
@@ -66,7 +65,7 @@ WHERE YEAR(`date`) = :year"""
         return db.query(sql, year=year).one()
 
 
-def get_file_for_date(full_date: datetime) -> Optional[str]:
+def get_file_for_date(full_date: datetime) -> str | None:
     """Determine if an archive file for a date exists."""
     date_iso = helpers.format_datetime_ymd(full_date)
     save_dir = Path(get_secret("DOWNLOADS_DIR")).resolve()
