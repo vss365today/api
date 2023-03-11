@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Literal, Optional, Union
+from typing import Any, Literal, TypeAlias
 
 from sqlalchemy.exc import DataError, IntegrityError
 
@@ -26,13 +26,16 @@ __all__ = [
 ]
 
 
-def create(host_info: dict) -> Optional[Host]:
+Host2: TypeAlias = dict[str, Any]
+
+
+def create(host_info: dict) -> Host2 | None:
     """Create a new Host."""
     sql = "INSERT INTO writers (uid, handle) VALUES (:uid, :handle)"
     try:
         with connect_to_db() as db:
             db.query(sql, uid=host_info["uid"], handle=host_info["handle"])
-        return Host(**host_info)
+        return Host(**host_info).as_dict()
     except DataError as exc:
         print(exc)
         return None
@@ -99,7 +102,7 @@ def exists_date(uid: str, date: str) -> bool:
         return bool(db.query(sql, uid=uid, date=date).first())
 
 
-def get(*, uid: str = "", handle: str = "") -> Optional[Host]:
+def get(*, uid: str = "", handle: str = "") -> Host2 | None:
     """Get Host info by either their Twitter ID or handle."""
     sql = """
     SELECT writers.uid, handle
@@ -108,10 +111,10 @@ def get(*, uid: str = "", handle: str = "") -> Optional[Host]:
     """
     with connect_to_db() as db:
         r = db.query(sql, uid=uid, handle=handle).one()
-    return Host(**r) if r is not None else None
+    return Host(**r).as_dict() if r is not None else None
 
 
-def get_all() -> List[Host]:
+def get_all() -> list[Host2]:
     """Get a list of all Hosts."""
     sql = """
     SELECT writers.uid, handle
@@ -119,10 +122,10 @@ def get_all() -> List[Host]:
     ORDER BY handle
     """
     with connect_to_db() as db:
-        return [Host(**host) for host in db.query(sql)]
+        return [Host(**host).as_dict() for host in db.query(sql)]
 
 
-def get_by_date(date: str) -> Optional[Host]:
+def get_by_date(date: str) -> Host2 | None:
     """Get the Host for the given date."""
     sql = """
     SELECT writers.uid, handle
@@ -132,10 +135,10 @@ def get_by_date(date: str) -> Optional[Host]:
     """
     with connect_to_db() as db:
         r = db.query(sql, date=date).one()
-    return Host(**r) if r is not None else None
+    return Host(**r).as_dict() if r is not None else None
 
 
-def get_by_year(year: str) -> List[Host]:
+def get_by_year(year: str) -> list[Host2]:
     """Get a list of all Hosts for a given year."""
     sql = """
     SELECT writers.uid, handle
@@ -147,10 +150,10 @@ def get_by_year(year: str) -> List[Host]:
     ORDER BY writer_dates.date ASC
     """
     with connect_to_db() as db:
-        return [Host(**host) for host in db.query(sql, year=year)]
+        return [Host(**host).as_dict() for host in db.query(sql, year=year)]
 
 
-def get_by_year_month(year: str, month: str) -> List[Host]:
+def get_by_year_month(year: str, month: str) -> list[Host2]:
     """Get all the Hosts in a year-month combination."""
     sql = """
     SELECT writers.uid, handle
@@ -161,10 +164,12 @@ def get_by_year_month(year: str, month: str) -> List[Host]:
         AND MONTH(writer_dates.date) = :month
     """
     with connect_to_db() as db:
-        return [Host(**host) for host in db.query(sql, year=year, month=month)]
+        return [
+            Host(**host).as_dict() for host in db.query(sql, year=year, month=month)
+        ]
 
 
-def get_date(handle: str) -> List[datetime]:
+def get_date(handle: str) -> list[datetime]:
     """Get the hosting periods for the given Host."""
     sql = """
     SELECT date
@@ -182,7 +187,7 @@ def get_date(handle: str) -> List[datetime]:
         ]
 
 
-def lookup(username: str) -> Union[str, Literal[False]]:
+def lookup(username: str) -> str | Literal[False]:
     """Get the Host's Twitter user ID."""
     api = twitter_v2_api()
     host = api.get_user(username=username)
