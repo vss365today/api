@@ -218,29 +218,6 @@ files = [
 ]
 
 [[package]]
-name = "docopt"
-version = "0.6.2"
-description = "Pythonic argument parser, that will make you smile"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "docopt-0.6.2.tar.gz", hash = "sha256:49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"},
-]
-
-[[package]]
-name = "et-xmlfile"
-version = "1.1.0"
-description = "An implementation of lxml.xmlfile for the standard library"
-category = "main"
-optional = false
-python-versions = ">=3.6"
-files = [
-    {file = "et_xmlfile-1.1.0-py3-none-any.whl", hash = "sha256:a2ba85d1d6a74ef63837eed693bcb89c3f752169b0e3e7ae5b16ca5e1b3deada"},
-    {file = "et_xmlfile-1.1.0.tar.gz", hash = "sha256:8eb9e2bc2f8c97e37a2dc85a09ecdcdec9d8a396530a6d5a33b30b9a92da0c5c"},
-]
-
-[[package]]
 name = "flake8"
 version = "6.0.0"
 description = "the modular source code checker: pep8 pyflakes and co"
@@ -396,18 +373,6 @@ python-versions = ">=3.7"
 files = [
     {file = "itsdangerous-2.1.2-py3-none-any.whl", hash = "sha256:2c2349112351b88699d8d4b6b075022c0808887cb7ad10069318a8b0bc88db44"},
     {file = "itsdangerous-2.1.2.tar.gz", hash = "sha256:5dbbc68b317e5e42f327f9021763545dc3fc3bfe22e6deb96aaf1fc38874156a"},
-]
-
-[[package]]
-name = "jdcal"
-version = "1.4.1"
-description = "Julian dates from proleptic Gregorian and Julian calendars."
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "jdcal-1.4.1-py2.py3-none-any.whl", hash = "sha256:1abf1305fce18b4e8aa248cf8fe0c56ce2032392bc64bbd61b5dff2a19ec8bba"},
-    {file = "jdcal-1.4.1.tar.gz", hash = "sha256:472872e096eb8df219c23f2689fc336668bdb43d194094b5cc1707e1640acfc8"},
 ]
 
 [[package]]
@@ -618,21 +583,6 @@ signals = ["blinker (>=1.4.0)"]
 signedtoken = ["cryptography (>=3.0.0)", "pyjwt (>=2.0.0,<3)"]
 
 [[package]]
-name = "openpyxl"
-version = "2.4.11"
-description = "A Python library to read/write Excel 2010 xlsx/xlsm files"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "openpyxl-2.4.11.tar.gz", hash = "sha256:626d38647c063d55803ef4971c4d43226538d4e95cb6260c094e363ee33e10c7"},
-]
-
-[package.dependencies]
-et_xmlfile = "*"
-jdcal = "*"
-
-[[package]]
 name = "packaging"
 version = "23.0"
 description = "Core utilities for Python packages"
@@ -726,29 +676,6 @@ files = [
 
 [package.extras]
 cli = ["click (>=5.0)"]
-
-[[package]]
-name = "records"
-version = "0.5.3"
-description = "SQL for Humans"
-category = "main"
-optional = false
-python-versions = "*"
-files = [
-    {file = "records-0.5.3-py2.py3-none-any.whl", hash = "sha256:cdbacf52c61b4a3bc10fef1286a24a63ae95255a2e7b4e8ccb1e1f96737231ed"},
-    {file = "records-0.5.3.tar.gz", hash = "sha256:47e4874096f4a8f4b5bcad8c7c7cf512be36186e6e263ff3dfd750b05ff0d3c4"},
-]
-
-[package.dependencies]
-docopt = "*"
-openpyxl = "<2.5.0"
-SQLAlchemy = {version = "*", markers = "python_version >= \"3.0\""}
-tablib = ">=0.11.4"
-
-[package.extras]
-pandas = ["tablib[pandas]"]
-pg = ["psycopg2"]
-redshift = ["psycopg2", "sqlalchemy-redshift"]
 
 [[package]]
 name = "requests"
@@ -937,28 +864,6 @@ files = [
 python-dotenv = ">=0.21.0,<0.22.0"
 
 [[package]]
-name = "tablib"
-version = "3.3.0"
-description = "Format agnostic tabular data library (XLS, JSON, YAML, CSV)"
-category = "main"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "tablib-3.3.0-py3-none-any.whl", hash = "sha256:f7f2e214a1a68577f2599927a8870495adac0f7f2673b1819130f2060e1914ab"},
-    {file = "tablib-3.3.0.tar.gz", hash = "sha256:11e02a6f81d256e0666877d8397972d10302307a54c04fd7157e92faf740cb10"},
-]
-
-[package.extras]
-all = ["markuppy", "odfpy", "openpyxl (>=2.6.0)", "pandas", "pyyaml", "tabulate", "xlrd", "xlwt"]
-cli = ["tabulate"]
-html = ["markuppy"]
-ods = ["odfpy"]
-pandas = ["pandas"]
-xls = ["xlrd", "xlwt"]
-xlsx = ["openpyxl (>=2.6.0)"]
-yaml = ["pyyaml"]
-
-[[package]]
 name = "tomli"
 version = "2.0.1"
 description = "A lil' TOML parser"
@@ -1106,4 +1011,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "24df7c9fb1adea3967b798200655303250cb4cfe358630530d7f96f06dc92bbf"
+content-hash = "3f77d09a8ed7833c4d4785413c1753e0ff27e91912c95e34ac2f893a0950a9c8"
