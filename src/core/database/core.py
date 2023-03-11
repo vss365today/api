@@ -1,7 +1,8 @@
 from contextlib import contextmanager
 from typing import Any, Generator
 
-from sqlalchemy.engine.result import ResultProxy, RowProxy
+from sqlalchemy.engine.cursor import CursorResult
+from sqlalchemy.engine.row import Row
 from sqlalchemy.sql import text
 
 from src.core.database.models import db
@@ -13,34 +14,31 @@ __all__ = ["connect_to_db"]
 class _Result:
     """Wrapper class for a raw SQL query result."""
 
-    def __init__(self, /, result: ResultProxy) -> None:
-        self._result: ResultProxy = result
+    def __init__(self, /, result: CursorResult) -> None:
+        self._result: CursorResult = result
 
     def __iter__(self) -> Generator[dict[str, Any], None, None]:
         """Iterate over all results from the query."""
         for r in self.all():
             yield r
 
-    def _to_dict(self, /, r: RowProxy) -> dict[str, Any]:
-        return dict(zip(r.keys(), r.values(), strict=True))
-
     def all(self) -> list[dict[str, Any]]:
         """Fetch all results from the query."""
-        return [self._to_dict(r) for r in self._result.fetchall()]
+        return [r._asdict() for r in self._result.all()]
 
     def first(self) -> dict[str, Any] | None:
         """Fetch the first result from the query."""
         # Specifically handle no results
         if (r := self._result.first()) is None:
             return None
-        return self._to_dict(r)
+        return r._asdict()
 
     def one(self) -> dict[str, Any] | None:
         """Fetch the only result from the query."""
         # Specifically handle no results
-        if (r := self._result.fetchone()) is None:
+        if (r := self._result.one_or_none()) is None:
             return None
-        return self._to_dict(r)
+        return r._asdict()
 
 
 class _Query:
@@ -50,7 +48,7 @@ class _Query:
     def query(sql, /, **kwargs) -> _Result:
         """Execute a SQL query."""
         with db.engine.connect() as conn:
-            return _Result(conn.execute(text(sql), **kwargs))
+            return _Result(conn.execute(statement=text(sql), parameters=kwargs))
 
 
 @contextmanager
