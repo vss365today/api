@@ -1,8 +1,11 @@
 import json
+from datetime import date, datetime
 from importlib import import_module
+from typing import Any
 
 import sys_vars
 from flask import Flask
+from flask.json.provider import DefaultJSONProvider, _default
 from flask_cors import CORS
 from flask_smorest import Api
 from werkzeug.exceptions import HTTPException
@@ -11,15 +14,26 @@ import src.configuration as config
 from src.blueprints import all_blueprints, v2_blueprints
 from src.core import logger
 from src.core.database import models
-from src.core.helpers.JsonEncode import JsonEncode
 
 
-def create_app():
+def my_default(o) -> Any:
+    """Format dates and datetimes in ISO 8601 for JSON."""
+    # TODO: Remove this with v1 removal. v2 handles this correctly already
+    if isinstance(o, datetime):
+        return o.isoformat()
+
+    if isinstance(o, date):
+        return o.isoformat()
+
+    return _default(o)
+
+
+DefaultJSONProvider.default = staticmethod(my_default)
+
+
+def create_app() -> Flask:
     """Create an instance of the app."""
     app = Flask(__name__)
-
-    # Override the default JSON encoder with a customized one
-    app.json_encoder = JsonEncode
 
     # Load the app configuration
     app.config.update(config.get_app_config("default"))
