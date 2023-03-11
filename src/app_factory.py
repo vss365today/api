@@ -11,7 +11,6 @@ import src.configuration as config
 from src.blueprints import all_blueprints, v2_blueprints
 from src.core import logger
 from src.core.database import models
-from src.core.database.core import get_db_conn_uri
 from src.core.helpers.JsonEncode import JsonEncode
 
 
@@ -37,7 +36,12 @@ def create_app():
     # Create a database connection
     with app.app_context():
         app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-        app.config["SQLALCHEMY_DATABASE_URI"] = get_db_conn_uri()
+        app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://{}:{}@{}/{}".format(
+            config.get_secret("DB_USERNAME"),
+            config.get_secret("DB_PASSWORD"),
+            app.config["DB_HOST"],
+            app.config["DB_DBNAME"],
+        )
         models.db.init_app(app)
 
     # Add a file logger to record errors

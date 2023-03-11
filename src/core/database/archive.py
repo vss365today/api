@@ -128,9 +128,9 @@ def make() -> bool:
             # Set the column widths
             widths = get_column_widths(int(year))
             worksheet.set_column(0, 0, 10)
-            worksheet.set_column(1, 1, widths.longest_word)
-            worksheet.set_column(2, 2, widths.longest_handle)
-            worksheet.set_column(3, 3, widths.longest_url)
+            worksheet.set_column(1, 1, widths["longest_word"])
+            worksheet.set_column(2, 2, widths["longest_handle"])
+            worksheet.set_column(3, 3, widths["longest_url"])
 
             # Write the headings
             worksheet.write(0, 0, "Date", bolded_text)
@@ -145,9 +145,9 @@ def make() -> bool:
                 row += 1
 
                 # Write all the data
-                worksheet.write_datetime(row, 0, prompt.date)
-                worksheet.write(row, 1, prompt.word)
-                worksheet.write(row, 2, prompt.writer_handle)
-                url = Prompt.make_url(prompt.writer_handle, prompt.tweet_id)
+                worksheet.write_datetime(row, 0, prompt["date"])
+                worksheet.write(row, 1, prompt["word"])
+                worksheet.write(row, 2, prompt["writer_handle"])
+                url = Prompt.make_url(prompt["writer_handle"], prompt["tweet_id"])
                 worksheet.write_url(row, 3, url)
     return True

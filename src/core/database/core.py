@@ -1,16 +1,13 @@
 from contextlib import contextmanager
 from typing import Any, Generator
 
-import records
-from flask import current_app
 from sqlalchemy.engine.result import ResultProxy, RowProxy
 from sqlalchemy.sql import text
 
-from src.configuration import get_secret
 from src.core.database.models import db
 
 
-__all__ = ["connect_to_db", "connect_to_db2", "get_db_conn_uri"]
+__all__ = ["connect_to_db"]
 
 
 class _Result:
@@ -57,21 +54,6 @@ class _Query:
 
 
 @contextmanager
-def connect_to_db2() -> Generator[type[_Query], None, None]:
+def connect_to_db() -> Generator[type[_Query], None, None]:
     """Create a connection to the database."""
     yield _Query
-
-
-def get_db_conn_uri() -> str:
-    """Create a database connection URI."""
-    return "mysql+pymysql://{}:{}@{}/{}".format(
-        get_secret("DB_USERNAME"),
-        get_secret("DB_PASSWORD"),
-        current_app.config["DB_HOST"],
-        current_app.config["DB_DBNAME"],
-    )
-
-
-def connect_to_db() -> records.Database:
-    """Create a connection to the database."""
-    return records.Database(get_db_conn_uri()).get_connection()
