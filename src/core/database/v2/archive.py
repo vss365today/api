@@ -73,7 +73,7 @@ def __get_prompt_date_range() -> _PromptDateRange:
 
 def __get_by_year(year: int) -> list:
     """Get all relevant Prompt information for the archive for the given year."""
-    # TODO: Select Prompt.url
+    # TODO: Select Prompt.url and Host.handle
     return (
         Prompt.query.with_entities(
             Host.handle,
