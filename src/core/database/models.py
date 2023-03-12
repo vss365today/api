@@ -1,14 +1,14 @@
-# coding: utf-8
 from contextlib import suppress
 from datetime import date as date_obj, datetime, timedelta
 from typing import TypedDict
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, Date, DateTime, ForeignKey, String, inspect
+from sqlalchemy import Column, ForeignKey, inspect
 from sqlalchemy.dialects.mysql import TINYINT
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import relationship
-from sqlalchemy.types import Boolean, BigInteger
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.types import Boolean, BigInteger, Date, DateTime, String
+
 
 db = SQLAlchemy()
 
@@ -64,15 +64,6 @@ class ApiKey(HelperMethods, db.Model):
     has_emails = Column("has_subscription", Boolean, nullable=False, default=False)
 
     history = relationship("ApiKeyHistory", backref="history")
-
-
-class Email(db.Model):
-    __tablename__ = "emails"
-
-    address = Column(
-        "email", String(150, "utf8mb4_unicode_ci"), primary_key=True, unique=True
-    )
-    date_added = Column(DateTime, default=datetime.now)
 
 
 class Writer(db.Model):
@@ -267,4 +258,16 @@ class PromptMedia(db.Model):
         nullable=False,
     )
 
-    prompt = relationship("Prompt", backref="prompt")
+class Email(db.Model):
+    __tablename__ = "emails"
+    __table_args__ = {
+        "comment": "Store email addresses for those who want Prompt notifications."
+    }
+
+    address: Mapped[str] = mapped_column(
+        "email",
+        String(150, collation="utf8mb4_unicode_ci"),
+        primary_key=True,
+        unique=True,
+    )
+    date_added: Mapped[datetime] = Column(DateTime, default=datetime.now)
