@@ -41,31 +41,6 @@ class HelperMethods:
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
 
 
-class ApiKey(HelperMethods, db.Model):
-    __tablename__ = "api_keys"
-    __table_args__ = {
-        "comment": (
-            "API keys for accessing protected API endpoints. By default, keys can only access "
-            "public, unprotected endpoints and actions. Authorization can be granted on a granular "
-            "level for complete control over key permissions."
-        )
-    }
-
-    _id = Column(TINYINT(3), primary_key=True)
-    token = Column(String(64, "utf8mb4_unicode_ci"), nullable=False, unique=True)
-    date_created = Column(DateTime, nullable=False, default=datetime.now)
-    desc = Column(String(256, "utf8mb4_unicode_ci"))
-    has_archive = Column(Boolean, nullable=False, default=False)
-    has_notifications = Column("has_broadcast", Boolean, nullable=False, default=False)
-    has_hosts = Column("has_host", Boolean, nullable=False, default=False)
-    has_keys = Column(Boolean, nullable=False, default=False)
-    has_prompts = Column("has_prompt", Boolean, nullable=False, default=False)
-    has_settings = Column(Boolean, nullable=False, default=False)
-    has_emails = Column("has_subscription", Boolean, nullable=False, default=False)
-
-    history = relationship("ApiKeyHistory", backref="history")
-
-
 class Writer(db.Model):
     __tablename__ = "writers"
 
@@ -101,26 +76,6 @@ class WriterDate(db.Model):
     writer = relationship("Writer")
 
 
-class ApiKeyHistory(db.Model):
-    __tablename__ = "audit_api_keys"
-    __table_args__ = {"comment": "Audit table to track permission changes to API keys."}
-
-    _id = Column(TINYINT(3), primary_key=True)
-    key_id = Column(
-        ForeignKey("api_keys._id", ondelete="CASCADE"), nullable=False, index=True
-    )
-    date_updated = Column(DateTime, nullable=False, default=datetime.now)
-    has_archive = Column(Boolean, nullable=False, default=False)
-    has_hosts = Column(Boolean, nullable=False, default=False)
-    has_keys = Column(Boolean, nullable=False, default=False)
-    has_notifications = Column(Boolean, nullable=False, default=False)
-    has_prompts = Column(Boolean, nullable=False, default=False)
-    has_settings = Column(Boolean, nullable=False, default=False)
-    has_emails = Column(Boolean, nullable=False, default=False)
-
-    key = relationship("ApiKey", backref="key")
-
-
 class PromptLegacy(db.Model):
     __tablename__ = "prompts"
     __table_args__ = {"comment": "Legacy table for storing prompts."}
@@ -154,11 +109,16 @@ class Host(db.Model):
     __tablename__ = "hosts"
     __table_args__ = {"comment": "Store the #vss365 Hosts."}
 
-    _id = Column(BigInteger, primary_key=True, autoincrement=True)
-    handle = Column(String(30, "utf8mb4_unicode_ci"), nullable=False, unique=True)
-    twitter_uid = Column(String(40, "utf8mb4_unicode_ci"), nullable=False, unique=True)
+    _id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    handle: Mapped[str] = mapped_column(
+        String(30, collation="utf8mb4_unicode_ci"), unique=True
+    )
+    twitter_uid: Mapped[str] = mapped_column(
+        String(40, collation="utf8mb4_unicode_ci"), unique=True
+    )
 
-    prompts = relationship("Prompt", backref="prompts", lazy="dynamic")
+    prompts: Mapped[list["Prompt"]] = relationship(back_populates="host")
+    dates: Mapped[list["HostDate"]] = relationship(back_populates="host")
 
     @hybrid_property
     def url(self) -> str:
@@ -185,42 +145,37 @@ class HostDate(db.Model):
     __tablename__ = "host_dates"
     __table_args__ = {"comment": "Store the hosting dates of #vss365 Hosts."}
 
-    _id = Column(BigInteger, primary_key=True, autoincrement=True)
-    date = Column(Date, nullable=False)
-    host_id = Column(
-        ForeignKey("hosts._id", ondelete="RESTRICT", onupdate="CASCADE"),
-        nullable=False,
+    _id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    date: Mapped[date_obj]
+    host_id: Mapped[int] = mapped_column(
+        ForeignKey("hosts._id", ondelete="RESTRICT", onupdate="CASCADE")
     )
-
-    host = relationship("Host", backref="host")
+    host: Mapped["Host"] = relationship(back_populates="dates")
 
 
 class Prompt(HelperMethods, db.Model):
     __tablename__ = "prompts_new"
     __table_args__ = {"comment": "Store the #vss365 Prompts."}
 
-    _id = Column(BigInteger, primary_key=True, autoincrement=True)
-    twitter_id = Column(
-        String(30, "utf8mb4_unicode_ci"),
-        nullable=False,
-        unique=True,
+    _id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    twitter_id: Mapped[str] = mapped_column(
+        String(30, collation="utf8mb4_unicode_ci"), unique=True
     )
-    date = Column(Date, nullable=False)
-    date_added = Column(
+    date: Mapped[date_obj]
+    date_added: Mapped[datetime] = Column(
         DateTime,
         nullable=False,
         default=datetime.now,
         onupdate=datetime.now,
     )
-    word = Column(String(30, "utf8mb4_unicode_ci"), nullable=False)
-    content = Column(String(2048, "utf8mb4_unicode_ci"), nullable=False)
-    host_id = Column(
-        ForeignKey("hosts._id", ondelete="RESTRICT", onupdate="CASCADE"),
-        nullable=False,
+    word: Mapped[str] = mapped_column(String(30, collation="utf8mb4_unicode_ci"))
+    content: Mapped[str] = mapped_column(String(2048, collation="utf8mb4_unicode_ci"))
+    host_id: Mapped[int] = mapped_column(
+        ForeignKey("hosts._id", ondelete="RESTRICT", onupdate="CASCADE")
     )
 
-    host = relationship("Host")
-    media = relationship("PromptMedia")
+    host: Mapped["Host"] = relationship(back_populates="prompts")
+    media: Mapped[list["PromptMedia"]] = relationship(back_populates="prompt")
 
     def __str__(self) -> str:
         return f"Prompt {self._id}, {self.date.isoformat()}, {self.word}"
@@ -250,13 +205,19 @@ class PromptMedia(db.Model):
     __tablename__ = "prompt_media"
     __table_args__ = {"comment": "Store the #vss365 Prompt media."}
 
-    _id = Column(BigInteger, primary_key=True, autoincrement=True)
-    media = Column(String(512, "utf8mb4_unicode_ci"))
-    alt_text = Column(String(1000, "utf8mb4_unicode_ci"))
-    prompt_id = Column(
-        ForeignKey("prompts_new._id", ondelete="CASCADE", onupdate="CASCADE"),
-        nullable=False,
+    _id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    media: Mapped[str | None] = mapped_column(
+        String(512, collation="utf8mb4_unicode_ci")
     )
+    alt_text: Mapped[str | None] = mapped_column(
+        String(1000, collation="utf8mb4_unicode_ci")
+    )
+    prompt_id: Mapped[int] = mapped_column(
+        ForeignKey("prompts_new._id", ondelete="CASCADE", onupdate="CASCADE")
+    )
+
+    prompt: Mapped["Prompt"] = relationship(back_populates="media")
+
 
 class Email(db.Model):
     __tablename__ = "emails"
@@ -271,3 +232,59 @@ class Email(db.Model):
         unique=True,
     )
     date_added: Mapped[datetime] = Column(DateTime, default=datetime.now)
+
+
+class ApiKey(HelperMethods, db.Model):
+    __tablename__ = "api_keys"
+    __table_args__ = {
+        "comment": (
+            "API keys for accessing protected API endpoints. By default, keys can only "
+            "access public, unprotected endpoints and actions. Authorization can be "
+            "granted on a granular level for complete control over key permissions."
+        )
+    }
+
+    _id: Mapped[int] = mapped_column(TINYINT(3), primary_key=True)
+    token: Mapped[str] = mapped_column(String(64, "utf8mb4_unicode_ci"), unique=True)
+    date_created: Mapped[datetime] = mapped_column(
+        DateTime,
+        nullable=False,
+        default=datetime.now,
+    )
+    desc: Mapped[str | None] = mapped_column(
+        String(256, collation="utf8mb4_unicode_ci")
+    )
+    has_archive: Mapped[bool] = mapped_column(default=False)
+    has_notifications: Mapped[bool] = mapped_column("has_broadcast", default=False)
+    has_hosts: Mapped[bool] = mapped_column("has_host", default=False)
+    has_keys: Mapped[bool] = mapped_column(default=False)
+    has_prompts: Mapped[bool] = mapped_column("has_prompt", default=False)
+    has_settings: Mapped[bool] = mapped_column(default=False)
+    has_emails: Mapped[bool] = mapped_column("has_subscription", default=False)
+
+    history: Mapped[list["ApiKeyHistory"]] = relationship(back_populates="key")
+
+
+class ApiKeyHistory(db.Model):
+    __tablename__ = "audit_api_keys"
+    __table_args__ = {"comment": "Audit table to track permission changes to API keys."}
+
+    _id: Mapped[int] = mapped_column(TINYINT(3), primary_key=True)
+    key_id: Mapped[int] = mapped_column(
+        ForeignKey("api_keys._id", ondelete="CASCADE"),
+        index=True,
+    )
+    date_updated: Mapped[datetime] = Column(
+        DateTime,
+        nullable=False,
+        default=datetime.now,
+    )
+    has_archive: Mapped[bool] = mapped_column(default=False)
+    has_hosts: Mapped[bool] = mapped_column(default=False)
+    has_keys: Mapped[bool] = mapped_column(default=False)
+    has_notifications: Mapped[bool] = mapped_column(default=False)
+    has_prompts: Mapped[bool] = mapped_column(default=False)
+    has_settings: Mapped[bool] = mapped_column(default=False)
+    has_emails: Mapped[bool] = mapped_column(default=False)
+
+    key: Mapped["ApiKey"] = relationship(back_populates="history")
