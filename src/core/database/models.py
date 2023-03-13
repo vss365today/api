@@ -7,10 +7,11 @@ from sqlalchemy import Column, ForeignKey, inspect
 from sqlalchemy.dialects.mysql import TINYINT
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy.types import Boolean, BigInteger, Date, DateTime, String
+from sqlalchemy.types import BigInteger, Date, DateTime, String
 
 
 db = SQLAlchemy()
+exe = db.session.execute
 
 
 __all__ = [
