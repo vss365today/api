@@ -11,7 +11,6 @@ from sqlalchemy.types import BigInteger, Date, DateTime, String
 
 
 db = SQLAlchemy()
-exe = db.session.execute
 
 
 __all__ = [

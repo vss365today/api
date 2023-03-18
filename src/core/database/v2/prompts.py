@@ -4,7 +4,7 @@ from typing import cast
 from sqlalchemy.sql import func
 from sqlalchemy.orm.exc import NoResultFound
 
-from src.core.database.models import Host, Prompt, PromptMedia, db, exe
+from src.core.database.models import Host, Prompt, PromptMedia, db
 from src.core.database.v2 import hosts
 from src.core.helpers import media
 
@@ -128,27 +128,25 @@ def delete_media(info: dict) -> bool:
 
 def exists(prompt_date: date) -> bool:
     """Determine if a Prompt has been recorded for this date."""
+    qs = db.select(Prompt).filter_by(date=prompt_date)
+    r = db.session.execute(qs).count()
     return bool(Prompt.query.filter_by(date=prompt_date).count())
 
 
 def get_by_date(prompt_date: date) -> list[Prompt]:
     """Get all of the Prompts for this date."""
     # Don't expose tomorrow's (or next week's) Prompt
-    return (
-        exe(
-            db.select(Prompt).filter(
-                Prompt.date == prompt_date, Prompt.date <= date.today()
-            )
-        )
-        .scalars()
-        .all()
+    qs = db.select(Prompt).filter(
+        Prompt.date == prompt_date, Prompt.date <= date.today()
     )
+    return db.session.execute(qs).scalars().all()
 
 
 def get_current() -> list[Prompt]:
     """Get the current Prompt."""
     # Start by determining the newest recorded Prompt date that's also not in the future
-    newest_date = exe(db.select(Prompt.date).order_by(Prompt.date.desc())).scalar()
+    qs = db.select(Prompt.date).order_by(Prompt.date.desc())
+    newest_date = db.session.execute(qs).scalar()
 
     # Now that we have the latest recorded date, nab all the Prompts for it.
     # This really should be a single Prompt under the 2021+ character,
@@ -157,7 +155,8 @@ def get_current() -> list[Prompt]:
     # multiple Prompts, at risk of YAGNI. We can't reuse our
     # `get_by_date` method here because we don't need to restrict ourselves
     # from pulling today's Prompt, as that would do
-    return exe(db.select(Prompt).filter_by(date=newest_date)).scalars().all()
+    qs = db.select(Prompt).filter_by(date=newest_date)
+    return db.session.execute(qs).scalars().all()
 
 
 def get_months(year: int) -> list[int]:
