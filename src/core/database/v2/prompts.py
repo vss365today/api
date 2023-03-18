@@ -169,29 +169,29 @@ def get_months(year: int) -> list[int]:
     """
     # Be sure to filter out any future, as of yet unreleased, Prompt years
     current_year = date.today().year
-    r = (
-        Prompt.query.with_entities(func.month(Prompt.date).label("month"))
-        .distinct()
+    qs = (
+        db.select(func.month(Prompt.date))
         .filter(
             func.year(Prompt.date) == year,
             func.year(Prompt.date) <= current_year,
         )
-        .order_by("month")
+        .distinct()
+        .order_by(Prompt.date)
     )
-    return [month[0] for month in r]
+    return [month[0] for month in db.session.execute(qs).all()]
 
 
 def get_years() -> list[int]:
     """Get a list of years of recorded Prompts."""
     # Be sure to filter out any future, as of yet unreleased, Prompt years
     current_year = date.today().year
-    r = (
-        Prompt.query.with_entities(func.year(Prompt.date).label("year"))
-        .distinct()
+    qs = (
+        db.select(func.year(Prompt.date))
         .filter(func.year(Prompt.date) <= current_year)
-        .order_by("year")
+        .distinct()
+        .order_by(Prompt.date)
     )
-    return [year[0] for year in r]
+    return [year[0] for year in db.session.execute(qs).all()]
 
 
 def update(info: dict) -> bool:
