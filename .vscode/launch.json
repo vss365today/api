@@ -19,6 +19,7 @@
       "type": "python",
       "request": "launch",
       "module": "flask",
+      "pythonArgs": ["-Wd"],
       "console": "internalConsole",
       "env": {
         "FLASK_APP": "wsgi.py",
@@ -37,6 +38,7 @@
       "type": "python",
       "request": "launch",
       "module": "flask",
+      "pythonArgs": ["-Wd"],
       "console": "internalConsole",
       "env": {
         "FLASK_APP": "wsgi.py",

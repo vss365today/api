@@ -128,9 +128,8 @@ def delete_media(info: dict) -> bool:
 
 def exists(prompt_date: date) -> bool:
     """Determine if a Prompt has been recorded for this date."""
-    qs = db.select(Prompt).filter_by(date=prompt_date)
-    r = db.session.execute(qs).count()
-    return bool(Prompt.query.filter_by(date=prompt_date).count())
+    qs = db.select(Prompt._id).filter_by(date=prompt_date)
+    return bool(db.session.execute(qs).all())
 
 
 def get_by_date(prompt_date: date) -> list[Prompt]:

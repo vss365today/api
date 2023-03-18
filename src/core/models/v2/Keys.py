@@ -17,7 +17,7 @@ class Permissions(Schema):
 
 
 class Token(Schema):
-    token = fields.String(max=64)
+    token = fields.String(metadata={"max": 64})
 
 
 class Key(Token, Permissions):

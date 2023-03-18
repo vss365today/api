@@ -2,6 +2,7 @@
   "secrets": [],
   "appConfig": {
     "DEBUG": true,
+    "SQLALCHEMY_ECHO": true,
     "DB_HOST": "vss365today-db",
 
     "OPENAPI_URL_PREFIX": "/",
