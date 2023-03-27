@@ -2,7 +2,7 @@ from datetime import date
 from typing import cast
 
 from sqlalchemy.sql import func
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import NoResultFound
 
 from src.core.database.models import Host, Prompt, PromptMedia, db
 from src.core.database.v2 import hosts
@@ -100,7 +100,8 @@ def delete(prompt_id: int) -> bool:
     """
     # We can't delete a Prompt that does not exist
     try:
-        prompt = Prompt.query.filter_by(_id=prompt_id).one()
+        qs = db.select(Prompt).filter_by(_id=prompt_id)
+        prompt = db.session.execute(qs).scalar_one()
     except NoResultFound:
         return False
 
@@ -115,7 +116,8 @@ def delete_media(info: dict) -> bool:
     """Delete media files and media records from a Prompt."""
     # We can't delete media that does not exist
     try:
-        pm = PromptMedia.query.filter_by(_id=info["media_id"]).one()
+        qs = db.select(PromptMedia).filter_by(_id=info["media_id"])
+        pm = db.session.execute(qs).scalar_one()
     except NoResultFound:
         return False
 
