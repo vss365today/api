@@ -1,6 +1,6 @@
 from contextlib import suppress
 from datetime import date as date_obj, datetime, timedelta
-from typing import TypedDict
+from typing import Any, TypedDict
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, ForeignKey, inspect
@@ -39,6 +39,12 @@ class HelperMethods:
     def as_dict(self) -> dict:
         """Return a model as a dictionary."""
         return {c.key: getattr(self, c.key) for c in inspect(self).mapper.column_attrs}
+
+    def update_with(self, data: dict[str, Any]) -> None:
+        """Update a record with the given data."""
+        for k, v in data.items():
+            setattr(self, k, v)
+        return None
 
 
 class Writer(db.Model):
