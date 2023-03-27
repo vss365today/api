@@ -200,8 +200,8 @@ def update(info: dict) -> bool:
     """Update an existing Prompt."""
     # We have to have a Prompt to update
     try:
-        prompt_q = Prompt.query.filter_by(_id=info["id"])
-        prompt = prompt_q.one()
+        qs = db.select(Prompt).filter_by(_id=info["id"])
+        prompt = db.session.execute(qs).scalar_one()
     except NoResultFound:
         return False
 
@@ -219,6 +219,6 @@ def update(info: dict) -> bool:
 
     # Finally, save the updated Prompt
     del info["id"]
-    prompt_q.update(info)
+    prompt.update_with(info)
     db.session.commit()
     return True
