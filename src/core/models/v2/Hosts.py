@@ -18,8 +18,14 @@ class Handle(Schema):
     handle = fields.String(required=True)
 
 
+class _HostDate(Schema):
+    _id = fields.Integer()
+    host_id = fields.Integer()
+    date = fields.Date("iso")
+
+
 class Host(Basic):
-    dates = fields.List(fields.Date("iso"))
+    dates = fields.List(fields.Pluck(_HostDate, "date"))
 
 
 class HostingDate(Handle, Date):

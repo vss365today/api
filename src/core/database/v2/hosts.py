@@ -188,22 +188,15 @@ def delete_date(handle: str, given_date: date) -> bool:
 
 def get(handle: str) -> Host | None:
     """Get an individual Host and all Hosting dates by a Twitter handle."""
+    # Get the Host's info
     try:
-        host = Host.query.filter_by(handle=handle).one()
-
-    # That Host doesn't exist
+        host = db.session.execute(db.select(Host).filter_by(handle=handle)).scalar_one()
     except NoResultFound:
         return None
 
     # Pull the Hosting Dates for the Host, ensuring to take out any future dates
     today = date.today()
-    dates = [
-        r.date
-        for r in HostDate.query.with_entities(HostDate.date)
-        .filter(HostDate.host_id == host._id, HostDate.date <= today)
-        .all()
-    ]
-    host.dates = dates
+    host.dates = [hd for hd in host.dates if hd.date <= today]
     return host
 
 
