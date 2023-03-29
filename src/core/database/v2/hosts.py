@@ -2,7 +2,7 @@ from calendar import monthrange
 from datetime import date
 from typing import TypedDict
 
-from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.exc import NoResultFound
 
 from src.core.database.models import Host, HostDate, Prompt, db
 from src.core.helpers import twitter_v2_api
@@ -85,12 +85,13 @@ def create_date(handle: str, date: date) -> bool:
     """
     # We can't create a Hosting date for a Host that does not exist
     try:
-        uid = Host.get_id(handle)
+        qs = db.select(Host).filter_by(handle=handle)
+        uid = db.session.execute(qs).scalar_one()._id
     except NoResultFound:
         return False
 
     # We can't create a Hosting date if a Host is already assigned to it
-    if HostDate.query.filter_by(date=date).first() is not None:
+    if db.session.execute(db.select(HostDate).filter_by(date=date)).first() is not None:
         return False
 
     # Create the Hosting date
@@ -130,13 +131,12 @@ def delete(handle: str) -> bool:
     """
     # We can't delete a Host that does not exist
     try:
-        host = Host.query.filter_by(handle=handle).one()
+        host = db.session.execute(db.select(Host).filter_by(handle=handle)).scalar_one()
     except NoResultFound:
         return False
 
     # We can't delete a Host if they have assigned Hosting dates
-    dates = HostDate.query.filter_by(host_id=host._id).all()
-    if dates:
+    if host.dates:
         return False
 
     # We can delete this Host
@@ -156,29 +156,30 @@ def delete_date(handle: str, given_date: date) -> bool:
     """
     # We can't delete a Hosting Date for a Host that does not exist
     try:
-        host = Host.query.filter_by(handle=handle).one()
+        host = db.session.execute(db.select(Host).filter_by(handle=handle)).scalar_one()
     except NoResultFound:
         return False
 
-    # We can't delete a Hosting Date if it is not recorded or
-    # they are not assigned to it
+    # We can't delete a Hosting Date if it is not recorded
+    # or they are not assigned to it
     try:
-        hdate = HostDate.query.filter_by(host_id=host._id, date=given_date).one()
-    except NoResultFound:
+        hdate = [hd for hd in host.dates if hd.date == given_date][0]
+    except IndexError:
         return False
 
     # Determine the Hosting period for the given date
-    hp = __hosting_period_for_date(hdate.date)
+    hp = __hosting_period_for_date(given_date)
     hp_start = date(given_date.year, given_date.month, hp["start"])
     hp_end = date(given_date.year, given_date.month, hp["end"])
 
     # We can't delete a Hosting Date if the Host
     # has given out a Prompt during the Hosting period
-    prompt = Prompt.query.filter(
+    qs = db.select(Prompt._id).filter(
         Prompt.host_id == host._id,
         Prompt.date >= hp_start,
         Prompt.date <= hp_end,
-    ).first()
+    )
+    prompt = db.session.execute(qs).first()
     if prompt is not None:
         return False
 
@@ -209,20 +210,23 @@ def get(handle: str) -> Host | None:
     return host
 
 
-def get_by_date(date: date) -> list[Host]:
-    """Get all of the Hosts for the given date.
+def get_by_date(date: date) -> Host:
+    """Get the Host for the given date.
 
-    While the majority of the time this will only return a single item
-    in the list, historically, there have been days where multiple Hosts
-    gave out a prompt on the same day. We cannot merely support the modern
-    day prompt format of a string one Host per day, hence, it's a list.
+     Unlike Prompts, there are no recorded instances of two Hosts giving out
+    two Prompts on the same day. As a result, this is a one-to-one mapping
+    between the Hosting Date and the Host.
     """
-    return Host.query.join(HostDate).filter(HostDate.date == date).all()
+    return (
+        db.session.execute(db.select(HostDate).filter(HostDate.date == date))
+        .scalar()
+        .one()
+    )
 
 
 def get_all() -> list[Host]:
     """Get all recorded Hosts."""
-    return Host.query.all()
+    return db.session.execute(db.select(Host)).scalars().all()
 
 
 def update(handle: str, new_handle: str) -> bool:
