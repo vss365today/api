@@ -24,12 +24,14 @@ def create(address: str) -> bool:
 
 def delete(address: str) -> None:
     """Remove an email address."""
-    db.session.delete(Email.query.filter_by(address=address).first())
-    db.session.commit()
+    qs = db.select(Email).filter_by(address=address)
+    if email := db.session.execute(qs).first() is not None:
+        db.session.delete(email)
+        db.session.commit()
     current_app.logger.debug("Email removed from subscription list.")
     return None
 
 
 def get_all() -> list[Email]:
     """Get all email addresses."""
-    return Email.query.order_by(Email.address).all()
+    return db.session.execute(db.select(Email).order_by(Email.address)).scalars().all()
