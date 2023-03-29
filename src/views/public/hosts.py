@@ -130,7 +130,7 @@ class HostIndividualDate(MethodView):
 class HostDate(MethodView):
     @require_permission("hosts")
     @hosts.arguments(models.Date, location="path", as_kwargs=True)
-    @hosts.response(200, models.Basic(many=True))
+    @hosts.response(200, models.Basic)
     @hosts.alt_response(403, schema=Generic.HttpError)
     @hosts.alt_response(404, schema=Generic.HttpError)
     @hosts.alt_response(422, schema=Generic.HttpError)

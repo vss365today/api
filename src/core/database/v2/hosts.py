@@ -110,15 +110,12 @@ def current() -> Host | None:
     # to prevent it from happening again in the future.
     today = date.today()
     if host := get_by_date(today):
-        return host[0]
+        return host
 
     # If we don't have a host assigned to today, we need to determine the starting date
     # for the current hosting period and use that to get the current host
     host_start_date = today.replace(day=__hosting_period_for_date(today)["start"])
-    try:
-        return get_by_date(host_start_date)[0]
-    except IndexError:
-        return None
+    return get_by_date(host_start_date)
 
 
 def delete(handle: str) -> bool:
@@ -210,18 +207,21 @@ def get(handle: str) -> Host | None:
     return host
 
 
-def get_by_date(date: date) -> Host:
+def get_by_date(date: date) -> Host | None:
     """Get the Host for the given date.
 
-     Unlike Prompts, there are no recorded instances of two Hosts giving out
+    Unlike Prompts, there are no recorded instances of two Hosts giving out
     two Prompts on the same day. As a result, this is a one-to-one mapping
     between the Hosting Date and the Host.
     """
-    return (
-        db.session.execute(db.select(HostDate).filter(HostDate.date == date))
-        .scalar()
-        .one()
-    )
+    try:
+        return (
+            db.session.execute(db.select(HostDate).filter_by(date=date))
+            .scalar_one()
+            .host
+        )
+    except NoResultFound:
+        return None
 
 
 def get_all() -> list[Host]:
@@ -233,11 +233,10 @@ def update(handle: str, new_handle: str) -> bool:
     """Update a Host's Twitter handle."""
     # We can't update a Host that doesn't exist
     try:
-        host = Host.query.filter_by(handle=handle)
-        host.one()
+        host = db.session.execute(db.select(Host).filter_by(handle=handle)).scalar_one()
     except NoResultFound:
         return False
 
-    host.update({"handle": new_handle})
+    host.update_with({"handle": new_handle})
     db.session.commit()
     return True

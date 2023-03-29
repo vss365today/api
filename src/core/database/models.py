@@ -111,7 +111,7 @@ class PromptLegacy(db.Model):
 
 
 # 2023+ models
-class Host(db.Model):
+class Host(HelperMethods, db.Model):
     __tablename__ = "hosts"
     __table_args__ = {"comment": "Store the #vss365 Hosts."}
 
@@ -135,11 +135,6 @@ class Host(db.Model):
     def get_handle(cls, /, id: str) -> str:
         """Get a Host's handle from their user ID."""
         return cls.query.filter_by(_id=id).first().handle
-
-    @classmethod
-    def get_id(cls, /, handle: str) -> str:
-        """Get a Host's user ID from their handle."""
-        return cls.query.filter_by(handle=handle).first()._id
 
     @classmethod
     def get_twitter_uid(cls, /, handle: str) -> str:
