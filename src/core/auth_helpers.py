@@ -32,7 +32,6 @@ def authorize_blueprint():
     flask_route = request.endpoint.split(".")[0].replace("-", "_")
     v1_v2_translation = {
         "api_key": "keys",
-        "broadcast": "notifications",
         "host": "hosts",
         "prompt": "prompts",
         "subscription": "emails",

@@ -95,12 +95,6 @@ archive = _factory(
     "archive",
     new_endpoint="archive",
 )  # documented
-broadcast = _factory(
-    "broadcast",
-    "broadcast",
-    v1_auth.authorize_blueprint,
-    new_endpoint="notifications",
-)  # documented
 browse = _factory("browse", "browse")  # documented
 host = _factory("host", "host", new_endpoint="hosts")  # documented
 prompt = _factory("prompt", "prompt", new_endpoint="prompts")  # documented
@@ -108,7 +102,6 @@ search = _factory("search", "search")  # documented
 settings = _factory("settings", "settings", v1_auth.authorize_blueprint)  # documented
 all_blueprints = (
     archive,
-    broadcast,
     browse,
     host,
     prompt,

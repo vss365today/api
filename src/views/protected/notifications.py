@@ -55,8 +55,7 @@ class Notification(MethodView):
                 f"Cannot select Prompt #{prompt_to_select} "
                 f"out of {num_of_prompts} total.",
             )
-        prompt = prompt[prompt_to_select]
-        prompt = cast(Prompt, prompt)
+        prompt = cast(Prompt, prompt[prompt_to_select])
 
         # Build up the email render information. Our custom `as_dict()` method
         # doesn't follow FKs or hybrid properties, # so we have to take care
