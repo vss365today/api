@@ -31,6 +31,9 @@ def available_permissions() -> list[str]:
 
 def can_access(route: str, token: str) -> bool:
     """Determine if the given API key has permission to access a route."""
+    # NOTE: This method intentionally uses the old querying style methods.
+    # This will be going away with the removal of the v1 API, and flask-sqlalchemy
+    # is keeping the legacy methods around for a bit, there's no need for revision
     return (
         ApiKey.query.with_entities(getattr(ApiKey, f"has_{route}"))
         .filter_by(token=token)
@@ -100,12 +103,12 @@ def get_all() -> list[ApiKey]:
 
 def update(data: dict) -> None:
     """Update a single key."""
-    # Set up a query to get the current key object but don't fetch it
+    # Get the current key object
     token = data.pop("token")
-    key = ApiKey.query.filter_by(token=token)
+    key = get(token)
 
-    # Run the query to get the current object and record it for auditing purposes
-    original_info = key.first().as_dict()
+    # Record the key's current permissions for auditing purposes
+    original_info = key.as_dict()
     original_info["key_id"] = original_info["_id"]
     del original_info["_id"]
     del original_info["desc"]
@@ -116,9 +119,8 @@ def update(data: dict) -> None:
         f"API key {original_info['key_id']} former permissions archived."
     )
 
-    # Go back to our original object, update it with
-    # the key changes, and save everything
-    key.update(data)
+    # Update the key with the permission changes and save everything
+    key.update_with(data)
     db.session.commit()
     current_app.logger.debug(
         f"API key {original_info['key_id']} new permissions recorded."
