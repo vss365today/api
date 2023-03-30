@@ -2,7 +2,7 @@ from secrets import token_hex
 
 from flask import current_app
 from sqlalchemy import inspect
-from sqlalchemy.exc import DataError
+from sqlalchemy.exc import DataError, NoResultFound
 
 from src.core.database.models import ApiKey, ApiKeyHistory, db
 
@@ -41,7 +41,12 @@ def can_access(route: str, token: str) -> bool:
 def can_access_v2(token: str, perms: set) -> bool:
     """Determine if the given API key has all permissions needed to access an endpoint."""
     filters = [getattr(ApiKey, f"has_{perm}") == 1 for perm in perms]
-    return ApiKey.query.filter(*filters, ApiKey.token == token).first()
+    qs = db.select(ApiKey).filter(*filters, ApiKey.token == token)
+    try:
+        db.session.execute(qs).scalar_one()
+        return True
+    except NoResultFound:
+        return False
 
 
 def create(data: dict) -> dict | None:
@@ -64,7 +69,7 @@ def create(data: dict) -> dict | None:
 def delete(token: str) -> bool:
     """Delete a key."""
     if exists(token):
-        db.session.delete(ApiKey.query.filter_by(token=token).first())
+        db.session.delete(get(token))
         db.session.commit()
         current_app.logger.debug("API key deleted.")
         return True
@@ -75,17 +80,22 @@ def delete(token: str) -> bool:
 
 def exists(token: str) -> bool:
     """Determine if a key exists."""
-    return ApiKey.query.filter_by(token=token).first() is not None
+    return (
+        db.session.execute(db.select(ApiKey._id).filter_by(token=token)).first()
+        is not None
+    )
 
 
 def get(token: str) -> ApiKey | None:
     """Get a single key."""
-    return ApiKey.query.filter_by(token=token).first()
+    return (
+        db.session.execute(db.select(ApiKey).filter_by(token=token)).scalars().first()
+    )
 
 
 def get_all() -> list[ApiKey]:
     """Get all recorded API key's permissions."""
-    return ApiKey.query.order_by(ApiKey._id).all()
+    return db.session.execute(db.select(ApiKey).order_by(ApiKey._id)).scalars().all()
 
 
 def update(data: dict) -> None:
