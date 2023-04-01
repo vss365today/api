@@ -4,10 +4,11 @@ from typing import TypedDict
 
 import xlsxwriter
 from sqlalchemy.sql import func
+from sqlalchemy.engine.row import Row
 
-import src.core.database.v2 as db
 from src.configuration import get_secret
-from src.core.database.models import Host, Prompt
+from src.core.database.models import Host, Prompt, db
+from src.core.database.v2 import prompts
 from src.core.helpers import format_datetime_pretty
 
 
@@ -71,22 +72,15 @@ def __get_prompt_date_range() -> _PromptDateRange:
     return _PromptDateRange(oldest=r.oldest, newest=r.newest)
 
 
-def __get_by_year(year: int) -> list:
+def __get_by_year(year: int) -> list[Row]:
     """Get all relevant Prompt information for the archive for the given year."""
-    # TODO: Select Prompt.url and Host.handle
-    return (
-        Prompt.query.with_entities(
-            Host.handle,
-            # Prompt.host.handle,
-            Prompt.date,
-            # Prompt.url,
-            Prompt.word,
-        )
+    qs = (
+        db.select(Host.handle, Prompt.date, Prompt.url, Prompt.word)
         .join(Host)
         .filter(func.year(Prompt.date) == year)
         .order_by(Prompt.word)
-        .all()
     )
+    return db.session.execute(qs).all()
 
 
 def create() -> str | None:
@@ -102,7 +96,7 @@ def create() -> str | None:
 
     # Set up all of the date values we need
     today = date.today()
-    all_prompt_years = db.prompts.get_years()
+    all_prompt_years = prompts.get_years()
     year_range = __get_prompt_date_range()
 
     # Put together the archive's file name
@@ -154,11 +148,10 @@ def create() -> str | None:
                 row += 1
 
                 # Write all the data
-                # TODO: Write Prompt.url
                 worksheet.write_datetime(row, 0, prompt.date)
                 worksheet.write(row, 1, prompt.word)
                 worksheet.write(row, 2, prompt.handle)
-                # worksheet.write_url(row, 3, prompt.url)
+                worksheet.write_url(row, 3, prompt.url)
     return file_name
 
 
