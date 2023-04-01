@@ -1,12 +1,13 @@
 from contextlib import suppress
-from datetime import date as date_obj, datetime, timedelta
+from datetime import date as date_obj
+from datetime import datetime, timedelta
 from typing import Any, TypedDict
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Column, ForeignKey, inspect
+from sqlalchemy import Column, ForeignKey, inspect, select
 from sqlalchemy.dialects.mysql import TINYINT
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.orm import Mapped, column_property, mapped_column, relationship
 from sqlalchemy.types import BigInteger, Date, DateTime, String
 
 
@@ -158,6 +159,9 @@ class Prompt(HelperMethods, db.Model):
     __tablename__ = "prompts_new"
     __table_args__ = {"comment": "Store the #vss365 Prompts."}
 
+    def __str__(self) -> str:
+        return f"Prompt {self._id}, {self.date.isoformat()}, {self.word}"
+
     _id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     twitter_id: Mapped[str] = mapped_column(
         String(30, collation="utf8mb4_unicode_ci"), unique=True
@@ -178,13 +182,15 @@ class Prompt(HelperMethods, db.Model):
     host: Mapped["Host"] = relationship(back_populates="prompts")
     media: Mapped[list["PromptMedia"]] = relationship(back_populates="prompt")
 
-    def __str__(self) -> str:
-        return f"Prompt {self._id}, {self.date.isoformat()}, {self.word}"
-
-    @hybrid_property
-    def url(self) -> str:
-        """Create a Twitter URL to the Prompt's source tweet."""
-        return f"https://twitter.com/{self.host.handle}/{self.twitter_id}"
+    url = column_property(
+        "https://twitter.com/"
+        + select(Host.handle)
+        .where(Host._id == host_id)
+        .correlate_except(Host)
+        .scalar_subquery()
+        + "/status/"
+        + twitter_id
+    )
 
     @hybrid_property
     def navigation(self) -> PromptNavigation:
