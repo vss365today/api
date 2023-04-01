@@ -1,6 +1,5 @@
 from datetime import date
 from pathlib import Path
-from typing import TypedDict
 
 import xlsxwriter
 from sqlalchemy.sql import func
@@ -19,16 +18,10 @@ FILE_NAME_BASE = "vss365today-prompt-archive-"
 FILE_NAME_EXT = ".xlsx"
 
 
-class _ColumnSizes(TypedDict):
-    longest_word: int
-    longest_handle: int
-    longest_url: int
-
-
-def __get_column_widths(year: int) -> _ColumnSizes:
+def __get_column_widths(year: int) -> Row:
     """Determine the best column widths for the given year data."""
-    r = (
-        Prompt.query.with_entities(
+    qs = (
+        db.select(
             (func.max(func.length(Prompt.word)) + 2).label("longest_word"),
             (func.max(func.length(Host.handle)) + 2).label("longest_handle"),
             (
@@ -41,13 +34,8 @@ def __get_column_widths(year: int) -> _ColumnSizes:
             func.year(Prompt.date) <= date.today().year,
         )
         .join(Host)
-        .one()
     )
-    return _ColumnSizes(
-        longest_word=r.longest_word,
-        longest_handle=r.longest_handle,
-        longest_url=r.longest_url,
-    )
+    return db.session.execute(qs).first()
 
 
 def __get_prompt_date_range() -> Row:
@@ -122,9 +110,9 @@ def create() -> str | None:
             # Set the column widths
             widths = __get_column_widths(year)
             worksheet.set_column(0, 0, 10)
-            worksheet.set_column(1, 1, widths["longest_word"])
-            worksheet.set_column(2, 2, widths["longest_handle"])
-            worksheet.set_column(3, 3, widths["longest_url"])
+            worksheet.set_column(1, 1, widths.longest_word)
+            worksheet.set_column(2, 2, widths.longest_handle)
+            worksheet.set_column(3, 3, widths.longest_url)
 
             # Write the headings
             worksheet.write(0, 0, "Date", bolded_text)
