@@ -19,11 +19,6 @@ FILE_NAME_BASE = "vss365today-prompt-archive-"
 FILE_NAME_EXT = ".xlsx"
 
 
-class _PromptDateRange(TypedDict):
-    oldest: date
-    newest: date
-
-
 class _ColumnSizes(TypedDict):
     longest_word: int
     longest_handle: int
@@ -55,21 +50,17 @@ def __get_column_widths(year: int) -> _ColumnSizes:
     )
 
 
-def __get_prompt_date_range() -> _PromptDateRange:
+def __get_prompt_date_range() -> Row:
     """Get the dates of the oldest and newest Prompts.
 
     Newest is a bit of a lie. It technically is the newest *non-future* Prompt.
     If it is a future Prompt, the newest recorded non-future Prompt is provided.
     """
-    r = (
-        Prompt.query.with_entities(
-            func.min(Prompt.date).label("oldest"),
-            func.max(Prompt.date).label("newest"),
-        )
-        .filter(Prompt.date <= date.today())
-        .one()
-    )
-    return _PromptDateRange(oldest=r.oldest, newest=r.newest)
+    qs = db.select(
+        func.min(Prompt.date).label("oldest"),
+        func.max(Prompt.date).label("newest"),
+    ).filter(Prompt.date <= date.today())
+    return db.session.execute(qs).first()
 
 
 def __get_by_year(year: int) -> list[Row]:
@@ -116,8 +107,8 @@ def create() -> str | None:
             0,
             0,
             "#vss365 prompt archive from {} to {}".format(
-                format_datetime_pretty(year_range["oldest"]),
-                format_datetime_pretty(year_range["newest"]),
+                format_datetime_pretty(year_range.oldest),
+                format_datetime_pretty(year_range.newest),
             ),
         )
         worksheet.write(1, 0, "Sorted by prompt in alphabetical order")
