@@ -3,6 +3,7 @@ from datetime import date
 from typing import TypedDict
 
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.sql import func
 
 from src.core.database.models import Host, HostDate, Prompt, db
 from src.core.helpers import twitter_v2_api
@@ -13,8 +14,10 @@ __all__ = [
     "delete",
     "delete_date",
     "get",
-    "get_by_date",
     "get_all",
+    "get_by_date",
+    "get_by_year",
+    "get_by_year_month",
     "update",
 ]
 
@@ -200,6 +203,11 @@ def get(handle: str) -> Host | None:
     return host
 
 
+def get_all() -> list[Host]:
+    """Get all recorded Hosts."""
+    return db.session.execute(db.select(Host)).scalars().all()
+
+
 def get_by_date(date: date) -> Host | None:
     """Get the Host for the given date.
 
@@ -217,9 +225,30 @@ def get_by_date(date: date) -> Host | None:
         return None
 
 
-def get_all() -> list[Host]:
-    """Get all recorded Hosts."""
-    return db.session.execute(db.select(Host)).scalars().all()
+def get_by_year(year: int) -> list[Host]:
+    """Get a list of all Hosts for a given year."""
+    qs = (
+        db.select(Host)
+        .join(HostDate)
+        .filter(func.year(HostDate.date) == year, HostDate.date <= date.today())
+        .order_by(HostDate.date)
+    )
+    return db.session.execute(qs).scalars().all()
+
+
+def get_by_year_month(year: int, month: int) -> list[Host]:
+    """Get all the Hosts in a year-month combination."""
+    qs = (
+        db.select(Host)
+        .join(HostDate)
+        .filter(
+            func.year(HostDate.date) == year,
+            func.month(HostDate.date) == month,
+            HostDate.date <= date.today(),
+        )
+        .order_by(HostDate.date)
+    )
+    return db.session.execute(qs).scalars().all()
 
 
 def update(handle: str, new_handle: str) -> bool:
