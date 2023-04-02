@@ -127,20 +127,7 @@ class Host(HelperMethods, db.Model):
     prompts: Mapped[list["Prompt"]] = relationship(back_populates="host")
     dates: Mapped[list["HostDate"]] = relationship(back_populates="host")
 
-    @hybrid_property
-    def url(self) -> str:
-        """Create a Twitter URL to the Host's profile."""
-        return f"https://twitter.com/{self.handle}"
-
-    @classmethod
-    def get_handle(cls, /, id: str) -> str:
-        """Get a Host's handle from their user ID."""
-        return cls.query.filter_by(_id=id).first().handle
-
-    @classmethod
-    def get_twitter_uid(cls, /, handle: str) -> str:
-        """Get a Host's Twitter ID from their handle."""
-        return cls.query.filter_by(handle=handle).first().twitter_uid
+    url = column_property("https://twitter.com/" + handle)
 
 
 class HostDate(db.Model):
