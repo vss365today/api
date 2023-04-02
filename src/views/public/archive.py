@@ -4,15 +4,15 @@ from flask.views import MethodView
 from flask_smorest import abort
 
 import src.core.database.v2 as db
-from src.blueprints import archive_v2
+from src.blueprints import archive
 from src.core.auth_helpers_v2 import require_permission
 from src.core.models.v2 import Generic, Archive as models
 
 
-@archive_v2.route("/")
+@archive.route("/")
 class Archive(MethodView):
-    @archive_v2.response(200, models.File)
-    @archive_v2.alt_response(404, schema=Generic.HttpError)
+    @archive.response(200, models.File)
+    @archive.alt_response(404, schema=Generic.HttpError)
     def get(self):
         """Get the file name of the newest Prompt archive."""
         # Attempt to get an archive with today's date,
@@ -28,9 +28,9 @@ class Archive(MethodView):
         abort(404, "Latest Prompt archive currently unavailable.")
 
     @require_permission("archive")
-    @archive_v2.response(201, models.File)
-    @archive_v2.alt_response(403, schema=Generic.HttpError)
-    @archive_v2.alt_response(404, schema=Generic.HttpError)
+    @archive.response(201, models.File)
+    @archive.alt_response(403, schema=Generic.HttpError)
+    @archive.alt_response(404, schema=Generic.HttpError)
     def post(self):
         """Generate a new Prompt archive using today's date.
 
