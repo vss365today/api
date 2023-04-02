@@ -187,10 +187,18 @@ class Prompt(HelperMethods, db.Model):
         navi = PromptNavigation(next=None, previous=None)
         with suppress(AttributeError):
             navi["previous"] = (
-                Prompt.query.filter_by(date=self.date - timedelta(days=1)).first().date
+                db.session.execute(
+                    db.select(Prompt.date).filter_by(date=self.date - timedelta(days=1))
+                )
+                .first()
+                .date
             )
             navi["next"] = (
-                Prompt.query.filter_by(date=self.date + timedelta(days=1)).first().date
+                db.session.execute(
+                    db.select(Prompt.date).filter_by(date=self.date + timedelta(days=1))
+                )
+                .first()
+                .date
             )
         return navi
 
