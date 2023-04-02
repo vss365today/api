@@ -42,7 +42,7 @@ class Prompt(MethodView):
     @prompts.alt_response(403, schema=Generic.HttpError)
     @prompts.alt_response(422, schema=Generic.HttpError)
     @prompts.alt_response(500, schema=Generic.HttpError)
-    def post(self, **kwargs: Any):
+    def post(self, **kwargs: dict[str, Any]):
         """Create a new Prompt.
 
         By default, recording a Prompt for day that already has a Prompt is forbidden
@@ -78,7 +78,7 @@ class PromptAlter(MethodView):
     @prompts.response(204, schema=Generic.Empty)
     @prompts.alt_response(403, schema=Generic.HttpError)
     @prompts.alt_response(500, schema=Generic.HttpError)
-    def patch(self, **kwargs: Any):
+    def patch(self, **kwargs: dict[str, Any]):
         """Update an existing Prompt.
 
         Providing a Host handle different from the current Host will associate
@@ -95,7 +95,7 @@ class PromptAlter(MethodView):
     @prompts.response(204, schema=Generic.Empty)
     @prompts.alt_response(403, schema=Generic.HttpError)
     @prompts.alt_response(404, schema=Generic.HttpError)
-    def delete(self, **kwargs: Any):
+    def delete(self, **kwargs: dict[str, Any]):
         """Delete an existing Prompt.
 
         This will also delete any and all associated media record and files.
@@ -111,7 +111,7 @@ class PromptDate(MethodView):
     @prompts.arguments(models.PromptDate, location="path", as_kwargs=True)
     @prompts.response(200, models.Prompt(many=True))
     @prompts.alt_response(404, schema=Generic.HttpError)
-    def get(self, **kwargs: Any):
+    def get(self, **kwargs: dict[str, Any]):
         """Get the Prompt(s) for a date.
 
         Special care should be taken to recognize multiple possible
@@ -140,7 +140,7 @@ class MediaCreate(MethodView):
     @prompts.response(201, schema=Generic.Empty)
     @prompts.alt_response(403, schema=Generic.HttpError)
     @prompts.alt_response(404, schema=Generic.HttpError)
-    def post(self, **kwargs):
+    def post(self, **kwargs: dict[str, Any]):
         """Create a Prompt Media record.
 
         * **Permission Required**: `has_prompts`
@@ -156,7 +156,7 @@ class MediaDelete(MethodView):
     @prompts.response(204, schema=Generic.Empty)
     @prompts.alt_response(403, schema=Generic.HttpError)
     @prompts.alt_response(404, schema=Generic.HttpError)
-    def delete(self, **kwargs):
+    def delete(self, **kwargs: dict[str, Any]):
         """Delete an existing Prompt Media record.
 
         * **Permission Required**: `has_prompts`
