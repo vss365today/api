@@ -28,17 +28,6 @@ class Archive(MethodView):
         abort(404, "Latest Prompt archive currently unavailable.")
 
     @require_permission("archive")
-    @archive_v2.response(201, Generic.Empty)
-    @archive_v2.alt_response(403, schema=Generic.HttpError)
-    @archive_v2.alt_response(422, schema=Generic.HttpError)
-    def put(self):
-        """TODO: write me!
-
-        * **Permission Required**: `has_archive`
-        """
-        ...
-
-    @require_permission("archive")
     @archive_v2.response(201, models.File)
     @archive_v2.alt_response(403, schema=Generic.HttpError)
     @archive_v2.alt_response(404, schema=Generic.HttpError)
@@ -47,10 +36,6 @@ class Archive(MethodView):
 
         * **Permission Required**: `has_archive`
         """
-        # If there's already an archive with today's date, pretend we just created it
-        if (file := db.archive.get_for_date(date.today())) is not None:
-            return {"file_name": file}
-
         # Attempt to create a new archive file
         if (file := db.archive.create()) is not None:
             return {"file_name": file}
