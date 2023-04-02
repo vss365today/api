@@ -20,7 +20,7 @@
       "request": "launch",
       "module": "flask",
       "pythonArgs": ["-Wd"],
-      "console": "internalConsole",
+      "console": "integratedTerminal",
       "env": {
         "FLASK_APP": "app.py",
         "FLASK_ENV": "development",
@@ -30,15 +30,20 @@
       },
       "args": [
         "run",
-        "--no-debugger"
-      ]
+        "--no-debugger",
+        "--no-reload"
+      ],
+      "jinja": true,
+      "justMyCode": true
     },
     {
       "name": "API (test)",
       "type": "python",
       "request": "launch",
       "module": "flask",
-      "pythonArgs": ["-Wd"],
+      "pythonArgs": [
+        "-Wd"
+      ],
       "console": "internalConsole",
       "env": {
         "FLASK_APP": "app.py",
