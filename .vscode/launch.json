@@ -22,7 +22,7 @@
       "pythonArgs": ["-Wd"],
       "console": "internalConsole",
       "env": {
-        "FLASK_APP": "wsgi.py",
+        "FLASK_APP": "app.py",
         "FLASK_ENV": "development",
         "FLASK_DEBUG": "1",
         "SYS_VARS_PATH": "${workspaceFolder}/../secrets",
@@ -41,7 +41,7 @@
       "pythonArgs": ["-Wd"],
       "console": "internalConsole",
       "env": {
-        "FLASK_APP": "wsgi.py",
+        "FLASK_APP": "app.py",
         "FLASK_ENV": "testing",
         "FLASK_DEBUG": "1",
         "SYS_VARS_PATH": "${workspaceFolder}/../secrets",
