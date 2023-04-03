@@ -293,14 +293,14 @@ SQLAlchemy-Utils = "*"
 
 [[package]]
 name = "flask-smorest"
-version = "0.40.0"
+version = "0.41.0"
 description = "Flask/Marshmallow-based REST API framework"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "flask-smorest-0.40.0.tar.gz", hash = "sha256:9b46b4937ccf78702d99fed8cfd1cd5c37608ddefd65ff16a86d1ad5c7f7d8c0"},
-    {file = "flask_smorest-0.40.0-py3-none-any.whl", hash = "sha256:b7122837a698bf63266a66880baeeef2bc8c57704973d81b9d0c6cb595af6a79"},
+    {file = "flask-smorest-0.41.0.tar.gz", hash = "sha256:9b98256a9073fcd3e18e0fd2e7511e32d9aa499e1aa133c646c0c27bc3fde218"},
+    {file = "flask_smorest-0.41.0-py3-none-any.whl", hash = "sha256:1793669d702e968d556b1df172ac65740ba76d9fa5ae7de887b22e2032d3d652"},
 ]
 
 [package.dependencies]
@@ -311,9 +311,9 @@ webargs = ">=8.0.0,<9"
 werkzeug = ">=2.0,<3"
 
 [package.extras]
-dev = ["PyYAML (==6.0)", "apispec (==6.0.0)", "coverage (==6.5.0)", "flake8 (==5.0.4)", "flake8-bugbear (==22.9.23)", "flask (==2.2.2)", "marshmallow (==3.18.0)", "pre-commit (==2.20.0)", "pytest (==7.1.3)", "pytest-cov (==4.0.0)", "webargs (==8.2.0)", "werkzeug (==2.2.2)"]
-lint = ["flake8 (==5.0.4)", "flake8-bugbear (==22.9.23)", "pre-commit (==2.20.0)"]
-tests = ["PyYAML (==6.0)", "apispec (==6.0.0)", "coverage (==6.5.0)", "flask (==2.2.2)", "marshmallow (==3.18.0)", "pytest (==7.1.3)", "pytest-cov (==4.0.0)", "webargs (==8.2.0)", "werkzeug (==2.2.2)"]
+dev = ["PyYAML (==6.0)", "apispec (==6.3.0)", "coverage (==7.2.2)", "flake8 (==6.0.0)", "flake8-bugbear (==23.3.23)", "flask (==2.2.3)", "marshmallow (==3.19.0)", "pre-commit (==3.2.1)", "pytest (==7.2.2)", "pytest-cov (==4.0.0)", "webargs (==8.2.0)", "werkzeug (==2.2.3)"]
+lint = ["flake8 (==6.0.0)", "flake8-bugbear (==23.3.23)", "pre-commit (==3.2.1)"]
+tests = ["PyYAML (==6.0)", "apispec (==6.3.0)", "coverage (==7.2.2)", "flask (==2.2.3)", "marshmallow (==3.19.0)", "pytest (==7.2.2)", "pytest-cov (==4.0.0)", "webargs (==8.2.0)", "werkzeug (==2.2.3)"]
 
 [[package]]
 name = "flask-sqlalchemy"
@@ -1092,4 +1092,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "43442b854123f06791ea7ab0faaa37ae1bb7b704a53c3527b95a2becf6b0b56d"
+content-hash = "5f860949cce55417bbf287a9ac2c8cba4587b4ada100df053fefd56589cfb956"
