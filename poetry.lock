@@ -293,13 +293,13 @@ SQLAlchemy-Utils = "*"
 
 [[package]]
 name = "flask-quick-sql"
-version = "1.0.0"
+version = "1.0.1"
 description = "A quick way to run SQL in your Flask app."
 category = "main"
 optional = false
 python-versions = ">=3.10,<4.0"
 files = [
-    {file = "flask_quick_sql-1.0.0-py3-none-any.whl", hash = "sha256:9265479c73acb62951aee3c6c95aa3dfd1dcc7f4cc3ff128d058d1e64a034762"},
+    {file = "flask_quick_sql-1.0.1-py3-none-any.whl", hash = "sha256:00bba828c876757de25fceaeaf28398f0d987771c28dcc0e7979a50702fb3b30"},
 ]
 
 [package.dependencies]
@@ -308,8 +308,7 @@ flask-sqlalchemy = ">=3.0.3,<4.0.0"
 
 [package.source]
 type = "url"
-url = "https://github.com/le717/flask-quick-sql/releases/download/v1.0.0/flask_quick_sql-1.0.0-py3-none-any.whl"
-
+url = "https://github.com/le717/flask-quick-sql/releases/download/v1.0.1/flask_quick_sql-1.0.1-py3-none-any.whl"
 [[package]]
 name = "flask-smorest"
 version = "0.41.0"
@@ -1111,4 +1110,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "9b756289c33830ce4302f0ab5ba2c707e5285d1996ded60b1a5c249da9615c92"
+content-hash = "0720f78421780e143abc909b796c9d0e0412636c93c58a054e3148252a520707"
