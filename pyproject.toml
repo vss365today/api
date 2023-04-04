@@ -22,6 +22,7 @@ flask-smorest = "^0.41.0"
 PyMySQL = "^1.0.2"
 Flask-DB = "^0.3.2"
 alembic = "^1.10.0"
+flask-quick-sql = {url = "https://github.com/le717/flask-quick-sql/releases/download/v1.0.0/flask_quick_sql-1.0.0-py3-none-any.whl"}
 
 [tool.poetry.group.dev]
 optional = true
