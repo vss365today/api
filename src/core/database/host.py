@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Literal, TypeAlias
+from typing import Literal
 
 from sqlalchemy.exc import DataError, IntegrityError
 
@@ -26,15 +26,12 @@ __all__ = [
 ]
 
 
-Host2: TypeAlias = dict[str, Any]
-
-
-def create(host_info: dict) -> Host2 | None:
+def create(host_info: dict) -> Host | None:
     """Create a new Host."""
     sql = "INSERT INTO writers (uid, handle) VALUES (:uid, :handle)"
     try:
         quick_sql.query(sql, uid=host_info["uid"], handle=host_info["handle"])
-        return Host(**host_info).as_dict()
+        return Host(**host_info)
     except DataError as exc:
         print(exc)
         return None
@@ -96,7 +93,7 @@ def exists_date(uid: str, date: str) -> bool:
     return bool(quick_sql.query(sql, uid=uid, date=date).first())
 
 
-def get(*, uid: str = "", handle: str = "") -> Host2 | None:
+def get(*, uid: str = "", handle: str = "") -> Host | None:
     """Get Host info by either their Twitter ID or handle."""
     sql = """
     SELECT writers.uid, handle
@@ -104,20 +101,20 @@ def get(*, uid: str = "", handle: str = "") -> Host2 | None:
     WHERE writers.uid = :uid OR UPPER(handle) = UPPER(:handle)
     """
     r = quick_sql.query(sql, uid=uid, handle=handle).one()
-    return Host(**r).as_dict() if r is not None else None
+    return Host(**r) if r is not None else None
 
 
-def get_all() -> list[Host2]:
+def get_all() -> list[Host]:
     """Get a list of all Hosts."""
     sql = """
     SELECT writers.uid, handle
     FROM writers
     ORDER BY handle
     """
-    return [Host(**host).as_dict() for host in quick_sql.query(sql)]
+    return [Host(**host) for host in quick_sql.query(sql)]
 
 
-def get_by_date(date: str) -> Host2 | None:
+def get_by_date(date: str) -> Host | None:
     """Get the Host for the given date."""
     sql = """
     SELECT writers.uid, handle
@@ -126,10 +123,10 @@ def get_by_date(date: str) -> Host2 | None:
     WHERE writer_dates.date = :date
     """
     r = quick_sql.query(sql, date=date).one()
-    return Host(**r).as_dict() if r is not None else None
+    return Host(**r) if r is not None else None
 
 
-def get_by_year(year: str) -> list[Host2]:
+def get_by_year(year: str) -> list[Host]:
     """Get a list of all Hosts for a given year."""
     sql = """
     SELECT writers.uid, handle
@@ -140,10 +137,10 @@ def get_by_year(year: str) -> list[Host2]:
             DATE_FORMAT(CURRENT_TIMESTAMP(), '%Y-%m')
     ORDER BY writer_dates.date ASC
     """
-    return [Host(**host).as_dict() for host in quick_sql.query(sql, year=year)]
+    return [Host(**host) for host in quick_sql.query(sql, year=year)]
 
 
-def get_by_year_month(year: str, month: str) -> list[Host2]:
+def get_by_year_month(year: str, month: str) -> list[Host]:
     """Get all the Hosts in a year-month combination."""
     sql = """
     SELECT writers.uid, handle
@@ -153,9 +150,7 @@ def get_by_year_month(year: str, month: str) -> list[Host2]:
         YEAR(writer_dates.date) = :year
         AND MONTH(writer_dates.date) = :month
     """
-    return [
-        Host(**host).as_dict() for host in quick_sql.query(sql, year=year, month=month)
-    ]
+    return [Host(**host) for host in quick_sql.query(sql, year=year, month=month)]
 
 
 def get_date(handle: str) -> list[datetime]:
