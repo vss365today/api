@@ -1,17 +1,13 @@
 from contextlib import contextmanager
 from typing import Any, Generator
 
-from flask_quick_sql import QuickSQL
 from sqlalchemy.engine.cursor import CursorResult
 from sqlalchemy.sql import text
 
 from src.core.database.models import db
 
 
-__all__ = ["connect_to_db", "quick_sql"]
-
-
-quick_sql = QuickSQL()
+__all__ = ["connect_to_db"]
 
 
 class _Result:

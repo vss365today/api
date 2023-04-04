@@ -13,7 +13,6 @@ import src.configuration as config
 from src.blueprints import all_blueprints, v2_blueprints
 from src.core import json_special, logger
 from src.core.database import models
-from src.core.database.core import quick_sql
 
 
 # Modify Flask's JSON encoder to stringify some datatypes how I want
@@ -46,7 +45,7 @@ def create_app() -> Flask:
             app.config["DB_DBNAME"],
         )
         models.db.init_app(app)
-        quick_sql.init_app(app)
+        models.quick_sql.init_app(app)
 
     # Add a file logger to record errors
     app.logger.addHandler(logger.file_handler(app.config["LOG_PATH"]))

@@ -1,10 +1,11 @@
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Literal
 
 from sqlalchemy.exc import IntegrityError
 
-from src.core.database.core import connect_to_db
+from src.core.database.models import quick_sql
 from src.core.models.v1.Prompt import Prompt
+
 
 __all__ = [
     "delete",
@@ -24,12 +25,11 @@ __all__ = [
 def delete(pid: str) -> Literal[True]:
     """Delete an existing prompt."""
     sql = "DELETE FROM prompts WHERE tweet_id = :id"
-    with connect_to_db() as db:
-        db.query(sql, **{"id": pid})
+    quick_sql.query(sql, id=pid)
     return True
 
 
-def create(prompt: dict[str, Optional[str]]) -> bool:
+def create(prompt: dict[str, str | None]) -> bool:
     """Create a new prompt."""
     sql = """
     INSERT INTO prompts (
@@ -40,9 +40,8 @@ def create(prompt: dict[str, Optional[str]]) -> bool:
     )
     """
     try:
-        with connect_to_db() as db:
-            db.query(sql, **prompt)
-            return True
+        quick_sql.query(sql, **prompt)
+        return True
 
     # A prompt with this ID already exists
     except IntegrityError as exc:
@@ -56,8 +55,7 @@ def exists(*, pid: str, date: str) -> bool:
     sql = """SELECT 1
     FROM prompts
     WHERE (tweet_id = :tweet_id OR date = :date)"""
-    with connect_to_db() as db:
-        return bool(db.query(sql, tweet_id=pid, date=date).first())
+    return bool(quick_sql.query(sql, tweet_id=pid, date=date).first())
 
 
 def get_by_date(date: str, *, date_range: bool = False) -> list[Prompt]:
@@ -81,8 +79,7 @@ def get_by_date(date: str, *, date_range: bool = False) -> list[Prompt]:
             AND STR_TO_DATE(:date, '%Y-%m-%d') <= CURRENT_TIMESTAMP()"""
 
     # Finally perform the query
-    with connect_to_db() as db:
-        return [Prompt(record) for record in db.query(sql, date=date)]
+    return [Prompt(record) for record in quick_sql.query(sql, date=date)]
 
 
 def get_by_host(handle: str) -> list[Prompt]:
@@ -94,16 +91,14 @@ def get_by_host(handle: str) -> list[Prompt]:
     WHERE prompts.date <= CURRENT_TIMESTAMP()
         AND writers.handle = :handle
     """
-    with connect_to_db() as db:
-        return [Prompt(record) for record in db.query(sql, handle=handle)]
+    return [Prompt(record) for record in quick_sql.query(sql, handle=handle)]
 
 
 def get_latest() -> list[Prompt]:
     """Get the newest prompt."""
     # Get the latest date in the database
     latest_date_sql = "SELECT date FROM prompts ORDER BY date DESC LIMIT 1"
-    with connect_to_db() as db:
-        latest_date = db.query(latest_date_sql).one()["date"]
+    latest_date = quick_sql.query(latest_date_sql).one()["date"]
 
     # Using the latest date, fetch the prompt(s) for the date
     sql = """
@@ -113,8 +108,7 @@ def get_latest() -> list[Prompt]:
     WHERE date = :latest_date
     ORDER BY date DESC
     """
-    with connect_to_db() as db:
-        return [Prompt(record) for record in db.query(sql, latest_date=latest_date)]
+    return [Prompt(record) for record in quick_sql.query(sql, latest_date=latest_date)]
 
 
 def get_months(year: str) -> list[str]:
@@ -133,8 +127,7 @@ def get_months(year: str) -> list[str]:
         :year <= YEAR(CURRENT_TIMESTAMP())
     ORDER BY MONTH(date) ASC
     """
-    with connect_to_db() as db:
-        return [r["month"] for r in db.query(sql, year=year).all()]
+    return [r["month"] for r in quick_sql.query(sql, year=year).all()]
 
 
 def get_one_year() -> dict:
@@ -251,8 +244,7 @@ def get_years() -> list[str]:
     FROM prompts
     ORDER BY date ASC
     """
-    with connect_to_db() as db:
-        return [r["year"] for r in db.query(sql).all()]
+    return [r["year"] for r in quick_sql.query(sql).all()]
 
 
 def search(word: str) -> list[Prompt]:
@@ -265,11 +257,10 @@ def search(word: str) -> list[Prompt]:
         AND prompts.word LIKE CONCAT('%', :word, '%')
     ORDER BY UPPER(word)
     """
-    with connect_to_db() as db:
-        return [Prompt(record) for record in db.query(sql, word=word)]
+    return [Prompt(record) for record in quick_sql.query(sql, word=word)]
 
 
-def update(prompt: dict[str, Optional[str]]) -> None:
+def update(prompt: dict[str, str | None]) -> None:
     """Update an existing prompt."""
     sql = """
     UPDATE prompts
@@ -281,5 +272,4 @@ def update(prompt: dict[str, Optional[str]]) -> None:
         media_alt_text = :media_alt_text
     WHERE tweet_id = :id
     """
-    with connect_to_db() as db:
-        db.query(sql, **prompt)
+    quick_sql.query(sql, **prompt)
