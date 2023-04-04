@@ -16,6 +16,7 @@ __all__ = [
     "delete_media",
     "exists",
     "get_by_date",
+    "get_by_calendar_month",
     "get_current",
     "get_months",
     "get_years",
@@ -139,6 +140,20 @@ def get_by_date(prompt_date: date) -> list[Prompt]:
     # Don't expose tomorrow's (or next week's) Prompt
     qs = db.select(Prompt).filter(
         Prompt.date == prompt_date, Prompt.date <= date.today()
+    )
+    return db.session.execute(qs).scalars().all()
+
+
+def get_by_calendar_month(year: int, month: int) -> list[Prompt]:
+    """Get all of the Prompts in a calendar month."""
+    qs = (
+        db.select(Prompt)
+        .filter(
+            func.year(Prompt.date) == year,
+            func.month(Prompt.date) == month,
+            Prompt.date <= date.today(),
+        )
+        .order_by(Prompt.date)
     )
     return db.session.execute(qs).scalars().all()
 
