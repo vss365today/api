@@ -3,7 +3,7 @@ from typing import Any, Literal, TypeAlias
 
 from sqlalchemy.exc import DataError, IntegrityError
 
-from src.core.database.core import connect_to_db
+from src.core.database.models import quick_sql
 from src.core.helpers import twitter_v2_api
 from src.core.models.v1.Host import Host
 
@@ -33,8 +33,7 @@ def create(host_info: dict) -> Host2 | None:
     """Create a new Host."""
     sql = "INSERT INTO writers (uid, handle) VALUES (:uid, :handle)"
     try:
-        with connect_to_db() as db:
-            db.query(sql, uid=host_info["uid"], handle=host_info["handle"])
+        quick_sql.query(sql, uid=host_info["uid"], handle=host_info["handle"])
         return Host(**host_info).as_dict()
     except DataError as exc:
         print(exc)
@@ -49,8 +48,7 @@ def create_date(host_info: dict) -> bool:
         :uid, STR_TO_DATE(:date, '%Y-%m-%d 00:00:00')
     )"""
     try:
-        with connect_to_db() as db:
-            db.query(sql, uid=host_info["uid"], date=host_info["date"])
+        quick_sql.query(sql, uid=host_info["uid"], date=host_info["date"])
         return True
     except DataError as exc:
         print(exc)
@@ -67,8 +65,7 @@ def delete(uid: str) -> bool:
     """
     sql = "DELETE FROM writers WHERE uid = :uid"
     try:
-        with connect_to_db() as db:
-            db.query(sql, uid=uid)
+        quick_sql.query(sql, uid=uid)
         return True
     except IntegrityError:
         return False
@@ -77,16 +74,14 @@ def delete(uid: str) -> bool:
 def delete_date(uid: str, date: str) -> Literal[True]:
     """Delete a specific date for a Host."""
     sql = "DELETE FROM writer_dates WHERE uid = :uid AND date = :date"
-    with connect_to_db() as db:
-        db.query(sql, uid=uid, date=date)
+    quick_sql.query(sql, uid=uid, date=date)
     return True
 
 
 def exists(*, uid: str = "", handle: str = "") -> bool:
     """Find an existing Host."""
     sql = "SELECT 1 FROM writers WHERE uid = :uid OR handle = :handle"
-    with connect_to_db() as db:
-        return bool(db.query(sql, uid=uid, handle=handle).first())
+    return bool(quick_sql.query(sql, uid=uid, handle=handle).first())
 
 
 def exists_date(uid: str, date: str) -> bool:
@@ -98,8 +93,7 @@ def exists_date(uid: str, date: str) -> bool:
         uid = :uid AND
         date = STR_TO_DATE(:date, '%Y-%m-%d')
     """
-    with connect_to_db() as db:
-        return bool(db.query(sql, uid=uid, date=date).first())
+    return bool(quick_sql.query(sql, uid=uid, date=date).first())
 
 
 def get(*, uid: str = "", handle: str = "") -> Host2 | None:
@@ -109,8 +103,7 @@ def get(*, uid: str = "", handle: str = "") -> Host2 | None:
     FROM writers
     WHERE writers.uid = :uid OR UPPER(handle) = UPPER(:handle)
     """
-    with connect_to_db() as db:
-        r = db.query(sql, uid=uid, handle=handle).one()
+    r = quick_sql.query(sql, uid=uid, handle=handle).one()
     return Host(**r).as_dict() if r is not None else None
 
 
@@ -121,8 +114,7 @@ def get_all() -> list[Host2]:
     FROM writers
     ORDER BY handle
     """
-    with connect_to_db() as db:
-        return [Host(**host).as_dict() for host in db.query(sql)]
+    return [Host(**host).as_dict() for host in quick_sql.query(sql)]
 
 
 def get_by_date(date: str) -> Host2 | None:
@@ -133,8 +125,7 @@ def get_by_date(date: str) -> Host2 | None:
         JOIN writer_dates ON writer_dates.uid = writers.uid
     WHERE writer_dates.date = :date
     """
-    with connect_to_db() as db:
-        r = db.query(sql, date=date).one()
+    r = quick_sql.query(sql, date=date).one()
     return Host(**r).as_dict() if r is not None else None
 
 
@@ -149,8 +140,7 @@ def get_by_year(year: str) -> list[Host2]:
             DATE_FORMAT(CURRENT_TIMESTAMP(), '%Y-%m')
     ORDER BY writer_dates.date ASC
     """
-    with connect_to_db() as db:
-        return [Host(**host).as_dict() for host in db.query(sql, year=year)]
+    return [Host(**host).as_dict() for host in quick_sql.query(sql, year=year)]
 
 
 def get_by_year_month(year: str, month: str) -> list[Host2]:
@@ -163,10 +153,9 @@ def get_by_year_month(year: str, month: str) -> list[Host2]:
         YEAR(writer_dates.date) = :year
         AND MONTH(writer_dates.date) = :month
     """
-    with connect_to_db() as db:
-        return [
-            Host(**host).as_dict() for host in db.query(sql, year=year, month=month)
-        ]
+    return [
+        Host(**host).as_dict() for host in quick_sql.query(sql, year=year, month=month)
+    ]
 
 
 def get_date(handle: str) -> list[datetime]:
@@ -180,11 +169,10 @@ def get_date(handle: str) -> list[datetime]:
     )
     ORDER BY date DESC
     """
-    with connect_to_db() as db:
-        return [
-            datetime.combine(record["date"], datetime.min.time())
-            for record in db.query(sql, handle=handle)
-        ]
+    return [
+        datetime.combine(record["date"], datetime.min.time())
+        for record in quick_sql.query(sql, handle=handle)
+    ]
 
 
 def lookup(username: str) -> str | Literal[False]:
@@ -202,8 +190,7 @@ def update(host_info: dict) -> bool:
     """Update a Host's handle."""
     sql = "UPDATE writers SET handle = :handle WHERE uid = :uid"
     try:
-        with connect_to_db() as db:
-            db.query(sql, uid=host_info["uid"], handle=host_info["handle"])
+        quick_sql.query(sql, uid=host_info["uid"], handle=host_info["handle"])
         return True
     except DataError as exc:
         print(exc)
