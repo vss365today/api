@@ -90,13 +90,11 @@ def _factory(
 
 
 # v1 endpoints
-browse = _factory("browse", "browse", new_endpoint="browse")  # documented
 host = _factory("host", "host", new_endpoint="hosts")  # documented
 prompt = _factory("prompt", "prompt", new_endpoint="prompts")  # documented
 search = _factory("search", "search")  # documented
 settings = _factory("settings", "settings", v1_auth.authorize_blueprint)  # documented
 all_blueprints = (
-    browse,
     host,
     prompt,
     search,
@@ -110,11 +108,11 @@ archive = _api_factory(
     description="Manage the Prompt archive.",
 )  # done
 
-browse_v2 = _api_factory(
+browse = _api_factory(
     "browse",
     "browse",
     description="Browse recorded Prompts.",
-)
+)  # done
 
 emails = _api_factory(
     "emails",
@@ -149,4 +147,4 @@ prompts = _api_factory(
     description="Manage Prompts.",
 )  # done
 
-v2_blueprints = (archive, browse_v2, emails, hosts, keys, notifications, prompts)
+v2_blueprints = (archive, browse, emails, hosts, keys, notifications, prompts)
