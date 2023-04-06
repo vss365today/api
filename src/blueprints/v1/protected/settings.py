@@ -27,35 +27,6 @@ def put(args: dict):
     return helpers.make_response(201)
 
 
-@settings.route("/hosting", methods=["GET"])
-@use_args(
-    {
-        "date": fields.DateTime(),
-        "month": fields.Integer(validate=lambda x: 1 <= x <= 12),
-    },
-    location="query",
-)
-def hosting_get(args: dict):
-    # Except one and only one parameter is supported
-    if len(args) > 1:
-        return helpers.make_error_response(422, "Only one parameter can be provided!")
-
-    # We want the exact starting Hosting date for this day
-    if "date" in args:
-        return helpers.make_response(
-            200, jsonify([database.settings.hosting_start_date_get(args["date"])])
-        )
-
-    # We want the Hosting dates for this month
-    if "month" in args:
-        return helpers.make_response(
-            200, jsonify(database.settings.hosting_period_get(args["month"]))
-        )
-
-    # We didn't recieve any info so we don't know what to do ¯\_(ツ)_/¯
-    return helpers.make_error_response(422, "A single parameter must be provided!")
-
-
 @settings.route("/timings", methods=["GET"])
 def timer_get():
     """GET request to fetch finder timing values."""
