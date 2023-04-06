@@ -150,7 +150,7 @@ prompts = _api_factory(
 search_v2 = _api_factory(
     "search",
     "search",
-    description="Search the Prompts and Hosts.",
+    description="Search the Prompts by Hosts and arbitrary letters.",
 )
 
 v2_blueprints = (

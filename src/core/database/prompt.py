@@ -255,6 +255,7 @@ def search(word: str) -> list[Prompt]:
         JOIN writers ON writers.uid = prompts.uid
     WHERE prompts.date <= CURRENT_TIMESTAMP()
         AND prompts.word LIKE CONCAT('%', :word, '%')
+        AND CHAR_LENGTH(:word) > 1
     ORDER BY UPPER(word)
     """
     return [Prompt(record) for record in quick_sql.query(sql, word=word)]
