@@ -92,7 +92,7 @@ def _factory(
 # v1 endpoints
 host = _factory("host", "host", new_endpoint="hosts")  # documented
 prompt = _factory("prompt", "prompt", new_endpoint="prompts")  # documented
-search = _factory("search", "search")  # documented
+search = _factory("search", "search", new_endpoint="search")  # documented
 settings = _factory("settings", "settings", v1_auth.authorize_blueprint)  # documented
 all_blueprints = (
     host,
@@ -147,4 +147,19 @@ prompts = _api_factory(
     description="Manage Prompts.",
 )  # done
 
-v2_blueprints = (archive, browse, emails, hosts, keys, notifications, prompts)
+search_v2 = _api_factory(
+    "prompts",
+    "prompts",
+    description="Search the Prompts and Hosts.",
+)
+
+v2_blueprints = (
+    archive,
+    browse,
+    emails,
+    hosts,
+    keys,
+    notifications,
+    prompts,
+    search_v2,
+)
