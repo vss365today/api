@@ -148,8 +148,8 @@ prompts = _api_factory(
 )  # done
 
 search_v2 = _api_factory(
-    "prompts",
-    "prompts",
+    "search",
+    "search",
     description="Search the Prompts and Hosts.",
 )
 
