@@ -15,9 +15,9 @@ __all__ = [
     "delete_date",
     "get",
     "get_all",
+    "get_by_calendar_month",
     "get_by_date",
     "get_by_year",
-    "get_by_year_month",
     "update",
 ]
 
@@ -208,6 +208,21 @@ def get_all() -> list[Host]:
     return db.session.execute(db.select(Host)).scalars().all()
 
 
+def get_by_calendar_month(year: int, month: int) -> list[Host]:
+    """Get all the Hosts in a year-month combination."""
+    qs = (
+        db.select(Host)
+        .join(HostDate)
+        .filter(
+            func.year(HostDate.date) == year,
+            func.month(HostDate.date) == month,
+            HostDate.date <= date.today(),
+        )
+        .order_by(HostDate.date)
+    )
+    return db.session.execute(qs).scalars().all()
+
+
 def get_by_date(date: date) -> Host | None:
     """Get the Host for the given date.
 
@@ -231,21 +246,6 @@ def get_by_year(year: int) -> list[Host]:
         db.select(Host)
         .join(HostDate)
         .filter(func.year(HostDate.date) == year, HostDate.date <= date.today())
-        .order_by(HostDate.date)
-    )
-    return db.session.execute(qs).scalars().all()
-
-
-def get_by_year_month(year: int, month: int) -> list[Host]:
-    """Get all the Hosts in a year-month combination."""
-    qs = (
-        db.select(Host)
-        .join(HostDate)
-        .filter(
-            func.year(HostDate.date) == year,
-            func.month(HostDate.date) == month,
-            HostDate.date <= date.today(),
-        )
         .order_by(HostDate.date)
     )
     return db.session.execute(qs).scalars().all()

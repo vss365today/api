@@ -1,12 +1,30 @@
 from marshmallow import Schema, fields
 
-__all__ = ["Months", "Years"]
+from src.core.models.v2.Hosts import Basic
+from src.core.models.v2.Prompts import Prompt
 
 
-class Months(Schema):
+__all__ = ["BrowseResult", "ByYear", "ByYearMonth", "GetMonths", "GetYears"]
+
+
+class BrowseResult(Schema):
+    hosts = fields.List(fields.Nested(Basic))
+    prompts = fields.List(fields.Nested(Prompt), dump_default=[])
+    total = fields.Integer(strict=True)
+
+
+class ByYear(Schema):
+    year = fields.Integer(required=True, strict=True)
+
+
+class ByYearMonth(ByYear):
+    month = fields.Integer(required=True, strict=True)
+
+
+class GetMonths(Schema):
     year = fields.Integer(required=True, load_only=True)
     months = fields.List(fields.Integer, dump_only=True)
 
 
-class Years(Schema):
+class GetYears(Schema):
     years = fields.List(fields.Integer(strict=True))
