@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 
 
 __all__ = ["Key", "Permissions", "Token"]
@@ -17,7 +17,7 @@ class Permissions(Schema):
 
 
 class Token(Schema):
-    token = fields.String(metadata={"max": 64})
+    token = fields.String(validate=validate.Length(equal=64))
 
 
 class Key(Token, Permissions):
