@@ -1,8 +1,9 @@
 from datetime import date
 from typing import cast
 
-from sqlalchemy.sql import func
+from sqlalchemy.engine.row import Row
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.sql import func
 
 from src.core.database.models import Host, Prompt, PromptMedia, db
 from src.core.database.v2 import hosts
@@ -159,6 +160,18 @@ def get_by_calendar_month(year: int, month: int) -> list[Prompt]:
     return db.session.execute(qs).scalars().all()
 
 
+def get_by_host(handle: str) -> list[Row]:
+    """Get a Prompt by the Host who give it."""
+    today = date.today()
+    qs = (
+        db.select(Prompt.date, Prompt.word, Host.handle)
+        .join(Host)
+        .filter(Prompt.date <= today, Host.handle == handle)
+        .order_by(func.upper(Prompt.word))
+    )
+    return db.session.execute(qs).all()
+
+
 def get_current() -> list[Prompt]:
     """Get the current Prompt."""
     # Start by determining the newest recorded Prompt date that's also not in the future
@@ -212,15 +225,16 @@ def get_years() -> list[int]:
     return [year[0] for year in db.session.execute(qs).all()]
 
 
-def search(query: str) -> list[Prompt]:
-    """Search through Prompts words through an arbitrary query."""
+def search(query: str) -> list[Row]:
+    """Search through Prompts words with an arbitrary query."""
     today = date.today()
     qs = (
-        db.select(Prompt)
+        db.select(Prompt.date, Prompt.word, Host.handle)
+        .join(Host)
         .filter(Prompt.date <= today, Prompt.word.like(f"%{query}%"), len(query) > 1)
         .order_by(func.upper(Prompt.word))
     )
-    return db.session.execute(qs).scalars().all()
+    return db.session.execute(qs).all()
 
 
 def update(info: dict) -> bool:
