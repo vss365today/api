@@ -20,6 +20,7 @@ __all__ = [
     "get_current",
     "get_months",
     "get_years",
+    "search",
     "update",
 ]
 
@@ -209,6 +210,17 @@ def get_years() -> list[int]:
         .order_by(Prompt.date)
     )
     return [year[0] for year in db.session.execute(qs).all()]
+
+
+def search(query: str) -> list[Prompt]:
+    """Search through Prompts words through an arbitrary query."""
+    today = date.today()
+    qs = (
+        db.select(Prompt)
+        .filter(Prompt.date <= today, Prompt.word.like(f"%{query}%"), len(query) > 1)
+        .order_by(func.upper(Prompt.word))
+    )
+    return db.session.execute(qs).scalars().all()
 
 
 def update(info: dict) -> bool:
