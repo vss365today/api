@@ -133,8 +133,10 @@ def delete_media(info: dict) -> bool:
 
 def exists(prompt_date: date) -> bool:
     """Determine if a Prompt has been recorded for this date."""
+    # While there may be more than one Prompt on this date, the presence
+    # of just one means it exists (so, ya know, the majority of dates)
     qs = db.select(Prompt._id).filter_by(date=prompt_date)
-    return bool(db.session.execute(qs).all())
+    return bool(db.session.execute(qs).first())
 
 
 def get_by_date(prompt_date: date) -> list[Prompt]:
@@ -167,7 +169,7 @@ def get_by_host(handle: str) -> list[Row]:
         db.select(Prompt.date, Prompt.word, Host.handle)
         .join(Host)
         .filter(Prompt.date <= today, Host.handle == handle)
-        .order_by(func.upper(Prompt.word))
+        .order_by(Prompt.date)
     )
     return db.session.execute(qs).all()
 

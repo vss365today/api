@@ -18,6 +18,7 @@ __all__ = [
     "get_by_calendar_month",
     "get_by_date",
     "get_by_year",
+    "exists",
     "update",
 ]
 
@@ -249,6 +250,12 @@ def get_by_year(year: int) -> list[Host]:
         .order_by(HostDate.date)
     )
     return db.session.execute(qs).scalars().all()
+
+
+def exists(handle: str) -> bool:
+    """Determine if a Host has been recorded in the system."""
+    qs = db.select(Host._id).filter_by(handle=handle)
+    return bool(db.session.execute(qs).first())
 
 
 def update(handle: str, new_handle: str) -> bool:

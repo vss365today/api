@@ -10,19 +10,29 @@ from src.core.models.v2 import Generic, Search as models
 
 @search_v2.route("/host/<string:query>")
 class SearchByHost(MethodView):
-    @search_v2.arguments(models.ByHost, location="path", as_kwargs=True)
-    @search_v2.response(200, models.ByHost)
+    @search_v2.arguments(models.Query, location="path", as_kwargs=True)
+    @search_v2.response(200, models.Results)
+    @search_v2.alt_response(404, schema=Generic.HttpError)
+    @search_v2.alt_response(422, schema=Generic.HttpError)
     def get(self, **kwargs: dict[str, Any]):
-        """Search available Prompts by Host."""
+        """Search available Prompts by Host.
+
+        Queries less than 2 characters are refused and will always return a 422 error.
+        """
         query = kwargs["query"].strip()
 
-        return {}
+        # Stop early if the handle doesn't exist
+        if not db.hosts.exists(query):
+            abort(404, f"The Host '{query}' does not exist.")
+
+        r = db.prompts.get_by_host(query)
+        return {"prompts": r, "total": len(r), "query": query}
 
 
 @search_v2.route("/query/<string:query>")
 class SearchByQuery(MethodView):
-    @search_v2.arguments(models.ByQuery, location="path", as_kwargs=True)
-    @search_v2.response(200, models.ByQuery)
+    @search_v2.arguments(models.Query, location="path", as_kwargs=True)
+    @search_v2.response(200, models.Results)
     @search_v2.alt_response(422, schema=Generic.HttpError)
     def get(self, **kwargs: dict[str, Any]):
         """Search available Prompts words by query.
