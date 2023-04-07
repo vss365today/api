@@ -4,16 +4,16 @@ from flask.views import MethodView
 from flask_smorest import abort
 
 import src.core.database.v2 as db
-from src.blueprints import search_v2
+from src.blueprints import search
 from src.core.models.v2 import Generic, Search as models
 
 
-@search_v2.route("/host/<string:query>")
+@search.route("/host/<string:query>")
 class SearchByHost(MethodView):
-    @search_v2.arguments(models.Query, location="path", as_kwargs=True)
-    @search_v2.response(200, models.Results)
-    @search_v2.alt_response(404, schema=Generic.HttpError)
-    @search_v2.alt_response(422, schema=Generic.HttpError)
+    @search.arguments(models.Query, location="path", as_kwargs=True)
+    @search.response(200, models.Results)
+    @search.alt_response(404, schema=Generic.HttpError)
+    @search.alt_response(422, schema=Generic.HttpError)
     def get(self, **kwargs: dict[str, Any]):
         """Search available Prompts by Host.
 
@@ -29,11 +29,11 @@ class SearchByHost(MethodView):
         return {"prompts": r, "total": len(r), "query": query}
 
 
-@search_v2.route("/query/<string:query>")
+@search.route("/query/<string:query>")
 class SearchByQuery(MethodView):
-    @search_v2.arguments(models.Query, location="path", as_kwargs=True)
-    @search_v2.response(200, models.Results)
-    @search_v2.alt_response(422, schema=Generic.HttpError)
+    @search.arguments(models.Query, location="path", as_kwargs=True)
+    @search.response(200, models.Results)
+    @search.alt_response(422, schema=Generic.HttpError)
     def get(self, **kwargs: dict[str, Any]):
         """Search available Prompts words by query.
 
