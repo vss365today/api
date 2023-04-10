@@ -10,15 +10,15 @@ from src.configuration import get_secret
 
 
 __all__ = [
-    "delete_v2",
-    "download_v2",
+    "delete",
+    "download",
     "is_valid_url",
-    "move_v2",
-    "saved_name_v2",
+    "move",
+    "saved_name",
 ]
 
 
-def delete_v2(prompt_id: int, media_id: int | None = None) -> Literal[True]:
+def delete(prompt_id: int, media_id: int | None = None) -> Literal[True]:
     """Delete media files associated with a Prompt.
 
     If a specific Media file ID is given, only that file will be deleted.
@@ -31,7 +31,7 @@ def delete_v2(prompt_id: int, media_id: int | None = None) -> Literal[True]:
     return True
 
 
-def download_v2(url: str) -> str:
+def download(url: str) -> str:
     """Download a Tweet's media."""
     # Generate a random file name for the download
     temp_f_name = f"{secrets.token_hex(12)}{PurePath(original_name(url)).suffix}"
@@ -62,7 +62,7 @@ def is_valid_url(url: str) -> bool:
         return False
 
 
-def move_v2(temp_file: str, final_file: str) -> bool:
+def move(temp_file: str, final_file: str) -> bool:
     """Move a media file from the temporary directory to final location."""
     current_path = Path(get_secret("IMAGES_DIR_TEMP")) / temp_file
     final_path = Path(get_secret("IMAGES_DIR")) / final_file
@@ -81,7 +81,7 @@ def original_name(url: str) -> str:
     return name
 
 
-def saved_name_v2(prompt_id: int, media_id: int, url: str) -> str:
+def saved_name(prompt_id: int, media_id: int, url: str) -> str:
     """Generate the media's saved file name."""
     return "{id}-{media_id}-{original}".format(
         id=prompt_id,

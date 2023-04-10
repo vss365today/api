@@ -4,8 +4,9 @@ from flask.views import MethodView
 from flask_smorest import abort
 
 import src.core.database.v2 as db
-from src.blueprints import search
-from src.core.models.v2 import Generic, Search as models
+from src.core.models.v2 import Generic
+from src.core.models.v2 import Search as models
+from src.views import search
 
 
 @search.route("/host/<string:query>")
