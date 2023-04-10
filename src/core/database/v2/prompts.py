@@ -70,9 +70,9 @@ def create_media(prompt_id: int, media_info: list[dict]) -> bool:
     media_saved = []
     for item in media_recorded:
         # Download the media to its final resting place
-        temp_file = media.download_v2(item.media)
-        final_file = media.saved_name_v2(prompt_id, item._id, item.media)
-        save_result = media.move_v2(temp_file, final_file)
+        temp_file = media.download(item.media)
+        final_file = media.saved_name(prompt_id, item._id, item.media)
+        save_result = media.move(temp_file, final_file)
         media_saved.append(save_result)
 
         # After it is downloaded, we need to update the database record
@@ -90,7 +90,7 @@ def create_media(prompt_id: int, media_info: list[dict]) -> bool:
     # But if all of the media *didn't* save correctly, we need to remove all of them
     # so there's no orphan records
     db.session.rollback()
-    media.delete_v2(prompt_id)
+    media.delete(prompt_id)
     return False
 
 
@@ -111,7 +111,7 @@ def delete(prompt_id: int) -> bool:
     # Delete the Prompt and any associated Media records and files
     db.session.delete(prompt)
     db.session.commit()
-    media.delete_v2(prompt_id)
+    media.delete(prompt_id)
     return True
 
 
@@ -127,7 +127,7 @@ def delete_media(info: dict) -> bool:
     # Delete the Prompt and any associated Media records and files
     db.session.delete(pm)
     db.session.commit()
-    media.delete_v2(info["id"], info["media_id"])
+    media.delete(info["id"], info["media_id"])
     return True
 
 

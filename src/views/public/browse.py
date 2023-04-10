@@ -1,11 +1,13 @@
 from datetime import date
 from typing import Any
+
 from flask.views import MethodView
 from flask_smorest import abort
 
 import src.core.database.v2 as db
-from src.blueprints import browse
-from src.core.models.v2 import Generic, Browse as models
+from src.core.models.v2 import Browse as models
+from src.core.models.v2 import Generic
+from src.views import browse
 
 
 @browse.route("/<int:year>")

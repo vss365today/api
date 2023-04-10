@@ -5,9 +5,10 @@ from flask.views import MethodView
 from flask_smorest import abort
 
 import src.core.database.v2 as db
-from src.blueprints import hosts
 from src.core.auth_helpers_v2 import require_permission
-from src.core.models.v2 import Generic, Hosts as models
+from src.core.models.v2 import Generic
+from src.core.models.v2 import Hosts as models
+from src.views import hosts
 
 
 @hosts.route("/")

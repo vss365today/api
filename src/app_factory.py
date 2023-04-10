@@ -7,9 +7,9 @@ from flask_cors import CORS
 from flask_smorest import Api
 
 import src.configuration as config
-from src.blueprints import v2_blueprints
 from src.core import logger
 from src.core.database import models
+from src.views import v2_blueprints
 
 
 def create_app() -> Flask:

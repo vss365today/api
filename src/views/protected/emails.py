@@ -4,11 +4,12 @@ from flask.views import MethodView
 from flask_smorest import abort
 from requests import codes
 
-from src.blueprints import emails
 from src.configuration import get_config
 from src.core.database.v2 import emails as db
 from src.core.email import mailgun
-from src.core.models.v2 import Emails as models, Generic
+from src.core.models.v2 import Emails as models
+from src.core.models.v2 import Generic
+from src.views import emails
 
 
 @emails.route("/")

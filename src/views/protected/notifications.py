@@ -4,13 +4,13 @@ from flask.views import MethodView
 from flask_smorest import abort
 
 import src.core.database.v2 as db
-from src.blueprints import notifications
 from src.configuration import get_config
 from src.core import email, helpers
 from src.core.database.models import Prompt
 from src.core.email import mailgun
 from src.core.models.v2 import Generic
 from src.core.models.v2 import Notification as models
+from src.views import notifications
 
 
 @notifications.route("/<string:date>")
