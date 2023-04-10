@@ -5,7 +5,7 @@ from flask import current_app, render_template
 import requests
 
 from src.configuration import get_secret
-from src.core.models.v1.EmailTemplate import EmailTemplate
+from src.core.models.v2.EmailTemplate import EmailTemplate
 
 
 __all__ = ["batch_construct", "construct", "render", "send", "make_and_send"]
