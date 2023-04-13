@@ -51,12 +51,15 @@ class Email(MethodView):
         if getenv("FLASK_ENV") == "production":
             for addr in kwargs["address"]:
                 if not mailgun.verify(addr):
-                    abort(500)
+                    abort(500, message="Unable to validate provided email address.")
 
         # Attempt to add the address to the database first
         for addr in kwargs["address"]:
             if not db.create(addr):
-                abort(500)
+                abort(
+                    500,
+                    message="Unable to add provided email address to mailing list.",
+                )
 
         # Next, attempt to add the address to the Mailgun mailing list
         mg_result = mailgun.create(kwargs["address"])
@@ -66,7 +69,9 @@ class Email(MethodView):
         if mg_result.status_code != codes.ok:
             for addr in kwargs["address"]:
                 db.delete(addr)
-            abort(500)
+            abort(
+                500, message="Unable to add provided email address to mailing list."
+            )
 
     @emails.arguments(models.Address, as_kwargs=True)
     @emails.response(204, Generic.Empty)

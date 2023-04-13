@@ -38,7 +38,7 @@ class Host(MethodView):
         * **Permission Required**: `has_hosts`
         """
         if (host := db.hosts.create(kwargs["handle"])) is None:
-            abort(500)
+            abort(500, message=f"Unable to create Host with handle {kwargs['handle']}.")
         return host
 
 
@@ -50,7 +50,10 @@ class HostIndividual(MethodView):
     def get(self, **kwargs: str):
         """Get a Host's info and their Hosting dates."""
         if (host := db.hosts.get(kwargs["handle"])) is None:
-            abort(404)
+            abort(
+                404,
+                message=f"Unable to get info for Host with handle {kwargs['handle']}.",
+            )
         return host
 
     @require_permission("hosts")
@@ -69,7 +72,7 @@ class HostIndividual(MethodView):
         * **Permission Required**: `has_hosts`
         """
         if not db.hosts.update(**kwargs):
-            return abort(404)
+            return abort(404, message="Unable to change Host handle.")
 
     @require_permission("hosts")
     @hosts.arguments(models.Handle, location="path", as_kwargs=True)
@@ -85,7 +88,7 @@ class HostIndividual(MethodView):
         * **Permission Required**: `has_hosts`
         """
         if not db.hosts.delete(kwargs["handle"]):
-            abort(404)
+            abort(404, message=f"Unable to delete Host with handle {kwargs['handle']}.")
 
 
 @hosts.route("/<string:handle>/<string:date>")
@@ -106,7 +109,10 @@ class HostIndividualDate(MethodView):
         * **Permission Required**: `has_hosts`
         """
         if not db.hosts.create_date(**kwargs):
-            abort(404)
+            abort(
+                404,
+                message=f"Unable to create Hosting Date for Host with handle {kwargs['handle']}.",
+            )
 
     @require_permission("hosts")
     @hosts.arguments(models.HostingDate, location="path", as_kwargs=True)
@@ -124,7 +130,10 @@ class HostIndividualDate(MethodView):
         * **Permission Required**: `has_hosts`
         """
         if not db.hosts.delete_date(kwargs["handle"], kwargs["date"]):
-            abort(404)
+            abort(
+                404,
+                message=f"Unable to delete Hosting Date for Host with handle {kwargs['handle']}.",
+            )
 
 
 @hosts.route("/date/<string:date>")
@@ -145,7 +154,10 @@ class HostDate(MethodView):
         * **Permission Required**: `has_hosts`
         """
         if not (hosts := db.hosts.get_by_date(kwargs["date"])):
-            abort(404)
+            abort(
+                404,
+                message=f"Unable to get Host for Hosting Date {kwargs['date'].isoformat()}.",
+            )
         return hosts
 
 
@@ -163,4 +175,4 @@ class HostCurrent(MethodView):
         """
         if host := db.hosts.current():
             return host
-        abort(404)
+        abort(404, message="Unable to get current Host.")

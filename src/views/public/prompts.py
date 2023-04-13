@@ -1,3 +1,4 @@
+from email import message
 from typing import Any
 
 from flask.views import MethodView
@@ -85,7 +86,7 @@ class PromptAlter(MethodView):
         * **Permission Required**: `has_prompts`
         """
         if not db.prompts.update(kwargs):
-            return abort(500)
+            return abort(500, message=f"Unable to update Prompt {kwargs['id']}.")
 
     @require_permission("prompts")
     @prompts.arguments(models.PromptId, location="path", as_kwargs=True)
@@ -100,7 +101,7 @@ class PromptAlter(MethodView):
         * **Permission Required**: `has_prompts`
         """
         if not db.prompts.delete(kwargs["id"]):
-            abort(404)
+            abort(404, message=f"Unable to delete Prompt {kwargs['id']}.")
 
 
 @prompts.route("/date/<string:date>")
@@ -125,7 +126,7 @@ class PromptDate(MethodView):
         but not yet released.
         """
         if not (prompts := db.prompts.get_by_date(kwargs["date"])):
-            abort(404)
+            abort(404, message=f"Unable to get Prompts for date {kwargs['date']}.")
         return prompts
 
 
@@ -143,7 +144,9 @@ class MediaCreate(MethodView):
         * **Permission Required**: `has_prompts`
         """
         if not db.prompts.create_media(kwargs["id"], kwargs["items"]):
-            abort(404)
+            abort(
+                404, message=f"Unable to record Prompt Media for Prompt {kwargs['id']}."
+            )
 
 
 @prompts.route("/<int:id>/media/<int:media_id>")
@@ -159,4 +162,10 @@ class MediaDelete(MethodView):
         * **Permission Required**: `has_prompts`
         """
         if not db.prompts.delete_media(kwargs):
-            abort(404)
+            abort(
+                404,
+                message=(
+                    f"Unable to delete Prompt Media {kwargs['media_id']} for Prompt"
+                    f" {kwargs['id']}."
+                ),
+            )

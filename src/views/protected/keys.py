@@ -27,7 +27,7 @@ class Keys(MethodView):
         """
         if token := db.create(kwargs):
             return token
-        abort(422)
+        abort(422, message="Unable to create new API key.")
 
 
 @keys.route("/<string:token>")
@@ -40,7 +40,7 @@ class KeyByToken(MethodView):
         """Get a key's permissions."""
         if (key := db.get(kwargs["token"])) is not None:
             return key
-        abort(404)
+        abort(404, message="Unable to get permissions for provided API key.")
 
     @keys.arguments(models.Token, location="path", as_kwargs=True)
     @keys.arguments(models.Permissions, location="json", as_kwargs=True)
@@ -62,4 +62,4 @@ class KeyByToken(MethodView):
         will result in an authorization error.
         """
         if not db.delete(kwargs["token"]):
-            abort(404)
+            abort(404, message="Unable to delete provided API key.")
