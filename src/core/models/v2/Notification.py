@@ -9,4 +9,4 @@ class Date(Schema):
 
 
 class Which(Schema):
-    which = fields.Integer(missing=-1)
+    which = fields.Integer(load_default=-1)

@@ -38,7 +38,6 @@ def create_app() -> Flask:
             app.config["DB_DBNAME"],
         )
         models.db.init_app(app)
-        models.quick_sql.init_app(app)
 
     # Add a file logger to record errors
     app.logger.addHandler(logger.file_handler(app.config["LOG_PATH"]))
