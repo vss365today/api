@@ -26,7 +26,7 @@ class Archive(MethodView):
 
         # We don't have an archive to download. This really shouldn't happen
         # but it can if an archive hasn't been generated for a few days
-        abort(404, "Latest Prompt archive currently unavailable.")
+        abort(404, message="Latest Prompt archive currently unavailable.")
 
     @require_permission("archive")
     @archive.response(201, models.File)
@@ -41,4 +41,4 @@ class Archive(MethodView):
         if (file := db.archive.create()) is not None:
             return {"file_name": file}
 
-        abort(404, "Unable to generate new Prompt archive file.")
+        abort(404, message="Unable to generate new Prompt archive file.")

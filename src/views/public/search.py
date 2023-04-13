@@ -24,7 +24,7 @@ class SearchByHost(MethodView):
 
         # Stop early if the handle doesn't exist
         if not db.hosts.exists(query):
-            abort(404, f"The Host '{query}' does not exist.")
+            abort(404, message=f"The Host '{query}' does not exist.")
 
         r = db.prompts.get_by_host(query)
         return {"prompts": r, "total": len(r), "query": query}

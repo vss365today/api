@@ -1,7 +1,8 @@
 from functools import wraps
 from typing import NoReturn
 
-from flask import abort, request
+from flask import request
+from flask_smorest import abort
 
 from src.core.database.v2 import keys
 
@@ -23,7 +24,7 @@ def protect_blueprint(*perms: str) -> None | NoReturn:
     if unknown := requested_perms - all_perms:
         abort(
             403,
-            f"Unknown permissions attempted to be used: {','.join(unknown)}",
+            message=f"Unknown permissions attempted to be used: {','.join(unknown)}.",
         )
 
     # Check if the token has the proper permissions
@@ -31,7 +32,7 @@ def protect_blueprint(*perms: str) -> None | NoReturn:
     if not keys.can_access_v2(token, requested_perms):
         abort(
             403,
-            "API key does not contain all required permissions for this endpoint.",
+            message="API key does not contain all required permissions for this endpoint.",
         )
     return None
 
@@ -64,7 +65,7 @@ def get_token_from_request() -> str | NoReturn:
     """Extract an API key/token from an active request."""
     # Was an Authorization header sent?
     if "Authorization" not in request.headers:
-        abort(400)
+        abort(400, message="Missing HTTP Authorization header.")
 
     # Attempt to get the API key and validate it
     try:
@@ -73,7 +74,7 @@ def get_token_from_request() -> str | NoReturn:
             raise KeyError
         return token
     except (KeyError, IndexError):
-        abort(403)
+        abort(403, message="Invalid API key provided.")
 
 
 def fake_authorize():

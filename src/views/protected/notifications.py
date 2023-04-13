@@ -40,7 +40,9 @@ class Notification(MethodView):
         # We can't sent out emails for a Prompt that does not exist
         # (or shouldn't exist yet)
         if not (prompt := db.prompts.get_by_date(kwargs["date"])):
-            abort(404, f"Unable to find Prompt for {kwargs['date'].isoformat()}.")
+            abort(
+                404, message=f"Unable to find Prompt for {kwargs['date'].isoformat()}."
+            )
 
         # Using our `which` parameter, select the Prompt that should be sent out.
         # This supports our rare but possible multiple Prompts per day scenario
@@ -52,7 +54,7 @@ class Notification(MethodView):
         if prompt_to_select != 1 and prompt_to_select > num_of_prompts:
             abort(
                 422,
-                f"Cannot select Prompt #{prompt_to_select} "
+                message=f"Cannot select Prompt #{prompt_to_select} "
                 f"out of {num_of_prompts} total.",
             )
         prompt = cast(Prompt, prompt[prompt_to_select])

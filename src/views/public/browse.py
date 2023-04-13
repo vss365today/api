@@ -18,7 +18,7 @@ class BrowseForYear(MethodView):
     def get(self, **kwargs: dict[str, Any]):
         """Get all of the Hosts for a given year."""
         if not (hosts := db.hosts.get_by_year(kwargs["year"])):
-            abort(404, f"No data available for year {kwargs['year']}!")
+            abort(404, message=f"No data available for year {kwargs['year']}!")
         return {"hosts": hosts, "total": len(hosts)}
 
 
@@ -33,14 +33,14 @@ class BrowseForYearMonth(MethodView):
         try:
             date(year=kwargs["year"], month=kwargs["month"], day=1)
         except ValueError:
-            abort(422, "The month and year given is not a valid calendar date.")
+            abort(422, message="The month and year given is not a valid calendar date.")
 
         hosts = db.hosts.get_by_calendar_month(kwargs["year"], kwargs["month"])
         prompts = db.prompts.get_by_calendar_month(kwargs["year"], kwargs["month"])
         if not (hosts and prompts):
             abort(
                 404,
-                f"No data available for calendar month {kwargs['month']} {kwargs['year']}!",
+                message=f"No data available for calendar month {kwargs['month']} {kwargs['year']}!",
             )
 
         return {"hosts": hosts, "prompts": prompts, "total": len(prompts)}
