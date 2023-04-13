@@ -40,7 +40,10 @@ class BrowseForYearMonth(MethodView):
         if not (hosts and prompts):
             abort(
                 404,
-                message=f"No data available for calendar month {kwargs['month']} {kwargs['year']}!",
+                message=(
+                    "No data available for calendar month"
+                    f" {kwargs['month']} {kwargs['year']}."
+                ),
             )
 
         return {"hosts": hosts, "prompts": prompts, "total": len(prompts)}

@@ -69,9 +69,7 @@ class Email(MethodView):
         if mg_result.status_code != codes.ok:
             for addr in kwargs["address"]:
                 db.delete(addr)
-            abort(
-                500, message="Unable to add provided email address to mailing list."
-            )
+            abort(500, message="Unable to add provided email address to mailing list.")
 
     @emails.arguments(models.Address, as_kwargs=True)
     @emails.response(204, Generic.Empty)

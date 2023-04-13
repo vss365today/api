@@ -32,7 +32,9 @@ def protect_blueprint(*perms: str) -> None | NoReturn:
     if not keys.can_access_v2(token, requested_perms):
         abort(
             403,
-            message="API key does not contain all required permissions for this endpoint.",
+            message=(
+                "API key does not contain all required permissions for this endpoint."
+            ),
         )
     return None
 

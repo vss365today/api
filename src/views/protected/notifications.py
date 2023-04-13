@@ -54,7 +54,10 @@ class Notification(MethodView):
         if prompt_to_select != 1 and prompt_to_select > num_of_prompts:
             abort(
                 422,
-                message=f"Cannot select Prompt #{prompt_to_select} out of {num_of_prompts} total.",
+                message=(
+                    f"Cannot select Prompt #{prompt_to_select} out of"
+                    f" {num_of_prompts} total."
+                ),
             )
         prompt = cast(Prompt, prompt[prompt_to_select])
 

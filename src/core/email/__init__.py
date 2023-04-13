@@ -22,9 +22,7 @@ def batch_construct(
     rvs = {addr: {"email": addr} for addr in mailing_list}
 
     return {
-        "from": (
-            f'{current_app.config["APP_NAME"]} <noreply@{get_secret("MG_DOMAIN")}>'
-        ),
+        "from": f'{current_app.config["APP_NAME"]} <noreply@{get_secret("MG_DOMAIN")}>',
         "to": mailing_list,
         "subject": subject,
         "text": content.text,
@@ -36,9 +34,7 @@ def batch_construct(
 def construct(email_addr: str, subject: str, content: EmailTemplate) -> dict:
     """Construct a Mailgun email dictionary."""
     return {
-        "from": (
-            f'{current_app.config["APP_NAME"]} <noreply@{get_secret("MG_DOMAIN")}>'
-        ),
+        "from": f'{current_app.config["APP_NAME"]} <noreply@{get_secret("MG_DOMAIN")}>',
         "to": email_addr,
         "subject": subject,
         "text": content.text,

@@ -111,7 +111,10 @@ class HostIndividualDate(MethodView):
         if not db.hosts.create_date(**kwargs):
             abort(
                 404,
-                message=f"Unable to create Hosting Date for Host with handle {kwargs['handle']}.",
+                message=(
+                    "Unable to create Hosting Date for Host with handle"
+                    f" {kwargs['handle']}."
+                ),
             )
 
     @require_permission("hosts")
@@ -132,7 +135,10 @@ class HostIndividualDate(MethodView):
         if not db.hosts.delete_date(kwargs["handle"], kwargs["date"]):
             abort(
                 404,
-                message=f"Unable to delete Hosting Date for Host with handle {kwargs['handle']}.",
+                message=(
+                    "Unable to delete Hosting Date for Host with handle"
+                    f" {kwargs['handle']}."
+                ),
             )
 
 
@@ -156,7 +162,9 @@ class HostDate(MethodView):
         if not (hosts := db.hosts.get_by_date(kwargs["date"])):
             abort(
                 404,
-                message=f"Unable to get Host for Hosting Date {kwargs['date'].isoformat()}.",
+                message=(
+                    f"Unable to get Host for Hosting Date {kwargs['date'].isoformat()}."
+                ),
             )
         return hosts
 

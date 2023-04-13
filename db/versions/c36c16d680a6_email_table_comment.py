@@ -27,6 +27,8 @@ def upgrade():
 def downgrade():
     op.drop_table_comment(
         "emails",
-        existing_comment="Store email addresses for those who want Prompt notifications.",
+        existing_comment=(
+            "Store email addresses for those who want Prompt notifications."
+        ),
         schema=None,
     )
