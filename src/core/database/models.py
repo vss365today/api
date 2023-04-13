@@ -3,7 +3,6 @@ from datetime import date as date_obj
 from datetime import datetime, timedelta
 from typing import Any, TypedDict
 
-from flask_quick_sql import QuickSQL
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, ForeignKey, inspect, select
 from sqlalchemy.dialects.mysql import TINYINT
@@ -13,7 +12,6 @@ from sqlalchemy.types import BigInteger, Date, DateTime, String
 
 
 db = SQLAlchemy()
-quick_sql = QuickSQL()
 
 
 __all__ = [
@@ -28,7 +26,6 @@ __all__ = [
     "Host",
     "HostDate",
     "db",
-    "quick_sql",
 ]
 
 

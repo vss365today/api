@@ -3,7 +3,7 @@ from typing import Callable
 
 from flask_smorest import Blueprint as APIBlueprint
 
-from src.core import auth_helpers_v2 as v2_auth
+from src.core import auth_helpers as v2_auth
 
 
 def _api_factory(

@@ -44,7 +44,7 @@ class Prompt(Schema):
 
     # Fields that are only present in Prompt creation
     host_handle = fields.String(required=True, load_only=True)
-    is_additional = fields.Boolean(missing=False, load_only=True)
+    is_additional = fields.Boolean(load_default=False, load_only=True)
 
     # Fields that are only present in Prompt fetching
     _id = fields.Integer(strict=True, dump_only=True)
