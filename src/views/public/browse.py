@@ -61,9 +61,9 @@ class BrowseYears(MethodView):
 class BrowseMonths(MethodView):
     @browse.arguments(models.GetMonths, location="path", as_kwargs=True)
     @browse.response(200, models.GetMonths)
+    @browse.alt_response(404, schema=Generic.HttpError)
     def get(self, **kwargs: dict[str, Any]):
-        """Get a list of months in a given year Prompts has been recorded.
-
-        The month list may be blank if there are no Prompts for that year.
-        """
-        return {"months": db.prompts.get_months(kwargs["year"])}
+        """Get a list of months in a given year Prompts has been recorded."""
+        if months := db.prompts.get_months(kwargs["year"]):
+            return {"months": months}
+        abort(404, message=f"No data available for calendar year {kwargs['year']}.")

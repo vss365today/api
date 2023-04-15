@@ -23,7 +23,7 @@ class ByYearMonth(ByYear):
 
 class GetMonths(Schema):
     year = fields.Integer(required=True, load_only=True)
-    months = fields.List(fields.Integer, dump_only=True)
+    months = fields.List(fields.Integer(strict=True), dump_only=True)
 
 
 class GetYears(Schema):

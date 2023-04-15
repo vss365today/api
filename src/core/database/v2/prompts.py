@@ -211,7 +211,7 @@ def get_months(year: int) -> list[int]:
         .distinct()
         .order_by(Prompt.date)
     )
-    return [month[0] for month in db.session.execute(qs).all()]
+    return db.session.execute(qs).scalars().all()
 
 
 def get_years() -> list[int]:
