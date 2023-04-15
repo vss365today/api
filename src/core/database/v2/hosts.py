@@ -89,8 +89,8 @@ def create_date(handle: str, date: date) -> bool:
     """
     # We can't create a Hosting date for a Host that does not exist
     try:
-        qs = db.select(Host).filter_by(handle=handle)
-        uid = db.session.execute(qs).scalar_one()._id
+        qs = db.select(Host._id).filter_by(handle=handle)
+        uid = db.session.execute(qs).scalar_one()
     except NoResultFound:
         return False
 
