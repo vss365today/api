@@ -12,7 +12,6 @@ class Permissions(Schema):
     has_hosts = fields.Boolean()
     has_keys = fields.Boolean()
     has_prompts = fields.Boolean()
-    has_settings = fields.Boolean()
     has_emails = fields.Boolean()
 
 

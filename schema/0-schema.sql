@@ -62,7 +62,6 @@ CREATE TABLE IF NOT EXISTS api_keys (
   has_host TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   has_notifications TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   has_prompt TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
-  has_settings TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   has_subscription TINYINT(1) UNSIGNED NOT NULL DEFAULT '0'
 )
 COMMENT='API keys for accessing protected API endpoints. By default, keys can only access public, unprotected endpoints and actions. Authorization can be granted on a granular level for complete control over key permissions.',
@@ -78,7 +77,6 @@ CREATE TABLE audit_api_keys (
   has_host TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   has_notifications  TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   has_prompt TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
-  has_settings TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   has_subscription TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   CONSTRAINT `audit_api_keys_key_id-api_keys_id`
     FOREIGN KEY (key_id) REFERENCES api_keys (_id)

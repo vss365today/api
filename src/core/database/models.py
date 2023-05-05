@@ -137,7 +137,7 @@ class HostDate(db.Model):
     _id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
     date: Mapped[date_obj]
     host_id: Mapped[int] = mapped_column(
-        ForeignKey("hosts._id", ondelete="RESTRICT", onupdate="CASCADE")
+        ForeignKey("hosts._id", ondelete="CASCADE", onupdate="CASCADE")
     )
     host: Mapped["Host"] = relationship(back_populates="dates")
 
@@ -257,11 +257,10 @@ class ApiKey(HelperMethods, db.Model):
         String(256, collation="utf8mb4_unicode_ci")
     )
     has_archive: Mapped[bool] = mapped_column(default=False)
-    has_hosts: Mapped[bool] = mapped_column("has_host", default=False)
+    has_host: Mapped[bool] = mapped_column("has_host", default=False)
     has_notifications: Mapped[bool] = mapped_column(default=False)
     has_keys: Mapped[bool] = mapped_column(default=False)
     has_prompts: Mapped[bool] = mapped_column("has_prompt", default=False)
-    has_settings: Mapped[bool] = mapped_column(default=False)
     has_emails: Mapped[bool] = mapped_column("has_subscription", default=False)
 
     history: Mapped[list["ApiKeyHistory"]] = relationship(back_populates="key")
@@ -286,7 +285,6 @@ class ApiKeyHistory(db.Model):
     has_keys: Mapped[bool] = mapped_column(default=False)
     has_notifications: Mapped[bool] = mapped_column(default=False)
     has_prompts: Mapped[bool] = mapped_column(default=False)
-    has_settings: Mapped[bool] = mapped_column(default=False)
     has_emails: Mapped[bool] = mapped_column(default=False)
 
     key: Mapped["ApiKey"] = relationship(back_populates="history")
