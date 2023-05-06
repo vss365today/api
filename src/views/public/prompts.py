@@ -13,7 +13,6 @@ from src.views import prompts
 
 @prompts.route("/")
 class Prompt(MethodView):
-    @require_permission("prompts")
     @prompts.response(200, models.Prompt(many=True))
     def get(self):
         """Get the Prompt(s) for the current day.
