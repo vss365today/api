@@ -24,7 +24,7 @@ def delete(prompt_id: int, media_id: int | None = None) -> Literal[True]:
     If a specific Media file ID is given, only that file will be deleted.
     Otherwise, all files associated with the Prompt ID will be deleted.
     """
-    pattern = f"{prompt_id}*" if media_id is None else f"{prompt_id}-{media_id}*"
+    pattern = f"*-{prompt_id}-*" if media_id is None else f"{media_id}-{prompt_id}*"
     all_media = Path(get_secret("IMAGES_DIR")).glob(pattern)
     for f in all_media:
         f.unlink()
@@ -83,8 +83,8 @@ def original_name(url: str) -> str:
 
 def saved_name(prompt_id: int, media_id: int, url: str) -> str:
     """Generate the media's saved file name."""
-    return "{id}-{media_id}-{original}".format(
-        id=prompt_id,
+    return "{media_id}-{id}-{original}".format(
         media_id=media_id,
+        id=prompt_id,
         original=original_name(url),
     )
