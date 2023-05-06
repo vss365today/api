@@ -23,6 +23,7 @@ __all__ = [
     "get_years",
     "search",
     "update",
+    "update_media",
 ]
 
 
@@ -265,3 +266,7 @@ def update(info: dict) -> bool:
     prompt.update_with(info)
     db.session.commit()
     return True
+
+
+def update_media():
+    ...

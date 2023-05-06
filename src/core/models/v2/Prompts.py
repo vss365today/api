@@ -5,9 +5,10 @@ from src.core.models.v2 import Hosts
 
 __all__ = [
     "Media",
-    "MediaDelete",
+    "MediaChange",
     "MediaId",
     "MediaItems",
+    "MediaUpdate",
     "Prompt",
     "PromptDate",
     "PromptId",
@@ -70,5 +71,11 @@ class PromptId(Schema):
     id = fields.Integer(strict=True, required=True)
 
 
-class MediaDelete(PromptId, MediaId):
+class MediaChange(PromptId, MediaId):
+    ...
+
+
+class MediaUpdate(Schema):
+    """Change existing Media on a Prompt."""
+
     ...
