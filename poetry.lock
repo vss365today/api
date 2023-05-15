@@ -305,14 +305,14 @@ SQLAlchemy-Utils = "*"
 
 [[package]]
 name = "flask-smorest"
-version = "0.41.0"
+version = "0.42.0"
 description = "Flask/Marshmallow-based REST API framework"
 category = "main"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "flask-smorest-0.41.0.tar.gz", hash = "sha256:9b98256a9073fcd3e18e0fd2e7511e32d9aa499e1aa133c646c0c27bc3fde218"},
-    {file = "flask_smorest-0.41.0-py3-none-any.whl", hash = "sha256:1793669d702e968d556b1df172ac65740ba76d9fa5ae7de887b22e2032d3d652"},
+    {file = "flask-smorest-0.42.0.tar.gz", hash = "sha256:868421b29e060a602e3739c2caf7b97cfe21c3ac488f51a2b5e95e168dd3bec2"},
+    {file = "flask_smorest-0.42.0-py3-none-any.whl", hash = "sha256:029fc9c782fa702c261bd2252d41461818a04aef311c5181111df9e016b1f350"},
 ]
 
 [package.dependencies]
@@ -320,12 +320,12 @@ apispec = {version = ">=6.0.0,<7", extras = ["marshmallow"]}
 flask = ">=2.0,<3"
 marshmallow = ">=3.18.0,<4"
 webargs = ">=8.0.0,<9"
-werkzeug = ">=2.0,<3"
+werkzeug = ">=2.0.1,<3"
 
 [package.extras]
-dev = ["PyYAML (==6.0)", "apispec (==6.3.0)", "coverage (==7.2.2)", "flake8 (==6.0.0)", "flake8-bugbear (==23.3.23)", "flask (==2.2.3)", "marshmallow (==3.19.0)", "pre-commit (==3.2.1)", "pytest (==7.2.2)", "pytest-cov (==4.0.0)", "webargs (==8.2.0)", "werkzeug (==2.2.3)"]
-lint = ["flake8 (==6.0.0)", "flake8-bugbear (==23.3.23)", "pre-commit (==3.2.1)"]
-tests = ["PyYAML (==6.0)", "apispec (==6.3.0)", "coverage (==7.2.2)", "flask (==2.2.3)", "marshmallow (==3.19.0)", "pytest (==7.2.2)", "pytest-cov (==4.0.0)", "webargs (==8.2.0)", "werkzeug (==2.2.3)"]
+dev = ["PyYAML (==6.0)", "apispec (==6.3.0)", "coverage (==7.2.5)", "flake8 (==6.0.0)", "flake8-bugbear (==23.5.9)", "flask (==2.3.2)", "marshmallow (==3.19.0)", "pre-commit (==3.3.1)", "pytest (==7.3.1)", "pytest-cov (==4.0.0)", "webargs (==8.2.0)", "werkzeug (==2.3.4)"]
+lint = ["flake8 (==6.0.0)", "flake8-bugbear (==23.5.9)", "pre-commit (==3.3.1)"]
+tests = ["PyYAML (==6.0)", "apispec (==6.3.0)", "coverage (==7.2.5)", "flask (==2.3.2)", "marshmallow (==3.19.0)", "pytest (==7.3.1)", "pytest-cov (==4.0.0)", "webargs (==8.2.0)", "werkzeug (==2.3.4)"]
 
 [[package]]
 name = "flask-sqlalchemy"
@@ -1092,4 +1092,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "be64ddbd5847cf7c01d846b64c98ad2b00d7a3d69f0487978c38154f80c0a9d4"
+content-hash = "0e43e079855b5eeb9251b51910d8730b1c46d543ddddf0f3841ca6035633a526"
