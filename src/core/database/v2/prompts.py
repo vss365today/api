@@ -1,14 +1,14 @@
 from datetime import date
-from typing import cast
+from typing import Literal, cast
 
+from flask import current_app
 from sqlalchemy.engine.row import Row
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import DBAPIError, NoResultFound, SQLAlchemyError
 from sqlalchemy.sql import func
 
 from src.core.database.models import Host, Prompt, PromptMedia, db
 from src.core.database.v2 import hosts
 from src.core.helpers import media
-
 
 __all__ = [
     "create",
@@ -16,6 +16,7 @@ __all__ = [
     "delete",
     "delete_media",
     "exists",
+    "exists_media",
     "get_by_date",
     "get_by_calendar_month",
     "get_current",
@@ -57,6 +58,8 @@ def create_media(prompt_id: int, media_info: list[dict]) -> bool:
 
     # If there are any valid media URLs, create a record
     # that associates them with the given Prompt
+    # TODO: Maybe initially create the db record w/o the url
+    # then update it after we have the file name
     media_recorded = []
     for item in media_info:
         pm = PromptMedia(
@@ -78,7 +81,7 @@ def create_media(prompt_id: int, media_info: list[dict]) -> bool:
 
         # After it is downloaded, we need to update the database record
         # with the proper  media URL. This is a little bit of a chicken
-        # and egg problem. We want to save  the media file with the media ID,
+        # and egg problem. We want to save the media file with the media ID,
         # but to get it, we need to save the media to the database first.
         # Oh well ¯\_(ツ)_/¯
         item.file = final_file
@@ -137,6 +140,12 @@ def exists(prompt_date: date) -> bool:
     # While there may be more than one Prompt on this date, the presence
     # of just one means it exists (so, ya know, the majority of dates)
     qs = db.select(Prompt._id).filter_by(date=prompt_date)
+    return bool(db.session.execute(qs).first())
+
+
+def exists_media(media_id: int) -> bool:
+    """Determine if a Prompt Media with this ID exists."""
+    qs = db.select(PromptMedia._id).filter_by(_id=media_id)
     return bool(db.session.execute(qs).first())
 
 
@@ -268,5 +277,49 @@ def update(info: dict) -> bool:
     return True
 
 
-def update_media():
-    ...
+def update_media(prompt_id: int, media_info: list[dict]) -> Literal[True]:
+    # Filter out provided media items that do not already exist.
+    # This is not the place to create new media items or invalid URLss
+    media_info = (
+        item
+        for item in media_info
+        if not exists_media(item["id"]) or media.is_valid_url(item["url"])
+    )
+
+    # If there's no media to update, we should shortcut
+    # the remainder of the process and report all is well
+    if not media_info:
+        return True
+
+    for item in media_info:
+        item_id = item.pop("id")
+
+        # Determine if a media URL was provided. If so, we need to
+        # download the new media file. However, we don't need to actually save the file in the final
+        # location yet, not until we get the database updated
+        if "url" in item:
+            temp_file = media.download(item["url"])
+            final_file = media.saved_name(prompt_id, item["id"], item["url"])
+            item["url"] = final_file
+
+        try:
+            # Update the db record with the new info
+            pm = db.session.execute(
+                db.select(PromptMedia).filter_by(_id=item_id)
+            ).scalar_one()
+            pm.update_with(item)
+            db.session.commit()
+
+            # Finally, remove the old media file and replace it with the new one
+            if "url" in item:
+                media.delete(prompt_id, item_id)
+                media.move(temp_file, final_file)
+
+        # We had a DB level error, back off
+        except (DBAPIError, SQLAlchemyError) as exc:
+            current_app.log_exception(exc)
+            db.session.rollback()
+
+        # Always report success with this method. I don't have a good
+        # way right now to report individual errors
+        return True

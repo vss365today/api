@@ -155,9 +155,12 @@ class MediaCreate(MethodView):
     def patch(self, **kwargs: dict[str, Any]):
         """Update existing Prompt Media.
 
+        This endpoint will not create new Media items and will silently
+        discard any provided Media ids that are not already recorded.
+
         * **Permission Required**: `has_prompts`
         """
-        if not db.prompts.update_media(kwargs):
+        if not db.prompts.update_media(kwargs["id"], kwargs["items"]):
             return abort(
                 500,
                 message=f"Unable to update Prompt {kwargs['id']} with the given Media.",

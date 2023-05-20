@@ -78,4 +78,9 @@ class MediaChange(PromptId, MediaId):
 class MediaUpdate(Schema):
     """Change existing Media on a Prompt."""
 
-    media = fields.List(fields.Nested(Media))
+    class _Media(Schema):
+        id = fields.Integer(strict=True, required=True)
+        alt_text = fields.String(allow_none=True)
+        url = fields.Url()
+
+    items = fields.List(fields.Nested(_Media))
