@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vss365today-api"
-version = "2.0.1"
+version = "2.0.2"
 description = "REST API for #vss365 today"
 authors = ["Caleb <le717@users.noreply.github.com>"]
 license = "MIT"

@@ -1,4 +1,3 @@
-from email import message
 from typing import Any
 
 from flask.views import MethodView
@@ -147,6 +146,23 @@ class MediaCreate(MethodView):
                 404, message=f"Unable to record Prompt Media for Prompt {kwargs['id']}."
             )
 
+    @require_permission("prompts")
+    @prompts.arguments(models.MediaChange, location="path", as_kwargs=True)
+    @prompts.arguments(models.MediaUpdate, location="json", as_kwargs=True)
+    @prompts.response(204, schema=Generic.Empty)
+    @prompts.alt_response(403, schema=Generic.HttpError)
+    @prompts.alt_response(500, schema=Generic.HttpError)
+    def patch(self, **kwargs: dict[str, Any]):
+        """Update existing Prompt Media.
+
+        * **Permission Required**: `has_prompts`
+        """
+        if not db.prompts.update_media(kwargs):
+            return abort(
+                500,
+                message=f"Unable to update Prompt {kwargs['id']} with the given Media.",
+            )
+
 
 @prompts.route("/<int:id>/media/<int:media_id>")
 class MediaChange(MethodView):
@@ -168,23 +184,3 @@ class MediaChange(MethodView):
                     f" {kwargs['id']}."
                 ),
             )
-
-
-@prompts.route("/<int:id>/media/<int:media_id>")
-class MediaAlter(MethodView):
-    @require_permission("prompts")
-    @prompts.arguments(models.MediaChange, location="path", as_kwargs=True)
-    @prompts.arguments(models.MediaUpdate, location="json", as_kwargs=True)
-    @prompts.response(204, schema=Generic.Empty)
-    @prompts.alt_response(403, schema=Generic.HttpError)
-    @prompts.alt_response(500, schema=Generic.HttpError)
-    def patch(self, **kwargs: dict[str, Any]):
-        """Update existing Prompt Media.
-
-        * **Permission Required**: `has_prompts`
-        """
-        return abort(
-            500, message=f"Unable to update Prompt {kwargs['id']} with the given Media."
-        )
-        # if not db.prompts.update(kwargs):
-        #     return abort(500, message=f"Unable to update Prompt {kwargs['id']}.")

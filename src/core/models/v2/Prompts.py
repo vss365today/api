@@ -78,4 +78,4 @@ class MediaChange(PromptId, MediaId):
 class MediaUpdate(Schema):
     """Change existing Media on a Prompt."""
 
-    ...
+    media = fields.List(fields.Nested(Media))

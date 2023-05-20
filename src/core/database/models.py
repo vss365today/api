@@ -203,7 +203,7 @@ class Prompt(HelperMethods, db.Model):
         return navi
 
 
-class PromptMedia(db.Model):
+class PromptMedia(HelperMethods, db.Model):
     __tablename__ = "prompt_media"
     __table_args__ = {"comment": "Store the #vss365 Prompt media."}
 
