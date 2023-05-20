@@ -19,7 +19,7 @@ __all__ = [
 class Media(Schema):
     _id = fields.Integer(strict=True, dump_only=True)
     alt_text = fields.String(required=True, allow_none=True)
-    media = fields.String(required=True, allow_none=True, dump_only=True)
+    file = fields.String(required=True, allow_none=True, dump_only=True)
     url = fields.Url(required=True, load_only=True)
 
 

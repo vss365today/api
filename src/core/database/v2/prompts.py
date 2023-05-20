@@ -62,7 +62,7 @@ def create_media(prompt_id: int, media_info: list[dict]) -> bool:
         pm = PromptMedia(
             prompt_id=prompt_id,
             alt_text=item["alt_text"],
-            media=item["url"],
+            file=item["url"],
         )
         db.session.add(pm)
         db.session.flush()
@@ -71,8 +71,8 @@ def create_media(prompt_id: int, media_info: list[dict]) -> bool:
     media_saved = []
     for item in media_recorded:
         # Download the media to its final resting place
-        temp_file = media.download(item.media)
-        final_file = media.saved_name(prompt_id, item._id, item.media)
+        temp_file = media.download(item.file)
+        final_file = media.saved_name(prompt_id, item._id, item.file)
         save_result = media.move(temp_file, final_file)
         media_saved.append(save_result)
 
@@ -81,7 +81,7 @@ def create_media(prompt_id: int, media_info: list[dict]) -> bool:
         # and egg problem. We want to save  the media file with the media ID,
         # but to get it, we need to save the media to the database first.
         # Oh well ¯\_(ツ)_/¯
-        item.media = final_file
+        item.file = final_file
 
     # If all of the media saved successfully, we can write everything to the database
     if all(media_saved):

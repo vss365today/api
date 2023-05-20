@@ -208,7 +208,7 @@ class PromptMedia(db.Model):
     __table_args__ = {"comment": "Store the #vss365 Prompt media."}
 
     _id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
-    media: Mapped[str | None] = mapped_column(
+    file: Mapped[str | None] = mapped_column(
         String(512, collation="utf8mb4_unicode_ci")
     )
     alt_text: Mapped[str | None] = mapped_column(
