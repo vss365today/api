@@ -280,11 +280,12 @@ def update(info: dict) -> bool:
 def update_media(prompt_id: int, media_info: list[dict]) -> Literal[True]:
     # Filter out provided media items that do not already exist.
     # This is not the place to create new media items or invalid URLss
-    media_info = (
+    media_info = [
         item
         for item in media_info
-        if not exists_media(item["id"]) or media.is_valid_url(item["url"])
-    )
+        if not exists_media(item["id"])
+        or not ("url" in item and media.is_valid_url(item["url"]))
+    ]
 
     # If there's no media to update, we should shortcut
     # the remainder of the process and report all is well
@@ -319,7 +320,5 @@ def update_media(prompt_id: int, media_info: list[dict]) -> Literal[True]:
         except (DBAPIError, SQLAlchemyError) as exc:
             current_app.log_exception(exc)
             db.session.rollback()
-
-        # Always report success with this method. I don't have a good
-        # way right now to report individual errors
-        return True
+            return False
+    return True

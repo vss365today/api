@@ -147,7 +147,7 @@ class MediaCreate(MethodView):
             )
 
     @require_permission("prompts")
-    @prompts.arguments(models.MediaChange, location="path", as_kwargs=True)
+    @prompts.arguments(models.PromptId, location="path", as_kwargs=True)
     @prompts.arguments(models.MediaUpdate, location="json", as_kwargs=True)
     @prompts.response(204, schema=Generic.Empty)
     @prompts.alt_response(403, schema=Generic.HttpError)
