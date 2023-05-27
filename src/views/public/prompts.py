@@ -156,7 +156,7 @@ class MediaCreate(MethodView):
         """Update existing Prompt Media.
 
         This endpoint will not create new Media items and will silently
-        discard any provided Media ids that are not already recorded.
+        discard any provided Media items that are not already recorded.
 
         * **Permission Required**: `has_prompts`
         """
