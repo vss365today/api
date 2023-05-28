@@ -2,12 +2,11 @@ import secrets
 from pathlib import Path, PurePath
 from typing import Literal
 
-import requests
+import httpx
 from urllib3.exceptions import LocationParseError
 from urllib3.util import parse_url
 
 from src.configuration import get_secret
-
 
 __all__ = [
     "delete",
@@ -37,7 +36,7 @@ def download(url: str) -> str:
     temp_f_name = f"{secrets.token_hex(12)}{PurePath(original_name(url)).suffix}"
 
     # Download the media to a temp directory and provide the temp file name
-    r = requests.get(url)
+    r = httpx.get(url)
     dl_path = Path(get_secret("IMAGES_DIR_TEMP")).resolve() / temp_f_name
     dl_path.write_bytes(r.content)
     return temp_f_name

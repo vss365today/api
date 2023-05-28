@@ -1,12 +1,11 @@
 from json import dumps
 from typing import Any
 
+import httpx
 from flask import current_app, render_template
-import requests
 
 from src.configuration import get_secret
 from src.core.models.v2.EmailTemplate import EmailTemplate
-
 
 __all__ = ["batch_construct", "construct", "render", "send", "make_and_send"]
 
@@ -58,7 +57,7 @@ def send(email: dict[str, str]) -> bool:
         return True
 
     # Attempt to send out the email
-    r = requests.post(
+    r = httpx.post(
         f'https://api.mailgun.net/v3/{get_secret("MG_DOMAIN")}/messages',
         auth=("api", get_secret("MG_API_KEY")),
         data=email,
