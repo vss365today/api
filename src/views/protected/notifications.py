@@ -66,7 +66,7 @@ class Notification(MethodView):
         # to add that information ourselves
         render_opts = {**prompt.as_dict()}
         render_opts["url"] = prompt.url
-        render_opts["media"] = prompt.media[0].media
+        render_opts["file"] = prompt.media[0].file
         render_opts["host_handle"] = prompt.host.handle
 
         # Send an email to the Mailgun-hosted mailing list.
