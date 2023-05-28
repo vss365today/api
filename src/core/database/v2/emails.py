@@ -25,7 +25,7 @@ def create(address: str) -> bool:
 def delete(address: str) -> None:
     """Remove an email address."""
     qs = db.select(Email).filter_by(address=address)
-    if email := db.session.execute(qs).first() is not None:
+    if (email := db.session.execute(qs).scalars().first()) is not None:
         db.session.delete(email)
         db.session.commit()
     current_app.logger.debug("Email removed from subscription list.")

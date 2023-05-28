@@ -40,9 +40,7 @@
       "type": "python",
       "request": "launch",
       "module": "flask",
-      "pythonArgs": [
-        "-Wd"
-      ],
+      "pythonArgs": ["-Wd"],
       "console": "internalConsole",
       "env": {
         "FLASK_APP": "app.py",
@@ -53,9 +51,11 @@
       },
       "args": [
         "run",
-        "--no-debugger",
-        "--no-reload"
-      ]
-    }
+        "--no-debugger"
+      ],
+      "jinja": true,
+      "justMyCode": true
+    },
+
   ]
 }
