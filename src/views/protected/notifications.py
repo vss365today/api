@@ -35,7 +35,7 @@ class Notification(MethodView):
         """
         # If email sending is not enabled, just pretend it worked
         if not get_config("ENABLE_EMAIL_SENDING"):
-            return True
+            return None
 
         # We can't sent out emails for a Prompt that does not exist
         # (or shouldn't exist yet)
@@ -62,12 +62,12 @@ class Notification(MethodView):
         prompt = cast(Prompt, prompt[prompt_to_select])
 
         # Build up the email render information. Our custom `as_dict()` method
-        # doesn't follow FKs or hybrid properties, # so we have to take care
+        # doesn't follow FKs or hybrid properties, so we have to take care
         # to add that information ourselves
         render_opts = {**prompt.as_dict()}
         render_opts["url"] = prompt.url
-        render_opts["file"] = prompt.media[0].file
         render_opts["host_handle"] = prompt.host.handle
+        render_opts["file"] = prompt.media[0].file if prompt.media else None
 
         # Send an email to the Mailgun-hosted mailing list.
         # This helps us keep track of who is on the list at any given moment
