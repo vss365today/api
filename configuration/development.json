@@ -3,7 +3,7 @@
   "appConfig": {
     "DEBUG": true,
     "SQLALCHEMY_ECHO": true,
-    "DB_HOST": "vss365today-db",
+    "DB_HOST": "database",
 
     "OPENAPI_URL_PREFIX": "/",
     "OPENAPI_REDOC_PATH": "/v2/docs",

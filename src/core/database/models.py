@@ -8,7 +8,7 @@ from sqlalchemy import Column, ForeignKey, inspect, select
 from sqlalchemy.dialects.mysql import TINYINT
 from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped, column_property, mapped_column, relationship
-from sqlalchemy.types import BigInteger, Date, DateTime, String
+from sqlalchemy.types import BigInteger, DateTime, String
 
 
 db = SQLAlchemy()
@@ -18,9 +18,6 @@ __all__ = [
     "ApiKey",
     "ApiKeyHistory",
     "Email",
-    "PromptLegacy",
-    "Writer",
-    "WriterDate",
     "Prompt",
     "PromptMedia",
     "Host",
@@ -48,70 +45,6 @@ class HelperMethods:
         return None
 
 
-class Writer(db.Model):
-    __tablename__ = "writers"
-
-    uid = Column(String(30, "utf8mb4_unicode_ci"), primary_key=True, unique=True)
-    handle = Column(String(20, "utf8mb4_unicode_ci"), nullable=False)
-
-    @hybrid_property
-    def url(self) -> str:
-        """Create a Twitter URL to the Host's profile."""
-        return f"https://twitter.com/{self.handle}"
-
-    @classmethod
-    def get_handle(cls, /, uid: str) -> str:
-        """Get a Host's user ID from their handle."""
-        return cls.query.filter_by(id=uid).first().handle
-
-    @classmethod
-    def get_uid(cls, /, handle: str) -> str:
-        """Get a Host's handle from their user ID."""
-        return cls.query.filter_by(handle=handle).first().uid
-
-
-class WriterDate(db.Model):
-    __tablename__ = "writer_dates"
-
-    uid = Column(
-        ForeignKey("writers.uid", ondelete="CASCADE", onupdate="CASCADE"),
-        primary_key=True,
-        nullable=False,
-    )
-    date = Column(Date, primary_key=True, nullable=False)
-
-    writer = relationship("Writer")
-
-
-class PromptLegacy(db.Model):
-    __tablename__ = "prompts"
-    __table_args__ = {"comment": "Legacy table for storing prompts."}
-
-    tweet_id = Column(String(25, "utf8mb4_unicode_ci"), primary_key=True, unique=True)
-    date = Column(Date, nullable=False)
-    uid = Column(
-        ForeignKey("writers.uid", onupdate="CASCADE"), nullable=False, index=True
-    )
-    content = Column(String(2048, "utf8mb4_unicode_ci"), nullable=False)
-    word = Column(String(30, "utf8mb4_unicode_ci"), nullable=False)
-    media = Column(String(512, "utf8mb4_unicode_ci"))
-    media_alt_text = Column(String(1000, "utf8mb4_unicode_ci"))
-    date_added = Column(
-        DateTime,
-        nullable=False,
-        default=datetime.now,
-        onupdate=datetime.now,
-    )
-
-    writer = relationship("Writer")
-
-    @hybrid_property
-    def url(self) -> str:
-        """Create a Twitter URL to the Host's profile."""
-        return f"https://twitter.com/{self.handle}/{self.tweet_id}"
-
-
-# 2023+ models
 class Host(HelperMethods, db.Model):
     __tablename__ = "hosts"
     __table_args__ = {"comment": "Store the #vss365 Hosts."}
@@ -143,7 +76,7 @@ class HostDate(db.Model):
 
 
 class Prompt(HelperMethods, db.Model):
-    __tablename__ = "prompts_new"
+    __tablename__ = "prompts"
     __table_args__ = {"comment": "Store the #vss365 Prompts."}
 
     def __str__(self) -> str:
@@ -215,7 +148,7 @@ class PromptMedia(HelperMethods, db.Model):
         String(1000, collation="utf8mb4_unicode_ci")
     )
     prompt_id: Mapped[int] = mapped_column(
-        ForeignKey("prompts_new._id", ondelete="CASCADE", onupdate="CASCADE")
+        ForeignKey("prompts._id", ondelete="CASCADE", onupdate="CASCADE")
     )
 
     prompt: Mapped["Prompt"] = relationship(back_populates="media")
