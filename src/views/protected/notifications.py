@@ -80,7 +80,6 @@ class Notification(MethodView):
         # them again (except one day before to prevent multiplication by zero), then taking the
         # number of days since and multiplying it by a constant. Once I get back to sending all
         # 700+, I'll switch back to the mailing list
-        # TODO: Pick the actual day to start
         day_emails_started_back = date(2023, 7, 27)
         days_since_start = (date.today() - day_emails_started_back).days
         total_emails_to_send_to = days_since_start * 10
@@ -88,7 +87,7 @@ class Notification(MethodView):
         current_app.logger.debug(f"Sending out {total_emails_to_send_to} emails...")
         for addr in emails:
             email.make_and_send(
-                addr,
+                addr.address,
                 helpers.format_datetime_pretty(prompt.date),
                 "email",
                 **render_opts,

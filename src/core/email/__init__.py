@@ -4,7 +4,7 @@ from typing import Any
 import httpx
 from flask import current_app, render_template
 
-from src.configuration import get_secret
+from src.configuration import get_config, get_secret
 from src.core.models.v2.EmailTemplate import EmailTemplate
 
 __all__ = ["batch_construct", "construct", "render", "send", "make_and_send"]
@@ -53,7 +53,7 @@ def send(email: dict[str, str]) -> bool:
     """Send out a completed email."""
     # If email sending is not configured, just pretend the email
     # sent out correctly instead of making the caller handle the special case
-    if not current_app.config["ENABLE_EMAIL_SENDING"]:
+    if not get_config("ENABLE_EMAIL_SENDING"):
         return True
 
     # Attempt to send out the email
