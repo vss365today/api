@@ -80,7 +80,7 @@ class Notification(MethodView):
         # them again (except one day before to prevent multiplication by zero), then taking the
         # number of days since and multiplying it by a constant. Once I get back to sending all
         # 700+, I'll switch back to the mailing list
-        day_emails_started_back = date(2023, 7, 27)
+        day_emails_started_back = date(2023, 7, 28)
         days_since_start = (date.today() - day_emails_started_back).days
         total_emails_to_send_to = days_since_start * 10
         emails = db.emails.get_emails_totalling(total_emails_to_send_to)
