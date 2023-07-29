@@ -4,7 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from src.core.database.models import Email, db
 
 
-__all__ = ["create", "delete", "get_all"]
+__all__ = ["create", "delete", "get_all", "get_emails_totalling"]
 
 
 def create(address: str) -> bool:
@@ -35,3 +35,12 @@ def delete(address: str) -> None:
 def get_all() -> list[Email]:
     """Get all email addresses."""
     return db.session.execute(db.select(Email).order_by(Email.address)).scalars().all()
+
+
+def get_emails_totalling(limit: int, /) -> list[Email]:
+    """Get emails from the database up to the limit."""
+    return (
+        db.session.execute(db.select(Email).limit(limit).order_by(Email.address))
+        .scalars()
+        .all()
+    )

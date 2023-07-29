@@ -1,5 +1,7 @@
+from datetime import date
 from typing import Any, cast
 
+from flask import current_app
 from flask.views import MethodView
 from flask_smorest import abort
 
@@ -69,14 +71,37 @@ class Notification(MethodView):
         render_opts["host_handle"] = prompt.host.handle
         render_opts["file"] = prompt.media[0].file if prompt.media else None
 
-        # Send an email to the Mailgun-hosted mailing list.
-        # This helps us keep track of who is on the list at any given moment
-        # but also resolves a crazy amount of trouble
-        # when it comes to sending out a large amount of email messages
+        # Because of the Twitter/X API paywall that went online June 9/10 2023,
+        # all email sending immediately ceased. Access was not restored until late July,
+        # meaning nothing sent for nearly 2 months. Email, however, is picky, and sending out
+        # to 700+ addresses all at once will almost certainly cause all of them + my IP +
+        # email reputation to be blocked and sunk. To combat that, I need to gradually send them
+        # back up until I'm sending all 700+ again. To do this, I've picked a date to start sending
+        # them again (except one day before to prevent multiplication by zero), then taking the
+        # number of days since and multiplying it by a constant. Once I get back to sending all
+        # 700+, I'll switch back to the mailing list
+        # TODO: Pick the actual day to start
+        day_emails_started_back = date(2023, 7, 27)
+        days_since_start = (date.today() - day_emails_started_back).days
+        total_emails_to_send_to = days_since_start * 10
+        emails = db.emails.get_emails_totalling(total_emails_to_send_to)
+        current_app.logger.debug(f"Sending out {total_emails_to_send_to} emails...")
+        for addr in emails:
+            email.make_and_send(
+                addr,
+                helpers.format_datetime_pretty(prompt.date),
+                "email",
+                **render_opts,
+            )
+
+        # Send an email to the Mailgun-hosted mailing list. This helps us keep track
+        # of who is on the list at any given moment but also resolves a crazy amount of trouble
+        # when it comes to sending out a large amount of email messages.
+        # TODO: Switch back to this once I'm sending out the whole list using the code above
         # https://documentation.mailgun.com/en/latest/api-mailinglists.html#examples
-        email.make_and_send(
-            mailgun.mailing_list(),
-            helpers.format_datetime_pretty(prompt.date),
-            "email",
-            **render_opts,
-        )
+        # email.make_and_send(
+        #     mailgun.mailing_list(),
+        #     helpers.format_datetime_pretty(prompt.date),
+        #     "email",
+        #     **render_opts,
+        # )
