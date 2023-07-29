@@ -126,6 +126,12 @@ class Prompt(HelperMethods, db.Model):
                 .first()
                 .date
             )
+
+        # We need to catch the possible `AttributeError` for the next date separately from
+        # the previous date because these are separate events, and if we catch them together,
+        # we can end up with a case where the whole previous/next information is lost despite
+        # us having one of them
+        with suppress(AttributeError):
             navi["next"] = (
                 db.session.execute(
                     db.select(Prompt.date).filter_by(date=self.date + timedelta(days=1))
