@@ -82,7 +82,7 @@ class Notification(MethodView):
         # 700+, I'll switch back to the mailing list
         day_emails_started_back = date(2023, 7, 28)
         days_since_start = (date.today() - day_emails_started_back).days
-        total_emails_to_send_to = days_since_start * 10
+        total_emails_to_send_to = days_since_start * 15
         emails = db.emails.get_emails_totalling(total_emails_to_send_to)
         current_app.logger.debug(f"Sending out {total_emails_to_send_to} emails...")
         for addr in emails:
