@@ -19,7 +19,7 @@ Flask-SQLAlchemy = "^3.0.3"
 flask-smorest = "^0.42.0"
 PyMySQL = "^1.1.0"
 Flask-DB = "^0.3.2"
-alembic = "^1.11.1"
+alembic = "^1.11.2"
 httpx = "^0.24.1"
 
 [tool.poetry.group.dev]
