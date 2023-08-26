@@ -10,7 +10,6 @@ from src.core.database.models import ApiKey, ApiKeyHistory, db
 __all__ = [
     "available_permissions",
     "can_access",
-    "can_access_v2",
     "create",
     "delete",
     "exists",
@@ -29,19 +28,7 @@ def available_permissions() -> list[str]:
     ]
 
 
-def can_access(route: str, token: str) -> bool:
-    """Determine if the given API key has permission to access a route."""
-    # NOTE: This method intentionally uses the old querying style methods.
-    # This will be going away with the removal of the v1 API, and flask-sqlalchemy
-    # is keeping the legacy methods around for a bit, there's no need for revision
-    return (
-        ApiKey.query.with_entities(getattr(ApiKey, f"has_{route}"))
-        .filter_by(token=token)
-        .first()[0]
-    )
-
-
-def can_access_v2(token: str, perms: set) -> bool:
+def can_access(token: str, perms: set) -> bool:
     """Determine if the given API key has all permissions needed to access an endpoint."""
     filters = [getattr(ApiKey, f"has_{perm}") == 1 for perm in perms]
     qs = db.select(ApiKey).filter(*filters, ApiKey.token == token)

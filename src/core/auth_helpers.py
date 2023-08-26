@@ -29,7 +29,7 @@ def protect_blueprint(*perms: str) -> None | NoReturn:
 
     # Check if the token has the proper permissions
     token = get_token_from_request()
-    if not keys.can_access_v2(token, requested_perms):
+    if not keys.can_access(token, requested_perms):
         abort(
             403,
             message=(
