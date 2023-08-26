@@ -11,7 +11,7 @@ from src.core.database.v2 import prompts
 from src.core.helpers import format_datetime_pretty
 
 
-__all__ = ["create", "get_for_date"]
+__all__ = ["create", "current"]
 
 # Set some constants for a consistent filename
 FILE_NAME_BASE = "vss365today-prompt-archive-"
@@ -51,7 +51,7 @@ def __get_prompt_date_range() -> Row:
     return db.session.execute(qs).first()
 
 
-def __get_by_year(year: int) -> list[Row]:
+def __get_prompts_by_year(year: int) -> list[Row]:
     """Get all relevant Prompt information for the archive for the given year."""
     qs = (
         db.select(Host.handle, Prompt.date, Prompt.url, Prompt.word)
@@ -121,7 +121,7 @@ def create() -> str | None:
             worksheet.write(0, 3, "URL", bolded_text)
 
             # Get the prompt archive for the current year
-            for row, prompt in enumerate(__get_by_year(year)):
+            for row, prompt in enumerate(__get_prompts_by_year(year)):
                 # Rows are zero-indexed, meaning we need to increment
                 # so we don't clobber the headings
                 row += 1
@@ -134,9 +134,14 @@ def create() -> str | None:
     return file_name
 
 
-def get_for_date(date: date) -> str | None:
-    """Get an archive file for the given date."""
+def current() -> str | None:
+    """Get the newest generated archive file."""
+    # Sort the available files by created time, with newest on top,
+    # and return the first one if we have any
     save_dir = Path(get_secret("DOWNLOADS_DIR")).resolve()
-    file_name = f"{FILE_NAME_BASE}{date.isoformat()}{FILE_NAME_EXT}"
-    full_path = save_dir / file_name
-    return file_name if full_path.exists() else None
+    all_files = sorted(
+        save_dir.glob(f"*{FILE_NAME_EXT}"),
+        key=lambda f: f.stat().st_ctime,
+        reverse=True,
+    )
+    return all_files[0].name if all_files else None

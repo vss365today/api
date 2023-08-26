@@ -16,12 +16,7 @@ class Archive(MethodView):
     @archive.alt_response(404, schema=Generic.HttpError)
     def get(self):
         """Get the file name of the newest Prompt archive."""
-        # Attempt to get an archive with today's date,
-        # then yesterday's date if that fails
-        today = date.today()
-        if (file := db.archive.get_for_date(today)) is not None:
-            return {"file_name": file}
-        if (file := db.archive.get_for_date(today - timedelta(days=1))) is not None:
+        if (file := db.archive.current()) is not None:
             return {"file_name": file}
 
         # We don't have an archive to download. This really shouldn't happen
