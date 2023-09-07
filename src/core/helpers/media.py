@@ -3,8 +3,6 @@ from pathlib import Path, PurePath
 from typing import Literal
 
 import httpx
-from urllib3.exceptions import LocationParseError
-from urllib3.util import parse_url
 
 from src.configuration import get_secret
 
@@ -53,11 +51,11 @@ def is_valid_url(url: str) -> bool:
 
     try:
         # If we're missing parts of the URL, it's obviously not valid
-        result = parse_url(url)
+        result = httpx.URL(url)
         return not (not result.scheme or not result.host)
 
     # This is a SUPER malformed thing
-    except LocationParseError:
+    except httpx.InvalidURL:
         return False
 
 
