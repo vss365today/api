@@ -7,11 +7,7 @@ from flask_smorest import abort
 from src.core.database.v2 import keys
 
 
-__all__ = [
-    "protect_blueprint",
-    "require_permission",
-    "fake_authorize",
-]
+__all__ = ["fake_authorize", "protect_blueprint", "require_permission"]
 
 
 ALL_PERMISSIONS = keys.available_permissions()
@@ -58,7 +54,7 @@ def require_permission(*perms: str):
     return decorator
 
 
-def get_auth_token() -> str:
+def get_auth_token() -> str | NoReturn:
     """Attempt to extract the auth token from the request."""
     return request.headers["Authorization"].split("Bearer")[1].strip()
 
@@ -79,5 +75,5 @@ def get_token_from_request() -> str | NoReturn:
         abort(403, message="Invalid API key provided.")
 
 
-def fake_authorize():
+def fake_authorize() -> None:
     """Just a no-op for dummy authorization."""
