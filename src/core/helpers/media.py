@@ -69,7 +69,7 @@ def move(temp_file: str, final_file: str) -> bool:
 
 def original_name(url: str) -> str:
     """Extract the media file name from its URL."""
-    name = parse_url(url).path.split("/")[2]
+    name = httpx.URL(url).path.split("/")[2]
 
     # If there's a colon in the filename, it means there's an image size tag.
     # We want to remove this from the filename
