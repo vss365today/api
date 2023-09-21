@@ -292,12 +292,13 @@ Flask = ">=0.9"
 
 [[package]]
 name = "flask-db"
-version = "0.3.2"
+version = "0.4.0"
 description = "A Flask CLI extension to help migrate and manage your SQL database."
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "Flask-DB-0.3.2.tar.gz", hash = "sha256:bf2c9e161fb415129c1ef251852ba26f84a7a53601ec100609d82a231e34fd12"},
+    {file = "Flask-DB-0.4.0.tar.gz", hash = "sha256:69428f33105053e5e6d98a18db02e33ab9d6dbefc5703203fd674c006f6e5daa"},
+    {file = "Flask_DB-0.4.0-py3-none-any.whl", hash = "sha256:9b34c5cd9aa53774b06694eb733f2aeb6319bf0ccab27bf7e0ceb672898c50e4"},
 ]
 
 [package.dependencies]
@@ -1089,4 +1090,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "84b036844dd96432a8f5dbe41c322b14ccda636294d4861905004b5fb1d64d37"
+content-hash = "c1d4fa293a2636cb3f5473266fff6f42ebba9f70f1fa513208ee631c98b25328"
