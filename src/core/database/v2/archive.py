@@ -2,14 +2,13 @@ from datetime import date
 from pathlib import Path
 
 import xlsxwriter
-from sqlalchemy.sql import func
 from sqlalchemy.engine.row import Row
+from sqlalchemy.sql import func
 
 from src.configuration import get_secret
 from src.core.database.models import Host, Prompt, db
 from src.core.database.v2 import prompts
 from src.core.helpers import format_datetime_pretty
-
 
 __all__ = ["create", "current"]
 
@@ -54,7 +53,7 @@ def __get_prompt_date_range() -> Row:
 def __get_prompts_by_year(year: int) -> list[Row]:
     """Get all relevant Prompt information for the archive for the given year."""
     qs = (
-        db.select(Host.handle, Prompt.date, Prompt.url, Prompt.word)
+        db.select(Host.handle, Prompt.date, Prompt.url, Prompt.word, Prompt.content)
         .join(Host)
         .filter(func.year(Prompt.date) == year)
         .order_by(Prompt.word)
@@ -113,24 +112,24 @@ def create() -> str | None:
             worksheet.set_column(1, 1, widths.longest_word)
             worksheet.set_column(2, 2, widths.longest_handle)
             worksheet.set_column(3, 3, widths.longest_url)
+            worksheet.set_column(4, 1, 50)
 
             # Write the headings
             worksheet.write(0, 0, "Date", bolded_text)
             worksheet.write(0, 1, "Prompt", bolded_text)
             worksheet.write(0, 2, "Host", bolded_text)
             worksheet.write(0, 3, "URL", bolded_text)
+            worksheet.write(0, 4, "Content", bolded_text)
 
-            # Get the prompt archive for the current year
-            for row, prompt in enumerate(__get_prompts_by_year(year)):
-                # Rows are zero-indexed, meaning we need to increment
-                # so we don't clobber the headings
-                row += 1
-
-                # Write all the data
+            # Get the prompt archive for the current year.
+            # Rows are zero-indexed, meaning we need to start at 1
+            # so we don't clobber the headings
+            for row, prompt in enumerate(__get_prompts_by_year(year), start=1):
                 worksheet.write_datetime(row, 0, prompt.date)
                 worksheet.write(row, 1, prompt.word)
                 worksheet.write(row, 2, prompt.handle)
                 worksheet.write_url(row, 3, prompt.url)
+                worksheet.write(row, 4, prompt.content.replace("\n", " "))
     return file_name
 
 
