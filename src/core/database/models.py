@@ -54,7 +54,7 @@ class HelperMethods:
         return None
 
 
-class Host(HelperMethods, db.Model):
+class Host(HelperMethods, Base):
     __tablename__ = "hosts"
     __table_args__ = {"comment": "Store the #vss365 Hosts."}
 
@@ -72,7 +72,7 @@ class Host(HelperMethods, db.Model):
     url = column_property("https://twitter.com/" + handle)
 
 
-class HostDate(db.Model):
+class HostDate(Base):
     __tablename__ = "host_dates"
     __table_args__ = {"comment": "Store the hosting dates of #vss365 Hosts."}
 
@@ -84,7 +84,7 @@ class HostDate(db.Model):
     host: Mapped["Host"] = relationship(back_populates="dates")
 
 
-class Prompt(HelperMethods, db.Model):
+class Prompt(HelperMethods, Base):
     __tablename__ = "prompts"
     __table_args__ = {"comment": "Store the #vss365 Prompts."}
 
@@ -151,7 +151,7 @@ class Prompt(HelperMethods, db.Model):
         return navi
 
 
-class PromptMedia(HelperMethods, db.Model):
+class PromptMedia(HelperMethods, Base):
     __tablename__ = "prompt_media"
     __table_args__ = {"comment": "Store the #vss365 Prompt media."}
 
@@ -169,7 +169,7 @@ class PromptMedia(HelperMethods, db.Model):
     prompt: Mapped["Prompt"] = relationship(back_populates="media")
 
 
-class Email(db.Model):
+class Email(Base):
     __tablename__ = "emails"
     __table_args__ = {
         "comment": "Store email addresses for those who want Prompt notifications."
@@ -184,7 +184,7 @@ class Email(db.Model):
     date_added: Mapped[datetime] = Column(DateTime, default=datetime.now)
 
 
-class ApiKey(HelperMethods, db.Model):
+class ApiKey(HelperMethods, Base):
     __tablename__ = "api_keys"
     __table_args__ = {
         "comment": (
@@ -214,7 +214,7 @@ class ApiKey(HelperMethods, db.Model):
     history: Mapped[list["ApiKeyHistory"]] = relationship(back_populates="key")
 
 
-class ApiKeyHistory(db.Model):
+class ApiKeyHistory(Base):
     __tablename__ = "audit_api_keys"
     __table_args__ = {"comment": "Audit table to track permission changes to API keys."}
 

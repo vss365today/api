@@ -19,8 +19,8 @@
     "ENABLE_EMAIL_SENDING": false,
     "MG_MAILING_LIST_ADDR": "vss365today-dev",
 
-    "API_TITLE": "#vss365 today v2 API",
-    "API_VERSION": "2.0.0",
+    "API_TITLE": "#vss365 today API",
+    "API_VERSION": "2.0.3",
     "OPENAPI_VERSION": "3.0.3",
     "OPENAPI_JSON_PATH": "api-spec.json"
   }
