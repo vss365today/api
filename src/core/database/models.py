@@ -7,12 +7,14 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, ForeignKey, inspect, select
 from sqlalchemy.dialects.mysql import TINYINT
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Mapped, column_property, mapped_column, relationship
+from sqlalchemy.orm import (
+    DeclarativeBase,
+    Mapped,
+    column_property,
+    mapped_column,
+    relationship,
+)
 from sqlalchemy.types import BigInteger, DateTime, String
-
-
-db = SQLAlchemy()
-
 
 __all__ = [
     "ApiKey",
@@ -24,6 +26,13 @@ __all__ = [
     "HostDate",
     "db",
 ]
+
+
+# Set up the flask-sqlalchemy extension for "new-style" models
+class Base(DeclarativeBase): ...
+
+
+db = SQLAlchemy(model_class=Base)
 
 
 class PromptNavigation(TypedDict):
