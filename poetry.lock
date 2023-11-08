@@ -1014,6 +1014,20 @@ socks = ["requests[socks] (>=2.27.0,<3)"]
 test = ["vcrpy (>=1.10.3)"]
 
 [[package]]
+name = "types-flask-cors"
+version = "4.0.0.1"
+description = "Typing stubs for Flask-Cors"
+optional = false
+python-versions = "*"
+files = [
+    {file = "types-Flask-Cors-4.0.0.1.tar.gz", hash = "sha256:68dbf195dec2a21932690751f6e7669f9eb7def6b15bfaaf507f96cc04bef5ec"},
+    {file = "types_Flask_Cors-4.0.0.1-py3-none-any.whl", hash = "sha256:2846ceaceaf6dbbc023442ff85a15c9c1dbdf3c65fe3ed4b331f5c6b58f81c21"},
+]
+
+[package.dependencies]
+Flask = ">=2.0.0"
+
+[[package]]
 name = "typing-extensions"
 version = "4.8.0"
 description = "Backported and Experimental Type Hints for Python 3.8+"
@@ -1094,4 +1108,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "ab26331f82a9da663b93c1e5bfea68638689a8531e9a3452faa998651badf3ed"
+content-hash = "4e63698be2b3e80fc2775d6f608d251583d17017e9cf536913494a31d0c91892"

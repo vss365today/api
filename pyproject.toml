@@ -14,8 +14,8 @@ XlsxWriter = "^3.1.9"
 tweepy = "^4.14.0"
 SQLAlchemy = "2.0.23"
 sys-vars = "^5.0.0"
-Flask-SQLAlchemy = "^3.1.0"
-flask-smorest = "^0.42.0"
+Flask-SQLAlchemy = "^3.1.1"
+flask-smorest = "^0.42.1"
 PyMySQL = "^1.1.0"
 Flask-DB = "^0.4.0"
 alembic = "^1.12.1"
@@ -26,8 +26,10 @@ optional = true
 
 [tool.poetry.group.dev.dependencies]
 flake8 = "^6.1.0"
-mypy = "^1.6"
-black = "^23.10"
+mypy = "^1.6.1"
+black = "^23.10.1"
+types-Flask-Cors = "^4.0.0.1"
+
 
 [build-system]
 requires = ["poetry-core"]
