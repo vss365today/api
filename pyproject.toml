@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vss365today-api"
-version = "2.0.2"
+version = "2.0.3"
 description = "REST API for #vss365 today"
 authors = ["Caleb <le717@users.noreply.github.com>"]
 license = "MIT"
@@ -14,7 +14,7 @@ XlsxWriter = "^3.1.9"
 tweepy = "^4.14.0"
 SQLAlchemy = "2.0.23"
 sys-vars = "^5.0.0"
-Flask-SQLAlchemy = "^3.0.3"
+Flask-SQLAlchemy = "^3.1.0"
 flask-smorest = "^0.42.0"
 PyMySQL = "^1.1.0"
 Flask-DB = "^0.4.0"
