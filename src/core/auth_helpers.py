@@ -1,11 +1,10 @@
 from functools import wraps
-from typing import NoReturn
+from typing import Any, Callable, NoReturn
 
 from flask import request
 from flask_smorest import abort
 
 from src.core.database.v2 import keys
-
 
 __all__ = ["fake_authorize", "protect_blueprint", "require_permission"]
 
@@ -35,16 +34,16 @@ def protect_blueprint(*perms: str) -> None | NoReturn:
     return None
 
 
-def require_permission(*perms: str):
+def require_permission(*perms: str) -> Callable[..., Any]:
     """Protect a single endpoint with the specified permissions.
 
     This decorator is useful when a single endpoint
     needs to be protected but not the entire blueprint.
     """
 
-    def decorator(func):
+    def decorator(func) -> Callable[..., Any]:
         @wraps(func)
-        def wrapper(*args, **kwargs):
+        def wrapper(*args, **kwargs) -> Callable[..., Any]:
             protect_blueprint(*perms)
 
             return func(*args, **kwargs)
@@ -54,23 +53,21 @@ def require_permission(*perms: str):
     return decorator
 
 
-def get_auth_token() -> str | NoReturn:
-    """Attempt to extract the auth token from the request."""
-    return request.headers["Authorization"].split("Bearer")[1].strip()
-
-
 def get_token_from_request() -> str | NoReturn:
     """Extract an API key/token from an active request."""
     # Was an Authorization header sent?
-    if "Authorization" not in request.headers:
+    if request.authorization is None:
         abort(400, message="Missing HTTP Authorization header.")
+
+    # Make sure it's a Bearer token method
+    if request.authorization.type != "bearer":
+        abort(400, message="Invalid authorization type.")
 
     # Attempt to get the API key and validate it
     try:
-        token = get_auth_token()
-        if not keys.exists(token):
+        if not keys.exists(request.authorization.token):
             raise KeyError
-        return token
+        return request.authorization.token
     except (KeyError, IndexError):
         abort(403, message="Invalid API key provided.")
 

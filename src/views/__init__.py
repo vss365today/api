@@ -3,7 +3,7 @@ from typing import Callable
 
 from flask_smorest import Blueprint as APIBlueprint
 
-from src.core import auth_helpers as v2_auth
+from src.core import auth_helpers
 
 
 def _api_factory(
@@ -64,7 +64,7 @@ browse = _api_factory(
 emails = _api_factory(
     "emails",
     "emails",
-    partial(v2_auth.protect_blueprint, "emails"),
+    partial(auth_helpers.protect_blueprint, "emails"),
     description="Manage email subscriptions.",
 )
 
@@ -77,14 +77,14 @@ hosts = _api_factory(
 keys = _api_factory(
     "keys",
     "keys",
-    partial(v2_auth.protect_blueprint, "keys"),
+    partial(auth_helpers.protect_blueprint, "keys"),
     description="Manage API key permissions.",
 )
 
 notifications = _api_factory(
     "notifications",
     "notifications",
-    partial(v2_auth.protect_blueprint, "notifications"),
+    partial(auth_helpers.protect_blueprint, "notifications"),
     description="Manage email notifications.",
 )
 
