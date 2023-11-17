@@ -30,7 +30,6 @@ mypy = "^1.7.0"
 black = "^23.11.0"
 types-Flask-Cors = "^4.0.0.1"
 
-
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

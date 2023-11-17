@@ -10,6 +10,5 @@ Prompt by {{ host_handle }}
 
 To get a definition, visit https://www.merriam-webster.com/dictionary/{{ word|lower }}
 To view this email in your browser, visit https://vss365today.com/view/{{ date.strftime("%Y-%m-%d") }}
-To help support #vss365 today, visit https://vss365today.com/donate
 To unsubscribe, visit https://vss365today.com/unsubscribe
 To view our privacy policy, visit https://vss365today.com/privacy
