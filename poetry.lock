@@ -321,13 +321,13 @@ SQLAlchemy-Utils = "*"
 
 [[package]]
 name = "flask-smorest"
-version = "0.42.2"
+version = "0.42.3"
 description = "Flask/Marshmallow-based REST API framework"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "flask-smorest-0.42.2.tar.gz", hash = "sha256:85a6c71d3e83ea7b57a3b879f2a2efa1b0bbe3633a0374bf1527997fa950a59d"},
-    {file = "flask_smorest-0.42.2-py3-none-any.whl", hash = "sha256:713720ef63b607fd30c854ae2fa90c77c9aa31aa0f37388d33694d09899ef392"},
+    {file = "flask-smorest-0.42.3.tar.gz", hash = "sha256:736ef072bd5522de750a5a9d9f1bfb6d750d05c66e1b3702bc7a20e4277af9bf"},
+    {file = "flask_smorest-0.42.3-py3-none-any.whl", hash = "sha256:992fadb76d944f25dbf0bfc96fa43666f455b106fa99e58a910e0ce7e98b0c51"},
 ]
 
 [package.dependencies]
@@ -338,8 +338,8 @@ webargs = ">=8.0.0,<9"
 werkzeug = ">=2.0.1,<4"
 
 [package.extras]
-dev = ["PyYAML (==6.0.1)", "apispec (==6.3.0)", "coverage (==7.3.2)", "flake8 (==6.1.0)", "flake8-bugbear (==23.9.16)", "flask (==3.0.0)", "marshmallow (==3.20.1)", "pre-commit (==3.5.0)", "pytest (==7.4.3)", "pytest-cov (==4.1.0)", "webargs (==8.3.0)", "werkzeug (==3.0.1)"]
-lint = ["flake8 (==6.1.0)", "flake8-bugbear (==23.9.16)", "pre-commit (==3.5.0)"]
+dev = ["PyYAML (==6.0.1)", "apispec (==6.3.0)", "coverage (==7.3.2)", "flask (==3.0.0)", "marshmallow (==3.20.1)", "pre-commit (==3.5.0)", "pytest (==7.4.3)", "pytest-cov (==4.1.0)", "webargs (==8.3.0)", "werkzeug (==3.0.1)"]
+lint = ["pre-commit (==3.5.0)"]
 tests = ["PyYAML (==6.0.1)", "apispec (==6.3.0)", "coverage (==7.3.2)", "flask (==3.0.0)", "marshmallow (==3.20.1)", "pytest (==7.4.3)", "pytest-cov (==4.1.0)", "webargs (==8.3.0)", "werkzeug (==3.0.1)"]
 
 [[package]]
@@ -1118,4 +1118,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.11"
-content-hash = "7bec7656b07a077b77483e0c8ecb262bd62a77b4eb84c0c36bf3ae9e50b6c80a"
+content-hash = "bd79c6deefc1742e544eae105529b4e609d3054e617d56153c8a91c0e186b82c"
