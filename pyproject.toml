@@ -19,7 +19,7 @@ flask-smorest = "^0.42.3"
 PyMySQL = "^1.1.0"
 Flask-DB = "^0.4.0"
 alembic = "^1.13.0"
-httpx = "^0.25.2"
+httpx = "^0.26.0"
 
 [tool.poetry.group.dev]
 optional = true
